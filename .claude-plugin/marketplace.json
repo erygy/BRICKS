@@ -1,8 +1,9 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "bricks",
   "owner": {
     "name": "Rémi Lagorce & Robin Jehanno",
-    "url": "https://github.com/remilagorce"
+    "url": "https://github.com/erygy/BRICKS"
   },
   "metadata": {
     "description": "Bricks marketplace — deux moteurs GTM open-source pour Claude Code : bricks (Signal Interceptor, stack Claude + Sillage + FullEnrich + Emelia) et diggr (lignée v2/v4).",
@@ -13,13 +14,45 @@
       "name": "bricks",
       "source": "./plugins/bricks",
       "description": "Signal Interceptor — l'agent GTM qui surveille comptes et concurrents (Sillage), intercepte les prospects qui parlent aux concurrents, qualifie, score le WHY NOW, prépare la file de la semaine, rédige, audite et envoie (Emelia). UI locale avec fiche cold-call et graphe.",
-      "version": "3.0.0-alpha.1"
+      "version": "3.0.0-alpha.1",
+      "author": {
+        "name": "Rémi Lagorce & Robin Jehanno",
+        "url": "https://github.com/erygy/BRICKS"
+      },
+      "homepage": "https://github.com/erygy/BRICKS/tree/main/plugins/bricks",
+      "repository": "https://github.com/erygy/BRICKS",
+      "category": "productivity",
+      "keywords": [
+        "gtm",
+        "outbound",
+        "prospection",
+        "sillage",
+        "fullenrich",
+        "emelia",
+        "lead-scoring",
+        "sqlite"
+      ]
     },
     {
       "name": "diggr",
       "source": "./plugins/diggr",
       "description": "Diggr — open-source GTM engine (lignée Bricks v2). Workspace management, find, enrich and transform sur SQLite par workspace, plus le front Diggr (v4/) et les expérimentations v2/.",
-      "version": "0.22.2"
+      "version": "0.22.2",
+      "author": {
+        "name": "Rémi Lagorce & Robin Jehanno",
+        "url": "https://github.com/remilagorce"
+      },
+      "homepage": "https://github.com/erygy/BRICKS/tree/main/plugins/diggr",
+      "repository": "https://github.com/erygy/BRICKS",
+      "category": "productivity",
+      "keywords": [
+        "gtm",
+        "find",
+        "enrich",
+        "transform",
+        "workspace",
+        "sqlite"
+      ]
     }
   ]
 }

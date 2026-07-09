@@ -1,9 +1,23 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "bricks",
-  "description": "Open-source GTM engine: find, enrich and work B2B lead lists from Claude Code, backed by a per-workspace SQLite database. Base curée pour la v3 « Signal Interceptor » — stack sponsors (Claude + Sillage + FullEnrich).",
+  "description": "Open-source GTM engine: find, enrich and work B2B lead lists from Claude Code, backed by a per-workspace SQLite database. Base curée pour la v3 « Signal Interceptor » — stack sponsors (Claude + Sillage + FullEnrich + Emelia).",
   "version": "3.0.0-alpha.1",
   "mcpServers": "./.mcp.json",
   "author": {
-    "name": "Rémi Lagorce & Robin Jehanno"
-  }
+    "name": "Rémi Lagorce & Robin Jehanno",
+    "url": "https://github.com/erygy/BRICKS"
+  },
+  "homepage": "https://github.com/erygy/BRICKS/tree/main/plugins/bricks",
+  "repository": "https://github.com/erygy/BRICKS",
+  "keywords": [
+    "gtm",
+    "outbound",
+    "prospection",
+    "sillage",
+    "fullenrich",
+    "emelia",
+    "lead-scoring",
+    "sqlite"
+  ]
 }

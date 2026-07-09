@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin.json",
   "name": "diggr",
   "description": "Diggr — open-source GTM engine (lignée Bricks v2). Workspace management, find, enrich and transform skills over a per-workspace SQLite database, plus the Diggr front (v4/) and the v2 experiments (v2/ — agents, schemas, scoring).",
   "version": "0.22.2",
@@ -6,5 +7,15 @@
   "author": {
     "name": "Rémi Lagorce & Robin Jehanno",
     "url": "https://github.com/remilagorce"
-  }
+  },
+  "homepage": "https://github.com/erygy/BRICKS/tree/main/plugins/diggr",
+  "repository": "https://github.com/erygy/BRICKS",
+  "keywords": [
+    "gtm",
+    "find",
+    "enrich",
+    "transform",
+    "workspace",
+    "sqlite"
+  ]
 }
