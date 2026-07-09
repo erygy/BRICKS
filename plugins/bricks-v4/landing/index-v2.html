@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DIGGR — Stop targeting blind. Target on signals.</title>
+<meta name="description" content="Your team targets the wrong accounts because they target on static firmographics, not signals. DIGGR surfaces the accounts showing real buying intent right now — each with the source, the proof, and the verified contact.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%23FFD04D%22/><stop offset=%22100%22 stop-color=%22%23D18D2A%22/></linearGradient></defs><path d=%22M50 14 L82 34 L82 66 L50 86 L18 66 L18 34 Z%22 fill=%22url(%23g)%22/><path d=%22M50 40 L64 49 L64 58 L50 67 L36 58 L36 49 Z%22 fill=%22%230A0A0B%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0B; --bg-2:#101014; --glass:rgba(255,255,255,.025); --glass-hi:rgba(255,255,255,.04);
+    --border:rgba(255,255,255,.08); --border-hi:rgba(255,255,255,.15);
+    --text:#ECECEF; --dim:#9A9AA3; --mute:#63636C; --faint:#3a3a42;
+    --g1:#FFD04D; --g2:#D18D2A; --gold:#E9AE3A; --gold-soft:rgba(233,174,58,.12); --gold-glow:rgba(255,208,77,.4);
+    --grad:linear-gradient(135deg,#FFD04D 0%,#EBB43E 46%,#D18D2A 100%);
+    --capt:#fb7185; --inter:#38bdf8; --acq:#a78bfa;
+    --ok:#34d399;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;font-size:16px;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;font-feature-settings:'ss01','cv11'}
+  body::before{content:'';position:fixed;inset:-30%;z-index:0;pointer-events:none;filter:blur(80px);opacity:.85;
+    background:radial-gradient(ellipse 45% 40% at 22% 8%,rgba(255,208,77,.10),transparent 60%),
+      radial-gradient(ellipse 40% 45% at 82% 22%,rgba(167,139,250,.055),transparent 60%),
+      radial-gradient(ellipse 55% 42% at 50% 96%,rgba(255,208,77,.05),transparent 60%);
+    animation:drift 28s ease-in-out infinite alternate}
+  @keyframes drift{0%{transform:translate(0,0)}100%{transform:translate(-2%,2%)}}
+  body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,.01) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.01) 1px,transparent 1px);
+    background-size:54px 54px;mask:radial-gradient(ellipse 85% 75% at 50% 30%,#000,transparent)}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 26px;position:relative;z-index:1}
+  .gold{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+  h1,h2,h3{line-height:1.1;letter-spacing:-.02em;font-weight:800;text-wrap:balance}
+  section{position:relative;z-index:1;padding:76px 0;border-top:1px solid var(--border)}
+  .lead{color:var(--dim);font-size:18px;line-height:1.6;max-width:60ch}
+
+  nav{position:sticky;top:0;z-index:50;height:64px;display:flex;align-items:center;
+    background:rgba(10,10,11,.72);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+  nav .wrap{display:flex;align-items:center;gap:20px;width:100%}
+  .logo-img{height:25px;width:auto;display:block;filter:drop-shadow(0 1px 7px rgba(255,208,77,.25))}
+  nav .sp{flex:1}
+  nav .nlinks{display:flex;gap:22px}nav .nlinks a{color:var(--dim);text-decoration:none;font-size:13.5px;font-weight:500}nav .nlinks a:hover{color:var(--text)}
+  @media(max-width:760px){nav .nlinks{display:none}}
+
+  .btn{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:15px;cursor:pointer;border-radius:12px;
+    padding:13px 22px;border:1px solid transparent;text-decoration:none;transition:.16s var(--ease);white-space:nowrap;position:relative;overflow:hidden}
+  .btn.pri{background:var(--grad);color:#1c1305;box-shadow:0 6px 26px -8px var(--gold-glow)}
+  .btn.pri:hover{transform:translateY(-2px);filter:brightness(1.06)}
+  .btn.pri::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,245,210,.5) 50%,transparent 70%);transform:translateX(-120%)}
+  .btn.pri:hover::after{animation:sheen .9s ease}
+  @keyframes sheen{to{transform:translateX(120%)}}
+  .btn.ghost{background:var(--glass);border-color:var(--border-hi);color:var(--text)}
+  .btn.ghost:hover{background:var(--glass-hi)}
+  .btn.sm{padding:9px 15px;font-size:13.5px}
+
+  .hero{padding:82px 0 60px;border-top:none;text-align:center}
+  .hero h1{font-size:clamp(38px,6.4vw,68px);max-width:15ch;margin:22px auto 0}
+  .hero .sub{max-width:62ch;margin:24px auto 0;font-size:19px;color:var(--dim)}
+  .hero .sub b{color:var(--text);font-weight:600}
+  .cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+  .micro{margin-top:16px;font-size:13px;color:var(--mute)}
+  .proofbar{display:flex;gap:0;justify-content:center;flex-wrap:wrap;margin-top:44px;border:1px solid var(--border);border-radius:14px;overflow:hidden;max-width:860px;margin-left:auto;margin-right:auto;background:var(--glass)}
+  .proofbar div{padding:15px 24px;font-size:13.5px;color:var(--dim);border-right:1px solid var(--border);flex:1;min-width:180px}
+  .proofbar div:last-child{border-right:none}
+  .proofbar b{color:var(--text);font-family:var(--mono);font-weight:600}
+
+  .rv{opacity:0;transform:translateY(18px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+  .rv.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}body::before{animation:none}}
+
+  .h2{font-size:clamp(27px,4vw,40px);max-width:22ch}
+  .center{text-align:center}.center .h2,.center .lead{margin-left:auto;margin-right:auto}
+
+  .problem{text-align:center}
+  .problem h2{font-size:clamp(28px,5vw,46px);max-width:18ch;margin:0 auto}
+  .problem .lead{margin:22px auto 0;font-size:19px}
+
+  .dig{display:grid;grid-template-columns:1fr 64px 1fr;gap:8px;align-items:center;margin-top:40px}
+  @media(max-width:820px){.dig{grid-template-columns:1fr;gap:20px}.dig .arrow{transform:rotate(90deg);margin:0 auto}}
+  .post{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:20px}
+  .post .ph{display:flex;align-items:center;gap:11px;margin-bottom:13px}
+  .post .av{width:38px;height:38px;border-radius:9px;background:var(--glass-hi);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--dim)}
+  .post .nm{font-weight:600;font-size:14px}.post .sub2{font-size:11.5px;color:var(--mute)}
+  .post .body{font-size:14px;line-height:1.6;color:var(--dim)}
+  .hl{background:linear-gradient(180deg,transparent 62%,rgba(233,174,58,.32) 62%);color:var(--text);font-weight:600;border-radius:2px;padding:0 1px}
+  .arrow{color:var(--gold);display:flex;align-items:center;justify-content:center}
+  .arrow svg{filter:drop-shadow(0 0 10px var(--gold-glow))}
+  .cards{display:flex;flex-direction:column;gap:10px}
+  .ccard{background:var(--bg-2);border:1px solid var(--border);border-left:2px solid var(--gold);border-radius:12px;padding:13px 15px;animation:pop .5s var(--ease) both}
+  .ccard .cn{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:8px}
+  .ccard .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);background:var(--gold-soft);padding:2px 7px;border-radius:5px}
+  .ccard .cq{font-size:11.5px;color:var(--mute);font-style:italic;margin-top:5px}
+  @keyframes pop{from{opacity:0;transform:translateX(10px)}}
+  .sectorbar{display:flex;gap:8px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+  .sectorbar button{font-family:var(--mono);font-size:12px;color:var(--dim);background:var(--glass);border:1px solid var(--border);border-radius:999px;padding:6px 14px;cursor:pointer;transition:.14s}
+  .sectorbar button.on{background:var(--gold-soft);color:var(--gold);border-color:rgba(233,174,58,.3)}
+  .sectorbar button:hover{color:var(--text)}
+
+  .axes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:38px}
+  @media(max-width:820px){.axes{grid-template-columns:1fr}}
+  .axis{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:24px;transition:.2s var(--ease)}
+  .axis:hover{transform:translateY(-3px);border-color:var(--border-hi);background:var(--glass-hi)}
+  .axis .an{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .axis.c1 .an{color:var(--capt)}.axis.c2 .an{color:var(--inter)}.axis.c3 .an{color:var(--acq)}
+  .axis h3{font-size:22px;margin:12px 0 4px}
+  .axis .verb{font-size:13px;color:var(--mute);font-family:var(--mono)}
+  .axis p{font-size:14.5px;color:var(--dim);margin-top:12px}
+  .axis .ex{margin-top:14px;padding:11px 13px;background:var(--bg-2);border-radius:10px;font-size:12.5px;color:var(--mute);font-style:italic;border-left:2px solid var(--border-hi)}
+
+  .pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:40px;border:1px solid var(--border);border-radius:16px;overflow:hidden}
+  @media(max-width:820px){.pipe{grid-template-columns:1fr}}
+  .step{padding:24px 20px;border-right:1px solid var(--border);position:relative}
+  .step:last-child{border-right:none}
+  .step .n{width:30px;height:30px;border-radius:9px;background:var(--gold-soft);color:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:14px;margin-bottom:13px}
+  .step h4{font-size:15px;font-weight:700}.step p{font-size:13px;color:var(--dim);margin-top:6px}
+  .step .tool{font-family:var(--mono);font-size:10.5px;color:var(--gold);margin-top:9px}
+  .stack{display:flex;gap:20px;justify-content:center;align-items:center;margin-top:30px;flex-wrap:wrap;opacity:.75}
+  .stack .s{font-family:var(--mono);font-size:13px;color:var(--dim);display:flex;align-items:center;gap:8px}
+  .stack .s .dot{width:8px;height:8px;border-radius:50%}
+
+  .trust{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center}
+  @media(max-width:820px){.trust{grid-template-columns:1fr}}
+  .chatdemo{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:11px}
+  .bub{max-width:88%;padding:11px 14px;border-radius:13px;font-size:13.5px;line-height:1.5}
+  .bub.u{align-self:flex-end;background:var(--gold-soft);border:1px solid rgba(233,174,58,.22)}
+  .bub.a{align-self:flex-start;background:var(--glass-hi);border:1px solid var(--border)}
+  .bub.a.abs{border-color:rgba(233,174,58,.35);background:rgba(233,174,58,.06)}
+
+  .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px}
+  @media(max-width:640px){.nums{grid-template-columns:1fr}}
+  .num{text-align:center;padding:30px 18px;background:var(--glass);border:1px solid var(--border);border-radius:16px}
+  .num .v{font-size:52px;font-weight:900;letter-spacing:-.03em;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .num .l{color:var(--dim);font-size:13.5px;margin-top:10px}
+
+  .pers{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
+  @media(max-width:760px){.pers{grid-template-columns:1fr}}
+  .persona{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:24px}
+  .persona .role{font-weight:700;font-size:15px}
+  .persona .quote{font-size:18px;line-height:1.5;margin-top:12px;color:var(--text)}
+
+  .faq{max-width:760px;margin:32px auto 0;display:flex;flex-direction:column;gap:2px}
+  .qa{background:var(--glass);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .qa summary{padding:16px 18px;cursor:pointer;font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .qa summary::-webkit-details-marker{display:none}
+  .qa summary::after{content:'+';color:var(--gold);font-size:20px;font-weight:400}
+  .qa[open] summary::after{content:'–'}
+  .qa .a{padding:0 18px 16px;color:var(--dim);font-size:14.5px;line-height:1.6}
+
+  .final{text-align:center;padding:90px 0}
+  .final h2{font-size:clamp(30px,5vw,48px);max-width:20ch;margin:0 auto}
+  .final .lead{margin:20px auto 0}
+  footer{border-top:1px solid var(--border);padding:34px 0;position:relative;z-index:1}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--mute)}
+  .urg{margin-top:14px;font-family:var(--mono);font-size:12.5px;color:var(--gold)}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <img src="diggr-logo.svg" class="logo-img" alt="DIGGR"/>
+  <span class="sp"></span>
+  <div class="nlinks"><a href="#proof">The proof</a><a href="#signals">The signals</a><a href="#how">How</a><a href="#faq">FAQ</a></div>
+  <a href="#cta" class="btn pri sm">Get my in-market accounts →</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow rv">Signal-based targeting</div>
+  <h1 class="rv">You're targeting the <span class="gold">wrong accounts</span>.</h1>
+  <p class="sub rv">Not because your team is bad — because they target on static firmographics, blind to who's actually in-market. DIGGR surfaces the accounts showing real buying signals <b>right now</b> — each with the source, the proof, and the verified contact. <b>Target on signals, not guesses.</b></p>
+  <div class="cta-row rv">
+    <a href="#cta" class="btn pri">Get my 10 highest-signal accounts →</a>
+    <a href="#proof" class="btn ghost">See a real signal</a>
+  </div>
+  <div class="micro rv">15-min demo on your real market. You leave with 10 in-market accounts + verified contacts. No credit card.</div>
+  <div class="proofbar rv">
+    <div><b>257</b> buying signals tracked</div>
+    <div><b>~35</b> in-market accounts / day at 1,000 monitored</div>
+    <div><b>0</b> hallucination — every account is sourced</div>
+  </div>
+</div></header>
+
+<section class="problem"><div class="wrap">
+  <h2 class="rv">Same list as everyone. <span class="gold">Zero signal.</span></h2>
+  <p class="lead rv">Apollo, Sales Nav, Clay — they all hand you the same firmographic list: millions of accounts, no timing. So your reps spray, fight over the same cold accounts, and reply rates collapse. Targeting on company size and industry is targeting blind — the account that's ready to buy today looks identical to the one that churned last year.</p>
+</div></section>
+
+<section id="proof"><div class="wrap center">
+  <div class="eyebrow rv">The proof · not the pitch</div>
+  <h2 class="h2 rv" style="margin-top:14px">We don't tell you. <span class="gold">We show you the signal.</span></h2>
+  <p class="lead rv" style="margin-top:14px">One public signal. → DIGGR reads it, names the account that's in-market, and shows the exact source. In a single move.</p>
+  <div class="dig rv">
+    <div class="post">
+      <div class="ph"><div class="av" id="rivAv">A</div><div><div class="nm" id="rivName">Algolia</div><div class="sub2">Company post · LinkedIn · public</div></div></div>
+      <div class="body" id="postBody">"Proud to share how <span class="hl">The Hershey Company</span> boosted product search with our AI. Kudos to <span class="hl">Frasers Group</span> too on the launch of Ask FRASERS 🚀"</div>
+    </div>
+    <div class="arrow"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    <div class="cards" id="cards">
+      <div class="ccard"><div class="cn">The Hershey Company <span class="tag">signal</span></div><div class="cq">"…The Hershey Company boosted product search…"</div></div>
+      <div class="ccard" style="animation-delay:.12s"><div class="cn">Frasers Group <span class="tag">signal</span></div><div class="cq">"…kudos to Frasers Group on the launch of Ask FRASERS…"</div></div>
+      <div class="ccard" style="animation-delay:.24s"><div class="cn">+ verified contact <span class="tag">FullEnrich</span></div><div class="cq">Head of E-commerce · verified email · ready to reach</div></div>
+    </div>
+  </div>
+  <div class="sectorbar rv">
+    <button class="on" data-s="saas">SaaS</button><button data-s="agency">Agency</button><button data-s="industry">Industry</button><button data-s="services">Services</button>
+  </div>
+</div></section>
+
+<section id="signals"><div class="wrap center">
+  <div class="eyebrow rv">The product core</div>
+  <h2 class="h2 rv" style="margin-top:14px">Three signals. <span class="gold">One rule: proof.</span></h2>
+  <p class="lead rv" style="margin-top:14px">Every account DIGGR surfaces is backed by a dated, cited signal — never a guess from firmographics.</p>
+  <div class="axes">
+    <div class="axis c1 rv"><div class="an">◆ Displacement</div><h3>Their customer</h3><div class="verb">already paying a competitor</div><p>The strongest targeting signal there is: proven need, existing budget. You just weren't the one they picked — yet.</p><div class="ex">"Thrilled to work with [competitor]" → account identified + dated.</div></div>
+    <div class="axis c2 rv" style="transition-delay:.08s"><div class="an">◆ Interception</div><h3>Their prospect</h3><div class="verb">evaluating a competitor now</div><p>They're buying right now. You enter the evaluation before they sign — not six months after they churn.</p><div class="ex">Public demo request, RFP, comparison in progress.</div></div>
+    <div class="axis c3 rv" style="transition-delay:.16s"><div class="an">◆ Trigger</div><h3>Your ICP</h3><div class="verb">with a fresh buying trigger</div><p>The event that turns a cold ICP account into a timed one. Same profile as everyone's list — but with the moment attached.</p><div class="ex">Raised a round, hiring a Head of Sales, migrating stack.</div></div>
+  </div>
+</div></section>
+
+<section id="how"><div class="wrap center">
+  <div class="eyebrow rv">How it works</div>
+  <h2 class="h2 rv" style="margin-top:14px">From a signal to your next call. <span class="gold">In 4 steps.</span></h2>
+  <div class="pipe">
+    <div class="step rv"><div class="n">1</div><h4>You frame it</h4><p>Your competitors + your ideal customer profile.</p><div class="tool">2 minutes</div></div>
+    <div class="step rv" style="transition-delay:.06s"><div class="n">2</div><h4>DIGGR mines &amp; scores</h4><p>Public signals, 257 types, ranked by window.</p><div class="tool">Sillage</div></div>
+    <div class="step rv" style="transition-delay:.12s"><div class="n">3</div><h4>Grounded briefs</h4><p>Analysis, angle and message — every fact sourced.</p><div class="tool">Claude</div></div>
+    <div class="step rv" style="transition-delay:.18s"><div class="n">4</div><h4>Verified contact</h4><p>The coordinates, ready to reach today.</p><div class="tool">FullEnrich</div></div>
+  </div>
+  <p class="lead center rv" style="margin-top:26px;font-size:16px">Nothing to build, nothing to maintain. The feed arrives every morning — brief + contact ready. Your reps stop digging and start selling.</p>
+  <div class="stack rv">
+    <div class="s"><span class="dot" style="background:var(--gold)"></span>Claude</div>
+    <div class="s"><span class="dot" style="background:var(--inter)"></span>Sillage</div>
+    <div class="s"><span class="dot" style="background:var(--acq)"></span>FullEnrich</div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="trust">
+    <div>
+      <div class="eyebrow rv">Trust, not noise</div>
+      <h2 class="h2 rv" style="margin-top:14px">No signal, <span class="gold">no assertion.</span></h2>
+      <p class="lead rv" style="margin-top:16px">Other tools invent names to fill your lists. DIGGR abstains. Every claim is grounded in its cited source — no trace, no assertion. Your reps never call a ghost, and never put their name on invented data.</p>
+    </div>
+    <div class="chatdemo rv">
+      <div class="bub u">What's this account's exact IT budget?</div>
+      <div class="bub a abs">That's not in the brief — I won't make it up. To get it, enrich via FullEnrich or run a Sillage pass.</div>
+      <div class="bub u">Why this account now?</div>
+      <div class="bub a">Public RFP 7 days ago + a price increase announced by their current vendor. Switching window, act within 2–4 weeks. <span style="color:var(--gold)">[source cited]</span></div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap center">
+  <div class="eyebrow rv">A feed, not a file</div>
+  <div class="nums">
+    <div class="num rv"><div class="v">257</div><div class="l">buying signals, taxonomized</div></div>
+    <div class="num rv" style="transition-delay:.08s"><div class="v">~35</div><div class="l">in-market accounts / day <span style="color:var(--mute)">(at 1,000 monitored)</span></div></div>
+    <div class="num rv" style="transition-delay:.16s"><div class="v">0</div><div class="l">hallucination — every account carries its source</div></div>
+  </div>
+  <p class="lead center rv" style="margin-top:26px;font-size:16px">It's not a purchased list that rots. It's a stream of in-market accounts that flows every morning.</p>
+</div></section>
+
+<section><div class="wrap center">
+  <h2 class="h2 rv">Sound familiar?</h2>
+  <div class="pers">
+    <div class="persona rv"><div class="role">B2B leaders · founders / CEOs</div><div class="quote">"Stop paying for leads your competitors already qualified for you."</div></div>
+    <div class="persona rv" style="transition-delay:.08s"><div class="role">Sales teams · VP Sales, SDR/AE, RevOps</div><div class="quote">"A shortlist of accounts to reach today — with the why and the contact."</div></div>
+  </div>
+</div></section>
+
+<section id="faq"><div class="wrap center">
+  <div class="eyebrow rv">The hard questions</div>
+  <h2 class="h2 rv" style="margin-top:14px">Straight up.</h2>
+  <div class="faq">
+    <details class="qa rv"><summary>I already have Apollo / Sales Navigator / Clay.</summary><div class="a">Those give you the whole market — noise. DIGGR tells you <em>which</em> account is in-market today and <em>why</em>, with the proof. A targeting layer on top, not another directory.</div></details>
+    <details class="qa rv"><summary>AI invents leads — I can't send that to a prospect.</summary><div class="a">That's our technical stance: every brief is grounded in its source, and the system abstains rather than inventing. No proof, no assertion.</div></details>
+    <details class="qa rv"><summary>Is targeting a competitor's customers even legal?</summary><div class="a">We only use <em>public</em> signals already online, with the source cited. It's competitive intelligence — the same thing a great rep would find by hand, but at scale.</div></details>
+    <details class="qa rv"><summary>Another tool my team won't use.</summary><div class="a">Nothing to populate, nothing to maintain. The feed arrives every morning, brief + contact ready. Adoption is opening a tab.</div></details>
+    <details class="qa rv"><summary>35 signals a day is too much — I don't have the time.</summary><div class="a">You set the threshold. DIGGR only surfaces open windows — accounts actually reachable now. The rest sleeps, monitored, until a signal wakes it up.</div></details>
+  </div>
+</div></section>
+
+<section id="cta" class="final"><div class="wrap">
+  <div class="eyebrow rv">Stop targeting blind</div>
+  <h2 class="rv" style="margin-top:14px">Your best accounts are <span class="gold">already sending signals.</span></h2>
+  <p class="lead center rv">15 minutes. On your real market. You leave with 10 in-market accounts, sourced, with verified contacts.</p>
+  <div class="cta-row rv"><a href="mailto:thomas@eurobrand.fr?subject=DIGGR demo" class="btn pri">Get my 10 highest-signal accounts →</a></div>
+  <div class="urg rv">A buying signal has a shelf life: the prospect evaluating today signs in three weeks.</div>
+</div></section>
+
+<footer><div class="wrap">
+  <div style="display:flex;align-items:center;gap:9px"><img src="diggr-logo.svg" style="height:17px;width:auto" alt="DIGGR"/> <span style="color:var(--mute)">· signal-based targeting</span></div>
+  <div>Claude · Sillage · FullEnrich — your data, your keys.</div>
+</div></footer>
+
+<script>
+  const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+  const DATA={
+    saas:{av:'A',name:'Algolia',body:'"Proud to share how <span class="hl">The Hershey Company</span> boosted product search with our AI. Kudos to <span class="hl">Frasers Group</span> too on the launch of Ask FRASERS 🚀"',
+      cards:[['The Hershey Company','signal','"…The Hershey Company boosted product search…"'],['Frasers Group','signal','"…kudos to Frasers Group on the launch of Ask FRASERS…"'],['+ verified contact','FullEnrich','Head of E-commerce · verified email · ready to reach']]},
+    agency:{av:'D',name:'Devoteam',body:'"Recap of our project with <span class="hl">Stena Line</span>, one of Europe\'s largest ferry operators. And a big thank-you to <span class="hl">Liberty Global</span> for their trust."',
+      cards:[['Stena Line','signal','"…our project with Stena Line, ferry operator…"'],['Liberty Global','mention','"…thank-you to Liberty Global for their trust…"'],['+ verified contact','FullEnrich','Director of Transformation · verified email']]},
+    industry:{av:'S',name:'Siemens Digital',body:'"New win: <span class="hl">Groupe SEB</span> is rolling out our solution across 12 sites. And welcome to <span class="hl">Legrand</span> among our industrial customers."',
+      cards:[['Groupe SEB','signal','"…Groupe SEB rolling out our solution across 12 sites…"'],['Legrand','new customer','"…welcome to Legrand among our customers…"'],['+ verified contact','FullEnrich','VP Operations · verified email']]},
+    services:{av:'C',name:'Rival Consulting',body:'"Delighted to support <span class="hl">Orange Foundation</span> on their transformation, and to kick off with <span class="hl">Bertrand Group</span> this quarter."',
+      cards:[['Orange Foundation','signal','"…support Orange Foundation on their transformation…"'],['Bertrand Group','new customer','"…kick off with Bertrand Group this quarter…"'],['+ verified contact','FullEnrich','Managing Director · verified email']]},
+  };
+  const cardsEl=document.getElementById('cards');
+  document.querySelectorAll('.sectorbar button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.sectorbar button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    const d=DATA[b.dataset.s];document.getElementById('rivAv').textContent=d.av;document.getElementById('rivName').textContent=d.name;
+    document.getElementById('postBody').innerHTML=d.body;
+    cardsEl.innerHTML=d.cards.map((c,i)=>`<div class="ccard" style="animation-delay:${i*.12}s"><div class="cn">${c[0]} <span class="tag">${c[1]}</span></div><div class="cq">${c[2]}</div></div>`).join('');
+  }));
+</script>
+</body>
+</html>
