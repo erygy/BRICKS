@@ -296,3 +296,7 @@ json.dump(seed, open(os.path.join(HERE, "seed.json"), "w"), ensure_ascii=False, 
 print(f"\n→ seed.json : {len(accounts)} comptes ({seed['stats']['clients']} captation / "
       f"{seed['stats']['prospects']} interception / {seed['stats']['cold']} froids), "
       f"{len(rivals)} concurrents, {len(signals_feed)} signaux, {len(briefs)} briefs, {seed['stats']['open_windows']} fenêtres ouvertes")
+
+# ── V5 : patch de merge V2 (verdict.py + raisons ICP) — toujours appliqué après build ──
+import subprocess as _sp
+_sp.run(["python3", os.path.join(HERE, "merge_v5.py")], check=False)

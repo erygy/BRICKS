@@ -1179,7 +1179,8 @@
     "pays": "France",
     "domain": "maisonferrand.fr"
    },
-   "faille_rival": null
+   "faille_rival": null,
+   "why_icp": "Retail premium 40-120M€ GMV, équipe digitale en place, moteur search legacy — cœur d'ICP."
   },
   {
    "id": "A8a46b3a0",
@@ -1210,7 +1211,8 @@
     "pays": "US",
     "domain": "groupealteor.fr"
    },
-   "faille_rival": null
+   "faille_rival": null,
+   "why_icp": "Marketplace multi-vendeurs en croissance, volumétrie search élevée, pas d'acteur US verrouillé."
   },
   {
    "id": "Ae8759acc",
@@ -1241,7 +1243,8 @@
     "pays": "US",
     "domain": "novarue.fr"
    },
-   "faille_rival": null
+   "faille_rival": null,
+   "why_icp": "E-commerce DNVB scale-up, stack moderne, sensible à la souveraineté et au TCO."
   }
  ],
  "signals_feed": [
@@ -3897,6 +3900,20 @@
   "rivals": 5,
   "signals": 25,
   "open_windows": 18,
-  "tier_a": 15
+  "tier_a": 15,
+  "acquisition": 3
+ },
+ "acq_verdict": {
+  "verdict": "CONTINUE",
+  "explication": "pas encore tranchable — au rythme courant, il faudrait environ 20 contacts de plus pour un verdict VIABLE ; chaque réponse recale le calcul",
+  "campaign": {
+   "sent": 42,
+   "delivered": 40,
+   "replies_positive": 3,
+   "meetings": 2,
+   "clients": 0
+  },
+  "meeting_rate": 4.8,
+  "positive_rate": 7.1
  }
 }

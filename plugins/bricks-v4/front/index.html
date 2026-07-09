@@ -21,7 +21,7 @@
     /* Les deux AXES — signature produit */
     --capt:#fb7185; --capt-soft:rgba(251,113,133,.14);       /* CAPTATION (client d'un concurrent) */
     --inter:#38bdf8; --inter-soft:rgba(56,189,248,.14);      /* INTERCEPTION (prospect d'un concurrent) */
-    --cold:#64748b; --cold-soft:rgba(100,116,139,.13);
+    --cold:#a78bfa; --cold-soft:rgba(167,139,250,.15);   /* AXE 3 = ACQUISITION (captation ICP froide, moteur V2) */
     /* TIER (qualité, arbre FIT) */
     --ta:#34d399; --ta-soft:rgba(52,211,153,.14); --tb:#fbbf24; --tb-soft:rgba(251,191,36,.13); --tc:#6b7280; --tc-soft:rgba(107,114,128,.13);
     /* FENÊTRE (timing) */
@@ -60,7 +60,7 @@
   .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.02em;font-size:15px}
   .brand .glyph{width:24px;height:24px;background:var(--gold-grad);position:relative;box-shadow:0 0 16px var(--accent-glow);clip-path:polygon(50% 3%,90% 27%,90% 73%,50% 97%,10% 73%,10% 27%)}
   .brand .glyph::after{content:'';position:absolute;inset:7px;background:var(--bg);clip-path:polygon(50% 6%,86% 30%,86% 70%,50% 94%,14% 70%,14% 30%)}
-  .brand .word{background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;letter-spacing:.06em;font-size:16px}
+  .brand .word{background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;font-style:italic;letter-spacing:-.02em;font-size:23px;line-height:1;transform:skewX(-4deg);padding-right:2px;filter:drop-shadow(0 1px 6px rgba(255,208,77,.25))}
   .brand small{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--mute);font-weight:500;text-transform:uppercase}
   .spacer{flex:1}
   .tprim{display:flex;gap:2px;align-items:center;height:100%}
@@ -85,6 +85,7 @@
   .lens button.on{color:var(--text)}
   .lens button.on.capt{background:var(--capt-soft);color:var(--capt)} .lens button.on.capt .d{opacity:1;box-shadow:0 0 8px var(--capt)}
   .lens button.on.inter{background:var(--inter-soft);color:var(--inter)} .lens button.on.inter .d{opacity:1;box-shadow:0 0 8px var(--inter)}
+  .lens button.on.acq{background:var(--cold-soft);color:var(--cold)} .lens button.on.acq .d{opacity:1;box-shadow:0 0 8px var(--cold)}
   .lens button.on.all{background:var(--glass-hover);color:var(--text)}
 
   /* ---------- content shell ---------- */
@@ -180,6 +181,8 @@
 
   /* ---------- radar (rival boards) ---------- */
   .radargrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;align-items:start}
+  .acqwrap{display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start}
+  @media(max-width:820px){.acqwrap{grid-template-columns:1fr}}
   .rboard{overflow:hidden}
   .rboard .rhead{display:flex;align-items:center;gap:12px;padding:15px 17px;border-bottom:1px solid var(--border)}
   .rlogo{width:34px;height:34px;border-radius:9px;background:var(--glass-hi);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--dim);font-size:15px;flex:none}
@@ -344,7 +347,7 @@ const IC={
 function Icon({n,s=16,w=1.6}){return html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=${w} stroke-linecap="round" stroke-linejoin="round"><path d=${IC[n]||IC.post}/></svg>`;}
 
 /* ---------- shared components ---------- */
-const AXES={client:{label:"Captation",cls:"client",icon:"hire",verb:"Voler à"},prospect:{label:"Interception",cls:"prospect",icon:"target",verb:"Devancer chez"},cold:{label:"Froid",cls:"cold",icon:"user",verb:""}};
+const AXES={client:{label:"Captation",cls:"client",icon:"hire",verb:"Voler à"},prospect:{label:"Interception",cls:"prospect",icon:"target",verb:"Devancer chez"},cold:{label:"Acquisition",cls:"cold",icon:"user",verb:""}};
 function AxisBadge({axis}){const a=AXES[axis]||AXES.cold;return html`<span class="axisbadge ${a.cls}"><span class="d"></span>${a.label}</span>`;}
 function Tier({t}){if(!t)return html`<span class="muted">—</span>`;return html`<span class="tier ${t}"><span class="r">${t}</span></span>`;}
 function ScoreBar({fit}){const w=Math.max(2,Math.min(100,fit.expected));return html`<div class="scorebar"><div class="track"><div class="fill band-${fit.band}" style=${{width:w+"%"}}></div></div><span class="val">${Math.round(fit.expected)}</span></div>`;}
@@ -377,7 +380,7 @@ function App(){
 
   return html`<div class="app">
     <div class="topbar">
-      <div class="brand"><span class="glyph"></span><span class="word">DIGGR</span><small>creusez l'or</small></div>
+      <div class="brand"><span class="word">DIGGR</span><small>creusez l'or</small></div>
       <div class="sep"></div>
       <nav class="tprim">
         ${[["install","Installation","install"],["comptes","Comptes","table"],["radar","Radar","radar"]].map(([v,l,ic])=>html`
@@ -406,6 +409,7 @@ function AxisLens({axis,setAxis}){
     <button class=${"all"+(axis==="all"?" on all":"")} onClick=${()=>setAxis("all")}><span class="d"></span>Tout</button>
     <button class=${"capt"+(axis==="client"?" on capt":"")} onClick=${()=>setAxis("client")}><span class="d"></span>Captation</button>
     <button class=${"inter"+(axis==="prospect"?" on inter":"")} onClick=${()=>setAxis("prospect")}><span class="d"></span>Interception</button>
+    <button class=${"acq"+(axis==="cold"?" on acq":"")} onClick=${()=>setAxis("cold")}><span class="d"></span>Acquisition</button>
   </div>`;
 }
 
@@ -413,6 +417,7 @@ function AxisLens({axis,setAxis}){
 function Radar({seed,axis,go}){
   const filt=a=>axis==="all"||a.axis===axis;
   const accounts=seed.accounts.filter(filt);
+  const cold=accounts.filter(a=>a.axis==="cold");
   const openHot=accounts.filter(a=>a.window.state==="OPEN").sort((a,b)=>b.window.strongest-a.window.strongest||b.fit.expected-a.fit.expected);
   const st=seed.stats;
   return html`<div class="wrap">
@@ -424,8 +429,8 @@ function Radar({seed,axis,go}){
     <div class="stats">
       <${Stat} k="Captation" v=${st.clients} color="var(--capt)" foot="clients de concurrents"/>
       <${Stat} k="Interception" v=${st.prospects} color="var(--inter)" foot="prospects qui les évaluent"/>
+      <${Stat} k="Acquisition" v=${st.acquisition||st.cold||0} color="var(--cold)" foot="prospects ICP · moteur V2"/>
       <${Stat} k="Fenêtres ouvertes" v=${st.open_windows} color="var(--w-open)" foot="à démarcher maintenant"/>
-      <${Stat} k="Tier A" v=${st.tier_a} color="var(--ta)" foot="meilleur fit"/>
       <${Stat} k="Volume estimé" v=${seed.viability.qualified_week} suffix="/sem" color="var(--gold)" foot=${"à "+seed.viability.universe+" comptes surveillés"}/>
     </div>
 
@@ -450,10 +455,36 @@ function Radar({seed,axis,go}){
       </div>
     </div>
 
-    <div class="pagehead"><div><div class="eyebrow">Par concurrent</div><h1 style=${{fontSize:"18px"}}>Le champ de bataille</h1></div></div>
+    ${accounts.some(a=>a.rival)&&html`<div class="pagehead"><div><div class="eyebrow">Par concurrent</div><h1 style=${{fontSize:"18px"}}>Le champ de bataille</h1></div></div>
     <div class="radargrid">
       ${seed.rivals.map((r,i)=>html`<${RivalBoard} key=${r.id} rival=${r} accounts=${accounts.filter(a=>a.rival===r.name)} go=${go} delay=${i*40}/>`)}
-    </div>
+    </div>`}
+
+    ${cold.length>0&&html`<div>
+      <div class="pagehead" style=${{marginTop:"28px"}}><div>
+        <div class="eyebrow" style=${{color:"var(--cold)"}}>Axe Acquisition · moteur V2</div>
+        <h1 style=${{fontSize:"18px"}}>Prospects ICP — la captation V2</h1>
+        <div class="sub">Sourcing froid par profil idéal, scoré par le moteur signal-natif de la V2. Pas de concurrent : on ouvre sur la valeur.</div>
+      </div></div>
+      <div class="acqwrap">
+        ${seed.acq_verdict&&html`<div class="card pad reveal">
+          <div style=${{fontFamily:"var(--mono)",fontSize:"10px",letterSpacing:".1em",textTransform:"uppercase",color:"var(--dim)",marginBottom:"11px"}}>Viabilité du motion · verdict.py</div>
+          <div style=${{fontSize:"22px",fontWeight:800,color:"var(--cold)",letterSpacing:"-.02em"}}>${seed.acq_verdict.verdict}</div>
+          <div class="sub" style=${{fontSize:"12px",lineHeight:1.5,marginTop:"8px"}}>${seed.acq_verdict.explication}</div>
+          <div style=${{display:"flex",gap:"22px",marginTop:"14px"}}>
+            <div><div style=${{fontSize:"19px",fontWeight:700,fontVariantNumeric:"tabular-nums"}}>${seed.acq_verdict.meeting_rate}%</div><div class="muted" style=${{fontSize:"10.5px"}}>taux RDV</div></div>
+            <div><div style=${{fontSize:"19px",fontWeight:700,fontVariantNumeric:"tabular-nums"}}>${seed.acq_verdict.positive_rate}%</div><div class="muted" style=${{fontSize:"10.5px"}}>réponses +</div></div>
+          </div></div>`}
+        <div class="card feed reveal">
+          ${cold.map(a=>html`<div key=${a.id} class="fitem" onClick=${()=>go("#/brief/"+a.id)}>
+            <div class="ficon"><${Icon} n="user"/></div>
+            <div class="fmain"><div class="ftitle">${a.name}</div><div class="fmeta"><${AxisBadge} axis="cold"/><span>${a.why_icp||"Profil ICP"}</span></div></div>
+            <${ScoreBar} fit=${a.fit}/><${Tier} t=${a.fit.tier}/>
+            <button class="btn ghost sm" onClick=${e=>{e.stopPropagation();go("#/brief/"+a.id);}}>Dossier</button>
+          </div>`)}
+        </div>
+      </div>
+    </div>`}
   </div>`;
 }
 function RivalBoard({rival,accounts,go,delay}){
