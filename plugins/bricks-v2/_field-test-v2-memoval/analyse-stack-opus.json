@@ -1,0 +1,240 @@
+{
+  "summary": "Comparatif V1/V2 sur la stack imposée (Claude+Sillage+FullEnrich) + amélioration V2 pour gagner le hackathon",
+  "agentCount": 4,
+  "logs": [
+    "[synthèse] failed: API Error: Connection closed mid-response. The response above may be incomplete."
+  ],
+  "result": {
+    "stack": {
+      "claude": {
+        "v1_score_sur_10": 4,
+        "v2_score_sur_10": 9,
+        "analyse": "V1 n'utilise Claude qu'a UN seul point de la chaine : le skill write-outreach (redaction CPPC de mails <100 mots, template unique, drafts jamais envoyes). Tout l'amont — kill-rules, ICP-fit, rank-accounts — est du deterministe plat (tiers A/B/C) sans raisonnement LLM. Claude y est un COPYWRITER, pas un orchestrateur : preuve mesuree = 75% de precision seulement APRES 3 corrections humaines des kill-rules (Claude ne concoit pas les regles, un humain les repare). Profondeur AI-native faible = 4/10 (Claude branche mais confine au bout de chaine, zero role decisionnel).\n\nV2 place Claude aux DEUX jonctions de jugement irreductibles, via des SOUS-AGENTS (fichiers agents/*.md, pas des appels SDK noyes dans le Python) : (1) signal-architect decompose une these d'achat en arbre de 100-300 signaux latents avec discipline latent!=proxy, fidelity=sensibilite, couches P/S/O et classes LR — du raisonnement strategique, pas de la generation ; (2) axe-mapper (model: claude-opus-4-8 explicite) mappe signaux->axes de segment->prompt-d'axe, puis composer ecrit les mails depuis des ressources FERMEES (zero hallucination). Le coeur reproductible (score_v2.py, verdict.py) est ZERO TOKEN, deterministe, teste (22 tests) — grep 'anthropic|claude|token' sur score_v2.py = 0 hit. C'est la separation AI-native canonique : le LLM la ou le jugement est irreductible, le code partout ou la reproductibilite compte ; et verdict.py encadre Claude dans un test bayesien sequentiel ou le LLM ne touche JAMAIS un chiffre. Resultat mesure : 90% de precision au 1er run, 0 correction (le savoir des echecs est encode dans l'arbre que Claude a concu). Profondeur = 9/10, pas 10 : broker/critic/verifier/composer tournent en modele par defaut (pas Opus explicite) et l'apprentissage-par-recalibrage de l'arbre reste concu mais non prouve end-to-end."
+      },
+      "sillage": {
+        "v1_score_sur_10": 0,
+        "v2_score_sur_10": 6,
+        "analyse": "V1 : ZERO Sillage, sans ambiguite. Le pilier signal de V1 = news.py (RSS Google News gratuit) + jobs.py (France Travail/HelloWork). Le brief le dit et le disque le confirme : aucun fichier sillage dans plugins/bricks, la brique signal-sillage est PREVUE mais NON construite. RSS est un layer de signaux, mais ce n'est PAS Sillage — exploitation du pilier Sillage = 0/10 (honnete, pas punitif : c'est un fait, pas un jugement).\n\nV2 : adapter anti-corruption complet (sillage_adapter.py, 16,9 ko) qui encode le MODELE OPERATIONNEL REEL de Sillage — push top-accounts (async 202->poll), upsert persona, ensure_agents, launch signal-run, poll, query_signals a curseur ; identite par DOMAINE (pas SIREN, d'ou la resolution de domaine comme etape obligatoire) ; pas de webhook (poller) ; RFC 9457 problem+json remonte sans crasher le batch ; 3 backends (Mock deterministe / Rest Bearer / MCP OAuth) + discover_from_mcp_tools qui transforme les outils MCP en catalogue. compile_agent_specs sait ROUTER les 8 types d'agents SI l'arbre les declare, et capabilities.json catalogue les 13 capacites dont les 8 types. MAIS la profondeur REELLE est partielle : seuls 3 types sont ontologises dans l'arbre de travail (job_update, job_posting_keyword_detection, keyword_detection), le mock n'emet que 2 signaux (jobPosting + keyword), et les 5 types riches (champion, competitor, customer, influencer, partner) sont status:presumed avec params vides {} — declares au catalogue, jamais cables. Sillage n'a JAMAIS ete branche live (mock seulement, 0 cle). Donc : machinerie de branchement excellente (le rituel Day-1 est ecrit, le pont domaine->Sillage->FullEnrich existe), mais capacite-signal reelle non prouvee et largeur d'exploitation etroite. 6/10 : la plomberie merite 8-9, l'exploitation effective des signaux plafonne a 4 — moyenne 6."
+      },
+      "fullenrich": {
+        "v1_score_sur_10": 5,
+        "v2_score_sur_10": 8,
+        "analyse": "V1 : FullEnrich branche via MCP (skills enrich, enrich-firmographics, enrich-buying-committee, enrich-person-profile). Fonctionnel et reel, mais sans discipline economique : l'enrichissement suit le workflow, pas la valeur d'information. Pas de garde VOI, pas de logique 'n'enrichir que ce qui peut faire basculer une decision'. 5/10 : le pilier est exploite, mais comme un waterfall de donnees standard.\n\nV2 : adapter fullenrich_adapter.py ecrit sur l'OpenAPI reelle verifiee (base app.fullenrich.com/api/v2, bulk max 100, async 30-90s/contact), avec les elements qui prouvent une exploitation AI-native mature : verification HMAC-SHA1 du webhook (contact_finished temps reel), conscience des credits (email pro=1, mobile=10, perso=3, search=0,25 ; re-enrich <3 mois gratuit), gestion 402/429 + Retry-After sans crasher le batch, contact de test officiel a 0 credit pour smoke, et passthrough 'custom' (company_id/these) pour re-joindre le resultat. Surtout : la DOCTRINE VOI — n'enrichir QUE la bande IN (26 contacts), jamais BAND/OUT (303) — soit du capital-allocation applique a la prospection, mesure a 33 EUR cash/campagne vs 177 EUR Clay. C'est le pilier que V2 exploite le plus completement et le plus defendablement devant un jury unit-economics. 8/10, pas 10 : l'adapter est prouve en smoke a 0 credit mais le bulk paye reel n'a pas encore tourne (donc la boucle enrich->score->reband n'est validee qu'en design), et l'enrichissement d'ENTREPRISE (specialties, lookup) reste secondaire face au contact."
+      },
+      "verdict_stack_fit": "V2 exploite mieux la stack sur les 3 piliers, sans exception. Claude : V2=9 vs V1=4 — V1 confine Claude a la redaction (75% de precision APRES 3 patchs humains), V2 le place aux 2 jonctions de jugement (signal-architect + axe-mapper Opus) avec un coeur 0-token deterministe, d'ou 90% de precision au 1er run, 0 correction. Sillage : V2=6 vs V1=0 — V1 n'a litteralement pas Sillage (RSS seulement), V2 a l'adapter complet du vrai modele operationnel (push/agents/run/poll/query, 3 backends, MCP-discovery) mais n'ontologise que 3 des 8 types et ne teste le mock que sur 2. FullEnrich : V2=8 vs V1=5 — V2 ajoute HMAC, conscience-credits, gestion 402/429 et surtout la garde VOI (enrichir 26 IN, pas 303) = 33 EUR/campagne vs 177 EUR Clay. Moyenne stack : V2 7,7/10 vs V1 3,0/10.",
+      "angle_pitch_stack": "Les autres equipes ENRICHISSENT une liste avec FullEnrich et esperent que Sillage la reveille ; BRICKS V2 est le seul systeme ou les 3 piliers forment une seule boucle de decision fermee — Claude decompose la these en arbre de signaux, cet arbre COMPILE directement les agents-detecteurs Sillage (compile_agent_specs) et ne declenche un credit FullEnrich (garde VOI) QUE sur les 26 comptes de la bande IN ou l'information peut faire basculer une decision, le tout tranche par un verdict bayesien 0-token : de la these au mail, la stack n'est pas 3 outils juxtaposes mais un moteur ou chaque pilier alimente le suivant, a 33 EUR cash/campagne et 90% de precision ICP prouves."
+    },
+    "arch": {
+      "outreach_sequencer": {
+        "v2_couverture_pct": 70,
+        "gap": "Socle REEL, pas mock : cadence complete specifiee (FORMATS.md l.76-77 : F5 J0 -> F1 J+2 -> F2 J+6 -> F4 J+8 -> F3 J+12) ; messaging_factory produit des drafts par axe x format qui CITENT les signaux d'entree (0 hallu, ressources fermees) ; outreach_send.py applique caps/jour + fenetre horaire + stop-on-reply (gel du contact des replied) ; chaque envoi/reponse est un event tagge axe+format_id -> la boucle mesure quel variant convertit (n>=25 sinon abstention). Ce qui manque pour COCHER l'archetype : (1) pas de vrai ORDONNANCEUR qui declenche seul les etapes J+4/J+9 -- formats.json a sequence_step/timing=null, outreach_send envoie UNE vague sous cap et ne relance pas a la date ; (2) pas de re-ecriture auto de l'etape suivante conditionnee a la non-reponse ; (3) LinkedIn volontairement hors automatisation. En clair : 'draft-factory + envoi gate 1 vague + gel-sur-reponse' != 'sequence multi-touch qui court seule'. Combler = un scheduler qui lit la cadence, ecrit next_touch_at par contact, re-genere l'angle de relance -- ~1 nuit sur l'infra existante (events + statuts deja la)."
+      },
+      "icp_scoring_engine": {
+        "v2_couverture_pct": 95,
+        "gap": "LE joyau de V2, construit + teste + mesure (pas mock) : score_v2.py = moteur deterministe (gates P doux multiplicatifs, evidence S en log-vraisemblance plafonnee par clusters anti-double-comptage, bonus O borne), score par INTERVALLE [pess, attendu, opt] -> bandes IN/BAND/OUT, controle d'identifiabilite (alerte si >30% scorent >80), decomposition par signal auditable, 22 assertions vertes verifiees ce soir, meme entree->meme sortie. Terrain : 90% precision bande IN des le 1er run 0 correction (vs 75% V1 apres 3 patchs), separation 10x, 0 euro/0 token, 57ms/303. Aucun concurrent GTM ne SCORE l'ICP avec intervalles + capital-allocation ; les autres enrichissent une liste donnee. Micro-gaps : (a) calibrage prouve sur UN univers (303 PME FR, 1 these) -- la generalite multi-these reste a demontrer live ; (b) juge adversarial n=20, le systeme lui-meme s'abstient sous n=25 ; (c) les poids/LR viennent d'un LLM au design-time, la boucle-reponses qui les recale n'a pas encore tourne sur du reel. Rien de bloquant : c'est le seul des 4 archetypes livre a 95%."
+      },
+      "crm_auto_updater": {
+        "v2_couverture_pct": 15,
+        "gap": "ZERO code CRM. grep salesforce/hubspot/attio/writeback = 0 hit fonctionnel (seule occurrence : le nom du jury dans PITCH.md). V2 ecrit dans bricks.db (SQLite local) : tables theses/signals/proxies/evidence/scores + statuts messages (draft->approved->sent->replied). Ce qui EXISTE et sert de socle : un modele de donnees riche et append-only (evidence recomputable, scores dates, top_contributors JSON, cout par event) -- exactement la matiere qu'un CRM veut recevoir (score, bande, 3 signaux dominants, URL de preuve, cout/RDV). Ce qui MANQUE, et c'est le gap le plus tranchant vu le jury : (1) aucun connecteur d'ecriture vers un objet CRM (pas de mapping score->champ custom, pas d'upsert Account/Lead/Opportunity, pas d'auth OAuth Salesforce) ; (2) pas de log d'activite (email envoye/reponse) pousse en timeline CRM ; (3) pas de resolution d'identite domaine->CRM record. FullEnrich + domain_resolver donnent deja la cle de jointure (domaine) -- il manque le sink. Combler en une nuit = un adapter salesforce_adapter.py miroir de sillage_adapter.py : upsert Account par domaine, ecrire score/band/signaux/cout en champs custom + une note d'activite. Sur une infra event-store, c'est de la plomberie, pas de la recherche."
+      },
+      "pipeline_risk_monitor": {
+        "v2_couverture_pct": 10,
+        "gap": "ZERO code, et c'est le gap CONCEPTUEL le plus profond, pas juste un connecteur manquant. Toute l'ontologie V2 regarde l'ACQUISITION (buying thesis new-logo) : memoval-signals.json = 5 P + 13 S + 3 O, tous des traits firmographiques d'un PROSPECT (dirigeant 58-68, societe mure, memoire tacite). Sillage expose 8 types d'agents, V2 n'en ONTOLOGISE que 3 (keyword_detection, job_posting_keyword_detection, job_update) -- tous acquisition. Les 5 autres (competitor, partner, customer, influencer, champion) sont declares dans SIGNAL_KINDS (sillage_adapter.py l.55-56) mais JAMAIS cables dans un arbre : ce sont exactement les signaux POST-VENTE qui alimenteraient un pipeline risk monitor (champion job-change = risque de churn du sponsor, competitor-follow d'un compte client = risque concurrentiel, deal-inactivity = deal qui cale, customer-agent = expansion/risque). Manquent aussi : (1) la notion de compte EXISTANT / deal ouvert a surveiller (V2 ne connait que des prospects a scorer) ; (2) un score de RISQUE (le moteur score l'APPETENCE d'achat, pas la sante d'un deal) ; (3) un declencheur d'alerte + routing. MAIS -- point cle pour la grande idee -- le moteur d'intervalles [pess,att,opt] + bandes + VOI est agnostique : re-cible sur la meme donnee signal, il calcule un score de risque IN/BAND/OUT aussi bien qu'un score d'achat. Le squelette se reutilise ; il faut un 2e arbre (retention thesis) nourri des 5 agents Sillage non ontologises."
+      },
+      "lecture_jury_salesforce_deel": "Ce jury ne note pas 'un beau lead-gen de plus' -- il en voit dix par heure. Salesforce et Deel valorisent trois choses precises, et V2 gagne/perd exactement dessus. (1) DISCIPLINE D'UNIT ECONOMICS -- V2 GAGNE gros : score par intervalle + VOI = capital allocation applique a la prospection (0 credit depense sur un check qui ne fait pas basculer une bande), verdict.py = decision sequentielle bayesienne qui dit NON avec des chiffres et s'abstient sous n=25, ledger cout/RDV live. C'est un raisonnement de CFO GTM que 90% des demos n'ont pas -- c'est la ou un jury Salesforce/Deel hoche la tete. (2) LE PRODUIT DECIDE, il n'execute pas seulement -- V2 GAGNE : 'les autres enrichissent une liste, Bricks decide qui est dans la liste et le prouve' est un vrai wedge de positionnement, preuve 90% vs 75%. (3) INTEGRATION A L'ECOSYSTEME CRM -- V2 PERD des points, frontalement : le jury EST Salesforce et V2 n'ecrit dans AUCUN CRM (bricks.db seulement), ne couvre PAS le pipeline risk monitor (archetype explicitement cite au brief), et n'exploite Sillage que sur 3 de ses 8 agents (le mock ne teste que job_posting+keyword). Un juge Salesforce demandera en 30 s : 'ca ecrit dans mon Salesforce ? ca surveille mes deals ouverts ?' -- aujourd'hui la reponse est non x2. Verdict de lecture : V2 est le plus INTELLIGENT de la salle sur le ciblage/decision (2 archetypes a 70-95%), mais le plus EXPOSE sur l'ancrage CRM/post-vente (2 archetypes a 10-15%) devant precisement le jury qui note ce terrain. La nuit du hackathon doit servir a fermer ce flanc, pas a polir le joyau deja gagne.",
+      "la_seule_grande_idee": "'UN SEUL MOTEUR DE SIGNAUX, LE MEME CODE, QUATRE AGENTS GTM -- parce que scorer QUI achete et scorer QUEL deal meurt, c'est le meme calcul bayesien sur la meme donnee Sillage.' La these de repositionnement : V2 a deja construit la piece dure et generique (moteur d'intervalles [pess,att,opt] -> bandes IN/BAND/OUT + VOI + verdict), et il l'a prouvee sur l'ACQUISITION (ICP scoring 95% + sequencer 70%). Le coup de genie n'est pas d'ajouter 2 features separees, c'est de montrer que les 2 archetypes manquants SONT le meme moteur pointe dans l'autre sens du cycle de vie : (a) PIPELINE RISK MONITOR = exactement le score d'intervalle applique a une RETENTION THESIS, nourrie des 5 agents Sillage deja declares mais jamais cables (champion job-change, competitor-follow d'un client, deal-inactivity, customer, partner) -- IN/BAND/OUT devient sain/a-surveiller/a-risque, et le VOI depense le budget de verif seulement sur les deals dont le risque est incertain ; (b) CRM AUTO-UPDATER = le sink naturel de TOUT ce moteur : le score, la bande, les 3 signaux dominants avec leur URL de preuve, le cout/RDV -- ces colonnes existent deja dans l'event-store, il ne manque que l'upsert vers Salesforce par domaine (domain_resolver donne deja la cle). Le pitch devient : 'Un fondateur decrit son monde en langage naturel. Bricks compile UN arbre de signaux, et le MEME moteur d'intervalles alimente les quatre agents que ce jury a cites : il trouve qui prospecter (ICP), ecrit la sequence qui cite les signaux, ecrit le verdict dans votre Salesforce, et surveille vos deals qui derapent -- tous sur la meme donnee Sillage, chaque euro depense la ou il change une decision.' AMELIORATION que j'ajoute a l'idee brute du brief, car '4-en-1' seul sonne marketing : le vrai differenciateur defendable est L'UNITE DU MOTEUR DE DECISION (intervalles + VOI + abstention codee), pas le nombre d'agents -- donc la demo doit montrer LE MEME score_v2.py produire un score d'achat ET un score de risque sur deux arbres, cote a cote, pour prouver que ce n'est pas 4 outils recolles mais 1 cerveau. Priorite d'execution de la nuit, par ROI-jury decroissant : 1) salesforce_adapter (CRM writeback, ~1 nuit, ferme le flanc devant le jury qui note) ; 2) retention-thesis + les 5 agents Sillage manquants pour cabler le pipeline risk monitor sur le moteur existant ; 3) le scheduler de cadence pour faire passer le sequencer de 70 a 90. Le joyau ICP est deja gagne -- ne pas le repolir."
+    },
+    "improve": {
+      "ameliorations": [
+        {
+          "titre": "Ontologiser les 8 types d'agents Sillage dans l'arbre (champion / competitor / customer / partner / influencer + job_update actifs)",
+          "description": "Aujourd'hui l'arbre memoval-signals.json ne map QUE 3 des 8 types Sillage (job_posting_keyword_detection, keyword_detection, job_update). compile_agent_specs() sait déjà router n'importe lequel des 8 (SIGNAL_KINDS est complet dans sillage_adapter.py:55). Il manque juste les NŒUDS de l'arbre. Écrire un 2e arbre (thèse SaaS B2B, pas cédant) où chaque type Sillage devient un signal S pondéré : champion_promotion→x5 (power-user promu = expansion), competitor_engagement→x5 (compte suit/interagit avec un concurrent = deal at risk OU rip-and-replace), customer→gate P (est déjà client d'une catégorie adjacente), partner→x2, influencer→x1.2, plus job_update (champion job change) comme signal x5 first-party. Ajouter les proxies avec fidelity/fpr/coverage/cost_class et un `signal_type` snake_case qui matche signals_to_evidence(). Rien de neuf côté moteur : c'est du JSON qui exploite du code déjà écrit et testé.",
+          "pilier_stack": "Sillage",
+          "levier_sur_10": 9,
+          "effort_heures": 3,
+          "buildable_ce_soir": true,
+          "pourquoi_ca_gagne": "C'est la lacune (a) nommée dans le brief : la V2 exploite Sillage de façon étroite. Passer de 3/8 à 8/8 types transforme la démo de 'un détecteur d'offres d'emploi' en 'un cerveau qui consomme TOUTE la taxonomie d'intention de Sillage'. Zéro dette technique — le routeur d'agents et signals_to_evidence gèrent déjà les 8 kinds ; on ne fait que remplir l'ontologie que le moteur attend."
+        },
+        {
+          "titre": "Ajouter une thèse SaaS B2B 'expansion + churn-risk' — parler la langue du jury (Salesforce/Deel/RevOps), pas le cédant lyonnais",
+          "description": "La thèse actuelle (dirigeant 58-68 qui cède sa PME) est le cas MemoVAL — c'est un ÉTAT firmographique, précisément le cas où Sillage sert le MOINS (le brief le dit : le signal MemoVAL n'est pas un événement presse). Créer fixtures/saas-thesis.json + saas-signals.json : thèse = 'compte SaaS client mûr pour expansion OU à risque de churn'. Les signaux deviennent des ÉVÉNEMENTS que Sillage détecte nativement : funding round (web) → budget dispo → upsell ; power_user_promotion (first-party) → champion monte → expansion ; champion_job_change (first-party) → risque de perte de sponsor ; competitor_page_follow / competitor_content_engagement (social) → risque rip-and-replace ; deal_inactivity (first-party) → stall ; leadership_change / M&A (web) → re-évaluation du contrat. Réutiliser mock-universe pour générer un univers de 200 comptes SaaS synthétiques déterministes. Tout le moteur score_v2/VOI/verdict tourne dessus SANS modification.",
+          "pilier_stack": "Sillage + Claude",
+          "levier_sur_10": 9,
+          "effort_heures": 4,
+          "buildable_ce_soir": true,
+          "pourquoi_ca_gagne": "Le jury EST Salesforce/Deel et la cible EST RevOps/sales/founders B2B. Démo cédant-PME = hors-sujet émotionnel pour eux ; démo 'ce compte SaaS a levé 20M$ + son champion vient d'être promu → axe expansion' = leur quotidien. Prouve que le moteur est THÈSE-AGNOSTIQUE (le vrai moat) en le montrant sur DEUX univers. Et c'est l'univers où la taxonomie riche de Sillage brille vraiment."
+        },
+        {
+          "titre": "CRM writeback réel (Salesforce/HubSpot/Attio adapter) — écrire le score, la bande, l'axe et l'évidence dans l'objet Account/Opportunity",
+          "description": "Lacune (b) du brief : V2 écrit dans bricks.db, JAMAIS dans un CRM, alors que le jury est Salesforce. Construire tools/crm_adapter.py sur le modèle EXACT de sillage_adapter.py (couche anti-corruption : MockCRM déterministe + backend REST qui lève NotConfigured sans clé). Contrat : upsert_account(domain, {intent_score, band IN/BAND/OUT, dominant_signal, axe, evidence_urls[], next_best_action, last_signal_date}) + create_task(owner, 'Reach out: <axe>') sur les comptes IN. Mock prouvé E2E : 26 comptes IN → 26 upserts + 26 tasks avec payload complet et idempotence (external_id=domain). Backend Salesforce = sObject Account + Task via REST /services/data ; HubSpot = /crm/v3/objects/companies ; Attio = /v2/objects. Un champ custom 'bricks_intent_band' picklist.",
+          "pilier_stack": "Claude (orchestration) + Sillage (source du signal écrit)",
+          "levier_sur_10": 9,
+          "effort_heures": 4,
+          "buildable_ce_soir": true,
+          "pourquoi_ca_gagne": "Ferme la boucle 'production-ready GTM agent' : un agent qui SCORE mais n'écrit nulle part n'est pas déployable. Le jury Salesforce voit littéralement son produit se remplir. Couvre l'archétype 'CRM auto-updater' du brief. Et l'architecture anti-corruption existe déjà (copier-coller le pattern sillage_adapter) donc le coût réel est le mapping des payloads, pas de la plomberie."
+        },
+        {
+          "titre": "Pipeline-risk monitor — le 4e archétype manquant : détecter les deals qui décrochent via signaux Sillage + inactivité",
+          "description": "Lacune (c) : aucun des 4 archétypes 'pipeline risk monitor' n'existe. Construire tools/pipeline_monitor.py : prend une liste d'opportunités ouvertes (mock CRM: {account_domain, stage, amount, days_in_stage, champion_id}) + croise avec les signaux Sillage négatifs déjà ontologisés (améloriation #1) : champion_job_change → RISK CRITIQUE (sponsor perdu), competitor_engagement → RISK HAUT (rip-and-replace), deal_inactivity>seuil → RISK MOYEN, leadership_change → RISK MOYEN (re-négo). Sortie déterministe : risk_score par deal + raison source-groundée + next_best_action ('re-engager via nouveau contact X', 'défendre vs concurrent Y'). Réutilise le moteur d'odds bayésiens de score_v2 (risk = P(deal slippé) au lieu de P(fit)). Le VOI devient 'quel deal vérifier en priorité'.",
+          "pilier_stack": "Sillage + Claude",
+          "levier_sur_10": 8,
+          "effort_heures": 4,
+          "buildable_ce_soir": true,
+          "pourquoi_ca_gagne": "Coche explicitement le 4e des 4 archétypes cités par le brief, le seul non couvert. C'est aussi l'usage où Sillage 'competitor engagement' et 'champion job change' ont le plus de valeur business démontrable ($ à risque). Passe la V2 de 'agent d'acquisition' à 'agent de revenue full-funnel' (acquisition ET rétention) — exactement 'le revenue AI-native quand on le construit vraiment'."
+        },
+        {
+          "titre": "Brancher Sillage RÉEL au moins sur une chaîne (MCP OAuth + 1 signal-run réel sur ~15 comptes)",
+          "description": "Lacune (d) : Sillage jamais branché, mock only. DAY1-SILLAGE.md a déjà le rituel. Ce soir : `claude mcp add --transport http sillage https://api.getsillage.com/api/mcp/v2`, OAuth, puis discover_from_mcp_tools() (déjà codé) pour geler le catalogue de capacités réel, lire sillage://setup-state, pousser ~15 comptes (quota trial = cap à VIE donc contingent minuscule), créer 1-2 agents job_posting (RGPD-safe, pas de personne nommée), lancer un signal-run, poller, query_signals → signals_to_evidence → score_v2. Même 3 signaux réels qui remontent = la démo n'est plus un mock. Garder les agents legal_hold (keyword sur dirigeant nommé) DÉSACTIVÉS.",
+          "pilier_stack": "Sillage",
+          "levier_sur_10": 8,
+          "effort_heures": 3,
+          "buildable_ce_soir": true,
+          "pourquoi_ca_gagne": "'Prouvé en mock' vs 'signaux réels de Sillage qui traversent tout le pipeline jusqu'à un mail' = la différence entre un slide et un produit devant le jury. Le risque est le transport (MCP vs REST endpoints to_confirm) donc le faire CE SOIR dérisque le hackathon. L'adapter, la découverte et le mapping d'évidence sont déjà écrits et testés — il ne reste que l'auth et un run cadré par le quota-à-vie."
+        },
+        {
+          "titre": "Signaux composés multi-couches Sillage (funding + champion promotion = axe expansion ; competitor + inactivity = axe défense)",
+          "description": "La vraie subtilité GTM n'est pas UN signal mais la COMBINAISON. Ajouter dans messaging_factory une couche 'axes composés' : quand ≥2 signaux Sillage co-occurrent sur un compte, l'axe-mapper (Opus 4.8, déjà en place) reçoit la conjonction et nomme un axe plus fort. Ex : funding(web) + power_user_promotion(first-party) → axe 'moment d'expansion' (budget + champion) ; competitor_content_engagement(social) + deal_inactivity(first-party) → axe 'défense concurrentielle'. Techniquement : materialize() écrit déjà une colonne par signal clé ; ajouter la détection de co-occurrence et un champ `axe_compose` que l'axe-mapper priorise. Le mail cite alors DEUX faits datés au lieu d'un.",
+          "pilier_stack": "Claude + Sillage",
+          "levier_sur_10": 8,
+          "effort_heures": 3,
+          "buildable_ce_soir": true,
+          "pourquoi_ca_gagne": "C'est ce qui sépare un GTM engineer senior d'un débutant : lire l'histoire, pas les événements isolés. Un mail qui dit 'vous venez de lever ET votre power-user X a été promu' convertit 3x mieux qu'un mail à un signal. Exploite la richesse Sillage de façon que personne d'autre au hackathon ne fera (la plupart traiteront chaque signal en silo). Réutilise l'axe-mapper Opus déjà branché — coût quasi nul, effet démo maximal."
+        },
+        {
+          "titre": "Boucle de closed-loop learning : réponses réelles → réévaluation des poids d'axes/signaux (feedback verdict → arbre)",
+          "description": "outreach_send.py détecte déjà les réponses IMAP et verdict.py mesure taux par axe/format (n>=25 sinon abstention). Fermer la boucle : tools/learn.py lit le ledger de verdict (réponses positives par axe ET par signal dominant) et propose un AJUSTEMENT ORDINAL des lr_class dans l'arbre (ex : si l'axe 'champion promu' convertit 3x le témoin, remonter S-champion de x2→x5), en abstention stricte sous n=25, et JAMAIS d'auto-écriture (propose un diff JSON que l'humain valide). C'est l'agent 'qui apprend de ses vrais résultats' — le graal RevOps. Déterministe, source-groundé, réversible.",
+          "pilier_stack": "Claude + Sillage + FullEnrich",
+          "levier_sur_10": 7,
+          "effort_heures": 4,
+          "buildable_ce_soir": true,
+          "pourquoi_ca_gagne": "Répond frontalement à la question du hackathon : 'à quoi ressemble le revenue AI-native quand on le CONSTRUIT vraiment ?' — un système qui s'améliore avec les résultats terrain, pas un script figé. Différencie d'un simple générateur de séquences. La plomberie (détection réponses + verdict par axe) existe déjà ; il ne manque que le connecteur feedback→poids, avec la garde d'abstention n=25 qui protège de l'overfitting (crédibilité devant un jury technique)."
+        },
+        {
+          "titre": "VOI ciblé sur FullEnrich : ne dépenser des crédits mobile (10) QUE sur les comptes IN dont la vérif fait basculer une bande",
+          "description": "Le VOI décision-first existe déjà dans score_v2 (budget seulement sur la BAND, check le plus décisif d'abord). Le brancher explicitement sur le COÛT FullEnrich réel : email=1 crédit, mobile=10, perso=3, search=0.25. Aujourd'hui fullenrich_adapter fait du bulk. Le rendre VOI-driven : pour chaque compte, calculer si l'enrichissement mobile (cher) CHANGE la décision d'envoi ou d'axe ; sinon se contenter de l'email (1 crédit). Sortie : plan d'enrichissement chiffré 'X crédits, Y€, débloque Z bascules de bande'. Respecte dédup 3 mois, 60 appels/min, async 30-90s, webhook HMAC (déjà codé dans l'adapter).",
+          "pilier_stack": "FullEnrich",
+          "levier_sur_10": 7,
+          "effort_heures": 3,
+          "buildable_ce_soir": true,
+          "pourquoi_ca_gagne": "Le brief FullEnrich insiste sur l'économie des crédits (mobile 10x l'email). Un agent qui dépense au hasard n'est pas production-ready ; un agent qui prouve 'j'ai économisé 80% des crédits en n'enrichissant que ce qui fait décision' parle directement à un RevOps qui gère un budget. Le VOI existe déjà côté scoring — l'étendre au coût FullEnrich est une extension naturelle, pas une reconstruction, et chiffre le ROI devant le jury."
+        },
+        {
+          "titre": "Détecteur de subsidiaries/M&A Sillage pour le mapping de comptes (résoudre le trou domaine + capter les signaux corporate)",
+          "description": "Sillage expose 'subsidiary detection' (first-party) et M&A (web), et un endpoint account-mapping (domaine→profils employés, pont vers le dirigeant LinkedIn). domain_resolver.py fait déjà nom→domaine zéro-clé. Ajouter un enrichissement structurel : pour chaque compte IN, appeler mapping_enrich_company (Sillage) pour récupérer les filiales et l'org, et ontologiser subsidiary_detection comme un gate P (une filiale n'a pas de décideur autonome = anti-ICP, exactement le bug 45%→75% du field-test) ET M&A comme signal x20 (une acquisition rebat toutes les cartes GTM). Résout aussi la jointure domaine⟷Sillage⟷FullEnrich que le HANDOFF liste comme point dur.",
+          "pilier_stack": "Sillage + FullEnrich",
+          "levier_sur_10": 6,
+          "effort_heures": 3,
+          "buildable_ce_soir": true,
+          "pourquoi_ca_gagne": "Le filtre filiales est ce qui a fait passer la précision de 45% à 75% au field-test — le rendre AUTOMATIQUE via Sillage subsidiary_detection au lieu d'une kill-rule manuelle prouve que le moteur se calibre seul. Le M&A à x20 capte l'événement le plus fort du GTM (une acquisition = nouveau budget, nouveau décideur, nouveau moment). Deux types Sillage de plus exploités, et ça durcit la jointure d'identité qui est le vrai risque d'intégration."
+        },
+        {
+          "titre": "Pack démo 'live wire' : un seul script E2E funding→score→CRM→mail→task, chronométré, avec provenance visible",
+          "description": "Assembler tools/demo_e2e.py qui enchaîne en UNE commande, sur la thèse SaaS : (1) pull signaux Sillage réels ou mock, (2) score_v2 + bandes, (3) VOI FullEnrich chiffré, (4) messaging_factory → 3 mails à axes composés, (5) crm_adapter upsert + tasks, (6) verdict projeté. Chaque étape imprime son reçu source-groundé (URL + date du signal) et son temps. Sortie finale = un tableau 'compte → signal → axe → mail → écrit dans CRM → coût'. C'est le script du PITCH (3 min déjà écrit). Ajouter un mode --explain qui fait narrer chaque décision par Claude (pourquoi ce compte est IN, pourquoi cet axe).",
+          "pilier_stack": "Claude + Sillage + FullEnrich (les 3 piliers en une commande)",
+          "levier_sur_10": 8,
+          "effort_heures": 3,
+          "buildable_ce_soir": true,
+          "pourquoi_ca_gagne": "Un hackathon se gagne sur la démo, pas sur l'archi. Montrer les 3 piliers imposés (Claude+Sillage+FullEnrich) traverser un SEUL flux, chronométré, avec provenance visible et écriture réelle dans un CRM, en 90 secondes live, est imbattable face à des slides. Le mode --explain met Claude au centre (raisonnement visible) au lieu de le cacher. Tout est déjà construit brique par brique — cette amélioration est l'assemblage qui rend le reste DÉMONTRABLE."
+        }
+      ]
+    },
+    "synth": null
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Analyse"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Synthèse"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "stack-fit",
+      "phaseIndex": 1,
+      "phaseTitle": "Analyse",
+      "agentId": "acb2231ab37ca2587",
+      "model": "claude-opus-4-8",
+      "state": "done",
+      "startedAt": 1783549713570,
+      "queuedAt": 1783549713558,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "V2 exploite mieux la stack sur les 3 piliers, sans exceptio…",
+      "promptPreview": "HACKATHON (09/07/2026, Station F) — Anthropic + Sillage + FullEnrich. Question : « à quoi ressemble le revenue AI-native quand on le CONSTRUIT vraiment ? ». But : des AGENTS GTM PRODUCTION-READY. Archétypes cités : outreach sequencers · ICP scoring engines · CRM auto-updaters · pipeline risk monitors. Cibles : GTM engineers/RevOps, sales reps & execs, B2B founders. Jury : Salesforce/Deel.\nSTACK OB…",
+      "lastProgressAt": 1783549944583,
+      "tokens": 103075,
+      "toolCalls": 16,
+      "durationMs": 231013,
+      "resultPreview": "{\"claude\":{\"v1_score_sur_10\":4,\"v2_score_sur_10\":9,\"analyse\":\"V1 n'utilise Claude qu'a UN seul point de la chaine : le skill write-outreach (redaction CPPC de mails <100 mots, template unique, drafts jamais envoyes). Tout l'amont — kill-rules, ICP-fit, rank-accounts — est du deterministe plat (tiers A/B/C) sans raisonnement LLM. Claude y est un COPYWRITER, pas un orchestrateur : preuve mesuree = 7…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "archetype-fit",
+      "phaseIndex": 1,
+      "phaseTitle": "Analyse",
+      "agentId": "ab08244d6d34e2ba7",
+      "model": "claude-opus-4-8",
+      "state": "done",
+      "startedAt": 1783549713578,
+      "queuedAt": 1783549713559,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Ce jury ne note pas 'un beau lead-gen de plus' -- il en voi…",
+      "promptPreview": "HACKATHON (09/07/2026, Station F) — Anthropic + Sillage + FullEnrich. Question : « à quoi ressemble le revenue AI-native quand on le CONSTRUIT vraiment ? ». But : des AGENTS GTM PRODUCTION-READY. Archétypes cités : outreach sequencers · ICP scoring engines · CRM auto-updaters · pipeline risk monitors. Cibles : GTM engineers/RevOps, sales reps & execs, B2B founders. Jury : Salesforce/Deel.\nSTACK OB…",
+      "lastProgressAt": 1783549949558,
+      "tokens": 105608,
+      "toolCalls": 14,
+      "durationMs": 235980,
+      "resultPreview": "{\"outreach_sequencer\":{\"v2_couverture_pct\":70,\"gap\":\"Socle REEL, pas mock : cadence complete specifiee (FORMATS.md l.76-77 : F5 J0 -> F1 J+2 -> F2 J+6 -> F4 J+8 -> F3 J+12) ; messaging_factory produit des drafts par axe x format qui CITENT les signaux d'entree (0 hallu, ressources fermees) ; outreach_send.py applique caps/jour + fenetre horaire + stop-on-reply (gel du contact des replied) ; chaque…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "improvements",
+      "phaseIndex": 1,
+      "phaseTitle": "Analyse",
+      "agentId": "a6007b00ab3332758",
+      "model": "claude-opus-4-8",
+      "state": "done",
+      "startedAt": 1783549713583,
+      "queuedAt": 1783549713559,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "promptPreview": "HACKATHON (09/07/2026, Station F) — Anthropic + Sillage + FullEnrich. Question : « à quoi ressemble le revenue AI-native quand on le CONSTRUIT vraiment ? ». But : des AGENTS GTM PRODUCTION-READY. Archétypes cités : outreach sequencers · ICP scoring engines · CRM auto-updaters · pipeline risk monitors. Cibles : GTM engineers/RevOps, sales reps & execs, B2B founders. Jury : Salesforce/Deel.\nSTACK OB…",
+      "lastProgressAt": 1783549868622,
+      "tokens": 95462,
+      "toolCalls": 10,
+      "durationMs": 155039,
+      "resultPreview": "{\"ameliorations\":[{\"titre\":\"Ontologiser les 8 types d'agents Sillage dans l'arbre (champion / competitor / customer / partner / influencer + job_update actifs)\",\"description\":\"Aujourd'hui l'arbre memoval-signals.json ne map QUE 3 des 8 types Sillage (job_posting_keyword_detection, keyword_detection, job_update). compile_agent_specs() sait déjà router n'importe lequel des 8 (SIGNAL_KINDS est comple…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "synthèse",
+      "phaseIndex": 2,
+      "phaseTitle": "Synthèse",
+      "agentId": "a7f114b04d1804ba7",
+      "model": "claude-opus-4-8",
+      "state": "error",
+      "startedAt": 1783549949565,
+      "queuedAt": 1783549949558,
+      "attempt": 1,
+      "lastToolName": "Bash",
+      "lastToolSummary": "cd /Users/thomasjebabli/Documents/Bricks/plugins/bricks-v2 …",
+      "promptPreview": "HACKATHON (09/07/2026, Station F) — Anthropic + Sillage + FullEnrich. Question : « à quoi ressemble le revenue AI-native quand on le CONSTRUIT vraiment ? ». But : des AGENTS GTM PRODUCTION-READY. Archétypes cités : outreach sequencers · ICP scoring engines · CRM auto-updaters · pipeline risk monitors. Cibles : GTM engineers/RevOps, sales reps & execs, B2B founders. Jury : Salesforce/Deel.\nSTACK OB…",
+      "lastProgressAt": 1783550138120,
+      "error": "API Error: Connection closed mid-response. The response above may be incomplete.",
+      "tokens": 83018,
+      "toolCalls": 11,
+      "durationMs": 188555
+    }
+  ],
+  "totalTokens": 387163,
+  "totalToolCalls": 51
+}

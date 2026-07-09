@@ -1,0 +1,23 @@
+  V3 · VIABILITÉ — volume de flags (fréquences honnêtes par flag, sommées)
+════════════════════════════════════════════════════════════════════════════
+  flags utilisables : 257/257 (dont 231 détectables via Sillage)
+  intensité totale  : 1063 occurrences /1000 comptes /mois
+    dont Sillage    : 897 · dont flags FORTS (≥7/10) : 599
+
+  Taille de l'univers (clients de concurrents surveillés) → flags/jour :
+     univers | flags/jour | forts/jour | démarchages qualifiés/sem*
+         200 |        7.1 |        4.0 |                         19
+         500 |       17.7 |       10.0 |                         47
+        1000 |       35.4 |       20.0 |                         95
+        2000 |       70.9 |       39.9 |                        189
+        5000 |      177.2 |       99.8 |                        473
+
+  * démarchage qualifié = flag fort actionné + garde-fous (dédup compte, fenêtre, faux positifs).
+
+  Construction de l'univers (ordre de grandeur par CONCURRENT) :
+    posts LinkedIn minés (validé live : ~0,2 client/post × 300-800 posts) : 60-160
+    site web (logos, cas clients, portfolio)                              : 20-120
+    avis G2/Capterra/Trustpilot (si SaaS)                                  : 20-200
+    offres d'emploi des clients citant l'outil                             : 10-50
+    presse / marchés publics / événements co-brandés                       : 10-60
+    → par concurrent : ~100-400 clients identifiables · 8-12 concurrents = univers 800-4 800

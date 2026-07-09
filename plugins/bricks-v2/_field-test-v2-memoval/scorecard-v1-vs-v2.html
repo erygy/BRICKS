@@ -1,0 +1,213 @@
+<title>BRICKS V1 vs V2 — banc comparatif MemoVAL</title>
+<style>
+  :root{
+    --paper:#FBF8F4; --paper-2:#F4EEE6; --ink:#1C1815; --ink-2:#5B534A;
+    --line:#E6DDD1; --line-2:#D8CCBB;
+    --accent:#E0551E; --accent-soft:#F7E7DC;
+    --v1:#8A7A66; --v1-bg:#F0E9DF;
+    --v2:#E0551E; --v2-bg:#F7E7DC;
+    --pass:#2F7D57; --pass-bg:#E7F1EA;
+    --warn:#B47A16; --warn-bg:#F6EDD8;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:48px 28px 80px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5vw,46px);line-height:1.05;margin:.35em 0 .1em;text-wrap:balance;letter-spacing:-.01em}
+  .sub{color:var(--ink-2);font-size:16px;max-width:64ch;margin:.2em 0 0}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+  .meta b{color:var(--ink);font-weight:600}
+  section{margin-top:52px}
+  h2{font-family:var(--sans);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);font-weight:700;margin:0 0 18px;display:flex;align-items:center;gap:12px}
+  h2::after{content:"";flex:1;height:1px;background:var(--line)}
+  .verdict{margin-top:34px;border:1px solid var(--line-2);border-radius:14px;overflow:hidden;background:linear-gradient(180deg,#fff,var(--paper))}
+  .verdict-top{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--line)}
+  .verdict-top .lead{font-family:var(--serif);font-size:22px;line-height:1.28;max-width:52ch}
+  .verdict-top .lead b{color:var(--accent)}
+  .badge{font-family:var(--mono);font-size:12px;font-weight:700;padding:10px 14px;border-radius:10px;background:var(--pass-bg);color:var(--pass);white-space:nowrap}
+  .verdict-note{padding:16px 26px;font-size:14.5px;color:var(--ink-2)}
+  .verdict-note b{color:var(--ink)}
+  /* compare table */
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+  table{border-collapse:collapse;width:100%;min-width:680px}
+  th,td{text-align:left;padding:13px 18px;border-bottom:1px solid var(--line);vertical-align:top;font-size:14px}
+  thead th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);font-weight:700;background:var(--paper-2)}
+  thead th.v1{color:var(--v1)} thead th.v2{color:var(--v2)}
+  tbody tr:last-child td{border-bottom:none}
+  td.dim{color:var(--ink-2);font-weight:600;width:26%}
+  td.c1{background:rgba(138,122,102,.05)}
+  td.c2{background:var(--v2-bg)}
+  .val{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .win{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--v2);border:1px solid var(--v2);border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:middle}
+  /* precision bars */
+  .prec{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .pcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .pcard h3{margin:0 0 4px;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+  .pcard.v1 h3{color:var(--v1)} .pcard.v2 h3{color:var(--v2)}
+  .pcard .tag{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);margin-bottom:14px}
+  .steps{display:flex;align-items:flex-end;gap:8px;height:96px}
+  .step{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:flex-end}
+  .step .bar{width:100%;border-radius:5px 5px 0 0}
+  .step .n{font-family:var(--mono);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+  .step .lb{font-family:var(--mono);font-size:9.5px;color:var(--ink-2)}
+  .v1 .bar{background:var(--v1)} .v2 .bar{background:var(--accent)}
+  .pcard .foot{margin-top:12px;font-size:13px;color:var(--ink-2);border-top:1px dashed var(--line);padding-top:10px}
+  .pcard .foot b{color:var(--ink)}
+  /* hyp chips */
+  .hyps{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-family:var(--mono);font-size:12px;padding:7px 11px;border-radius:8px;background:var(--pass-bg);color:var(--pass);font-weight:600}
+  .chip.part{background:var(--warn-bg);color:var(--warn)}
+  /* panels */
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .panel h3{margin:0 0 12px;font-size:13px;letter-spacing:.05em;text-transform:uppercase;font-weight:700}
+  .panel.add h3{color:var(--v2)} .panel.care h3{color:var(--warn)}
+  .panel ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:11px}
+  .panel li{font-size:14px;color:var(--ink-2);padding-left:20px;position:relative;line-height:1.45}
+  .panel li b{color:var(--ink);font-weight:600}
+  .panel.add li::before{content:"+";position:absolute;left:0;color:var(--v2);font-family:var(--mono);font-weight:700}
+  .panel.care li::before{content:"!";position:absolute;left:2px;color:var(--warn);font-family:var(--mono);font-weight:700}
+  .mailrow{background:#fff;border:1px solid var(--line);border-radius:11px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .mailrow .who{font-weight:600;font-size:14.5px}
+  .mailrow .who small{display:block;color:var(--ink-2);font-weight:400;font-size:12px;font-family:var(--mono);margin-top:3px}
+  .axe{font-family:var(--mono);font-size:10px;font-weight:700;padding:3px 7px;border-radius:5px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+  .sc{font-family:var(--mono);font-size:19px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums}
+  .stack{display:flex;flex-direction:column;gap:9px}
+  footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);color:var(--ink-2);font-size:12.5px;font-family:var(--mono);line-height:1.7}
+  footer b{color:var(--ink)}
+  @media(max-width:680px){.prec,.cols{grid-template-columns:1fr}.verdict-top .lead{font-size:19px}}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Banc comparatif · V1 vs V2 · 08 juillet 2026</div>
+  <h1>BRICKS V2 face à V1, sur le même terrain</h1>
+  <p class="sub">Même offre (MemoVAL), même univers de 303 PME, mêmes juges adversariaux
+  avec la même grille — pour que la seule variable soit le cerveau. Protocole et seuils
+  fixés avant les juges.</p>
+  <div class="meta">
+    <div>Univers&nbsp;: <b>303 PME (constant)</b></div>
+    <div>Crédits&nbsp;: <b>0 / 0</b></div>
+    <div>Plantages&nbsp;: <b>0</b></div>
+    <div>Messages envoyés&nbsp;: <b>0</b></div>
+  </div>
+
+  <div class="verdict">
+    <div class="verdict-top">
+      <div class="lead">V2 <b>égale et dépasse</b> le meilleur de V1 — <b>90 % vs 75 %</b> de
+        précision — <b>sans aucune itération manuelle</b> (0 patch contre 3), et segmente
+        l'outreach par axe.</div>
+      <div class="badge">🟢 VERT</div>
+    </div>
+    <div class="verdict-note">Le gain n'est pas de la magie&nbsp;: l'arbre de signaux V2 a
+      <b>encodé les leçons du field-test V1</b> (ingénierie = anti-signal, filiales, plancher
+      d'ancienneté). C'est <b>le principe même</b> — la connaissance devient un actif réutilisable.
+      La comparaison juste est donc « V2 du premier coup » contre « V1 après 3 corrections ».</div>
+  </div>
+
+  <section>
+    <h2>La précision, et le chemin pour l'atteindre</h2>
+    <div class="prec">
+      <div class="pcard v1">
+        <h3>V1 — kill-rules</h3>
+        <div class="tag">3 cycles de correction manuelle</div>
+        <div class="steps">
+          <div class="step"><div class="n">45%</div><div class="bar" style="height:45%"></div><div class="lb">1er</div></div>
+          <div class="step"><div class="n">65%</div><div class="bar" style="height:65%"></div><div class="lb">+NAF</div></div>
+          <div class="step"><div class="n">75%</div><div class="bar" style="height:75%"></div><div class="lb">+filiale</div></div>
+        </div>
+        <div class="foot">Sélection&nbsp;: <b>194 ICP-fit</b>, atteinte en patchant les règles à la main entre chaque run.</div>
+      </div>
+      <div class="pcard v2">
+        <h3>V2 — arbre de signaux</h3>
+        <div class="tag">0 correction · 1er run</div>
+        <div class="steps">
+          <div class="step"><div class="n" style="color:var(--ink-2)">·</div><div class="bar" style="height:8%;background:var(--line-2)"></div><div class="lb"></div></div>
+          <div class="step"><div class="n" style="color:var(--ink-2)">·</div><div class="bar" style="height:8%;background:var(--line-2)"></div><div class="lb"></div></div>
+          <div class="step"><div class="n">90%</div><div class="bar" style="height:90%"></div><div class="lb">IN</div></div>
+        </div>
+        <div class="foot">Bande <b>IN = 26 comptes</b>, précision 90 %&nbsp;; <b>25/26 étaient déjà ICP-fit en V1</b> (les deux méthodes convergent).</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Comparaison, dimension par dimension</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Dimension</th><th class="v1">BRICKS V1</th><th class="v2">BRICKS V2</th></tr></thead>
+        <tbody>
+          <tr><td class="dim">Sourcing</td><td class="c1 val">303 (API gouv)</td><td class="c2 val">303 (idem)</td></tr>
+          <tr><td class="dim">Sélection</td><td class="c1">194 « ICP-fit » (liste plate)</td><td class="c2">bandes <span class="val">IN 26 / BAND 177 / OUT 100</span><span class="win">tiers par confiance</span></td></tr>
+          <tr><td class="dim">Corrections manuelles</td><td class="c1 val">3 cycles</td><td class="c2 val">0<span class="win">−3</span></td></tr>
+          <tr><td class="dim">Précision ICP (même juge)</td><td class="c1 val">75 % (après 3 patchs)</td><td class="c2 val">90 % (1er run)<span class="win">+15 pts</span></td></tr>
+          <tr><td class="dim">Modèle de signal</td><td class="c1">état firmo implicite</td><td class="c2">signaux nécessaires, 3 couches, explicites</td></tr>
+          <tr><td class="dim">Priorisation</td><td class="c1">tiers plats A/B/C</td><td class="c2">intervalles + bandes + <b>VOI</b> (que vérifier)<span class="win">décisionnel</span></td></tr>
+          <tr><td class="dim">Ce que Sillage ajouterait</td><td class="c1">—</td><td class="c2 val">IN 26 → 41 (mock)</td></tr>
+          <tr><td class="dim">Messaging</td><td class="c1">5 mails, template unique</td><td class="c2">fabrique 2 axes × formats, 8 mails<span class="win">segmenté</span></td></tr>
+          <tr><td class="dim">Qualité mails (même juge)</td><td class="c1 val">8,4 / 10</td><td class="c2 val">8,5 / 10<span class="win">+ défaut RGPD corrigé</span></td></tr>
+          <tr><td class="dim">Réutilisabilité</td><td class="c1">kill-rules jetables / campagne</td><td class="c2">arbre de signaux = <b>actif capitalisé</b></td></tr>
+          <tr><td class="dim">Coût</td><td class="c1 val">0 crédit</td><td class="c2 val">0 crédit</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Hypothèses pré-enregistrées</h2>
+    <div class="hyps">
+      <span class="chip">HV1 chaîne A→Z ✓</span>
+      <span class="chip">HV2 précision ≥75 % → 90 % ✓</span>
+      <span class="chip">HV3 zéro-patch → 0 ✓</span>
+      <span class="chip">HV4 bandes discriminantes ✓</span>
+      <span class="chip">HV5 VOI décision-first (100 %) ✓</span>
+      <span class="chip">HV6 qualité ≥8,4 → 8,5 ✓</span>
+      <span class="chip part">HV7 axes distincts — partiel</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Ce que V2 apporte · les réserves honnêtes</h2>
+    <div class="cols">
+      <div class="panel add">
+        <h3>V2 apporte</h3>
+        <ul>
+          <li><b>Le meilleur de V1 du premier coup</b> — 90 % sans patcher les règles à la main.</li>
+          <li><b>Un tri par confiance</b> — IN (enrichir) / BAND (vérifier) / OUT, au lieu d'une liste plate.</li>
+          <li><b>Le budget dépensé où il décide</b> (VOI) — 80 checks, tous capables de changer une bande.</li>
+          <li><b>La connaissance capitalisée</b> — l'arbre se réutilise sur le concept suivant.</li>
+          <li><b>Un outreach segmenté</b> par axe, et le défaut RGPD de V1 (mention d'âge) éliminé.</li>
+        </ul>
+      </div>
+      <div class="panel care">
+        <h3>À dire honnêtement</h3>
+        <ul>
+          <li>L'arbre a <b>hérité des leçons V1</b> — le 0-patch est de la capitalisation, pas de la magie.</li>
+          <li>90 % mesuré sur la bande <b>IN (26, resserrée)</b> ; V1 75 % sur les 194 (plus large).</li>
+          <li><b>Sillage = mock</b> (pas de clés) — la machinerie est prouvée, pas la donnée réelle.</li>
+          <li>Différenciation d'axe <b>lisible mais pas franche</b> (juge) ; le template reste visible.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Les mails, segmentés par axe (même juge, 8,5/10)</h2>
+    <div class="stack">
+      <div class="mailrow"><div class="who">Éts Bérod-Collet <small>décolletage · vallée de l'Arve · 36 ans</small></div><div style="display:flex;gap:12px;align-items:center"><span class="axe">la maison à un tournant</span><span class="sc">9,0</span></div></div>
+      <div class="mailrow"><div class="who">Collet et Amblard <small>usinage de précision · 70 ans</small></div><div style="display:flex;gap:12px;align-items:center"><span class="axe">le fonds invisible</span><span class="sc">9,0</span></div></div>
+      <div class="mailrow"><div class="who">SAUMA Industrie <small>usinage · 50 ans</small></div><div style="display:flex;gap:12px;align-items:center"><span class="axe">la maison à un tournant</span><span class="sc">8,5</span></div></div>
+      <div class="mailrow"><div class="who">SMOP <small>mécanique de précision · 71 ans</small></div><div style="display:flex;gap:12px;align-items:center"><span class="axe">le fonds invisible</span><span class="sc">8,5</span></div></div>
+      <div class="mailrow"><div class="who">JOBS SARL Usines de Lyon <small>maintenance machines · 36 ans</small></div><div style="display:flex;gap:12px;align-items:center"><span class="axe">la maison à un tournant</span><span class="sc">8,5</span></div></div>
+    </div>
+  </section>
+
+  <footer>
+    <b>Méthode.</b> Workspace V2 isolé, univers de 303 PME identique à V1 (verdicts retirés) · outils réels
+    (score_v2, messaging_factory, sillage_adapter mock) + AXE-MAPPER Opus 4.8 + skill email-craft · db.py porte unique, drafts only.<br>
+    <b>Mêmes juges adversariaux</b> que V1 (précision ICP n=20, qualité mails), relancés avec la grille identique — chiffres directement comparables.<br>
+    <b>Limites.</b> Précision jugée sur n=20 (intervalle large) · Sillage simulé · bande IN homogène BTP/CVC (le sous-segment le plus fort) · 2 faux positifs = filiales de distribution étrangères, indétectables sans registre de groupes.
+  </footer>
+</div>

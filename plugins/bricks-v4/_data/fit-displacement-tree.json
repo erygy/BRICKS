@@ -1,0 +1,49 @@
+{
+  "thesis_id": "displacement-fit",
+  "version": "1.0.0",
+  "_note": "Arbre de FIT V4 (qualité d'une cible de déplacement) au format score_v2. Lit les attributs d'un compte : relation au concurrent, certitude du minage, force du signal de fenêtre, taille (effectif). Déterministe, 0 token.",
+  "defaults": { "prior": { "P": 0.5, "S": 0.35, "O": 0.3 }, "gate_floor": 0.08 },
+  "signals": [
+    {
+      "id": "P-USE-01", "layer": "P", "crit": 1, "cluster": "categorie",
+      "claim": "Le compte a une relation RÉELLE avec un concurrent direct (client actif ou évaluation en cours), pas une simple mention.",
+      "proxies": [
+        { "id": "P-USE-01.a", "source": "registry", "field": "relation", "op": "in",
+          "value": ["cas_client", "projet", "temoignage", "co_marketing", "intent"],
+          "fidelity": 0.9, "fpr": 0.4, "coverage": 0.95, "cost_class": 0 }
+      ]
+    },
+    {
+      "id": "S-CERT-01", "layer": "S", "lr_class": "x5", "cluster": "preuve",
+      "claim": "La preuve du minage est de haute certitude (cas client explicite, pas une mention ambiguë).",
+      "proxies": [
+        { "id": "S-CERT-01.a", "source": "registry", "field": "certainty", "op": "eq", "value": "haute",
+          "fidelity": 0.85, "fpr": 0.3, "coverage": 0.9, "cost_class": 0 }
+      ]
+    },
+    {
+      "id": "S-SIG-01", "layer": "S", "lr_class": "x5", "cluster": "fenetre",
+      "claim": "Un signal de fenêtre FORT est actif (fenêtre de déplacement ouverte maintenant).",
+      "proxies": [
+        { "id": "S-SIG-01.a", "source": "registry", "field": "signal_strength", "op": "gte", "value": 7,
+          "fidelity": 0.82, "fpr": 0.3, "coverage": 0.85, "cost_class": 0 }
+      ]
+    },
+    {
+      "id": "S-SIZE-01", "layer": "S", "lr_class": "x2", "cluster": "taille",
+      "claim": "L'effectif du compte tombe dans notre ICP (ni trop petit, ni grand groupe ingérable).",
+      "proxies": [
+        { "id": "S-SIZE-01.a", "source": "registry", "field": "effectif", "op": "between", "value": [50, 3000],
+          "fidelity": 0.72, "fpr": 0.4, "coverage": 0.92, "cost_class": 0 }
+      ]
+    },
+    {
+      "id": "O-STR-01", "layer": "O", "lr_class": "x1.2", "cluster": "fenetre",
+      "claim": "Le signal de fenêtre est à intensité maximale (accroche datée idéale).",
+      "proxies": [
+        { "id": "O-STR-01.a", "source": "registry", "field": "signal_strength", "op": "gte", "value": 9,
+          "fidelity": 0.9, "fpr": 0.45, "coverage": 0.85, "cost_class": 0 }
+      ]
+    }
+  ]
+}

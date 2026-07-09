@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SECOND AVIS — Le diagnostic différentiel du silence client</title>
+<style>
+  :root{
+    --ink:#16211E; --ink-soft:#41504B; --paper:#F2F4F3; --paper-2:#E7ECEA; --card:#FBFCFB;
+    --accent:#0E7C86; --slate:#5B6B67; --line:#D3DAD7;
+    --benign:#2F8F5B; --toxic:#C0453B; --indet:#C0892B;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --serif:Georgia,'Iowan Old Style','Times New Roman',serif;
+    --mono:'SF Mono',ui-monospace,'JetBrains Mono',Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+    font-size:17px;line-height:1.6;
+    background-image:radial-gradient(circle at 12% -8%,#F7F9F8 0,transparent 42%),
+                     radial-gradient(circle at 92% 4%,#EAF0EE 0,transparent 38%);}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px}
+  hr.rule{height:1px;background:var(--line);border:0;margin:0}
+  h1,h2,h3{margin:0;line-height:1.14;text-wrap:balance}
+  h1,h2{font-family:var(--sans);font-weight:800;letter-spacing:-0.02em}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+  .muted{color:var(--ink-soft)}
+
+  /* HERO */
+  header{padding:60px 0 40px;text-align:center}
+  .badge{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--accent);
+    border:1px solid var(--line);border-radius:100px;padding:7px 15px;background:var(--card)}
+  .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  header h1{font-size:clamp(42px,8vw,80px);margin:24px 0 6px}
+  header .sub{font-family:var(--mono);font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--slate)}
+  .flat{display:block;margin:26px auto 0;max-width:560px;width:100%}
+  .thesis{max-width:700px;margin:26px auto 0;font-family:var(--serif);font-style:italic;
+    font-size:clamp(19px,2.5vw,25px);line-height:1.5}
+  .thesis .hl{color:var(--accent);font-style:normal;font-weight:600}
+  .oneliner{margin-top:18px;font-size:15px;color:var(--ink-soft)}
+
+  section{padding:44px 0}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+  .sec-head .num{font-family:var(--mono);font-size:13px;color:var(--accent)}
+  .sec-head h2{font-size:clamp(23px,4vw,31px)}
+  .sec-sub{color:var(--ink-soft);margin:0 0 24px;max-width:70ch}
+
+  /* PROBLEM */
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:20px}
+  .stat .v{font-size:34px;font-weight:800;letter-spacing:-.02em}
+  .stat .l{font-size:14px;color:var(--ink-soft);margin-top:4px}
+
+  /* DIVERGENCE (héros) */
+  .diverge-band{background:var(--ink);color:var(--paper)}
+  .diverge-band .sec-head h2{color:var(--paper)}
+  .diverge-band .num{color:#6FD3DA}
+  .diverge-band .sec-sub{color:#AEBDB8}
+  .same{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
+    font-family:var(--mono);font-size:12px;color:#AEBDB8;margin-bottom:22px;text-align:center}
+  .same b{color:#6FD3DA}
+  .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .acct{background:#1E2C28;border:1px solid #2C3B36;border-radius:8px;padding:15px 14px;display:flex;flex-direction:column;gap:9px}
+  .acct .nm{font-weight:700;font-size:16px;color:var(--paper)}
+  .acct .arr{font-family:var(--mono);font-size:11px;color:#8DA098}
+  .spark{display:block;width:100%;height:26px}
+  .acct .ext{font-size:12.5px;color:#B9C7C1;line-height:1.4;min-height:66px}
+  .vd{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.04em;
+    padding-top:9px;border-top:1px solid #2C3B36}
+  .dot{width:10px;height:10px;border-radius:50%;flex:none}
+  .v-ben{color:#63C48B} .v-tox{color:#E8776C} .v-ind{color:#E0B25E}
+  .diverge-foot{margin-top:22px;text-align:center;font-family:var(--mono);font-size:12.5px;color:#AEBDB8}
+  .diverge-foot b{color:#6FD3DA}
+
+  /* MECHANISM */
+  .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .step{background:var(--card);padding:18px 16px}
+  .step .n{font-family:var(--mono);font-size:12px;color:var(--accent)}
+  .step h3{font-size:15px;font-weight:700;margin:7px 0 6px}
+  .step p{margin:0;font-size:13px;color:var(--ink-soft)}
+  .step .who{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin-top:9px}
+
+  /* TRIO */
+  .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .trio .t{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:19px;border-top:3px solid var(--toxic)}
+  .trio .t .k{font-weight:800;font-size:18px}
+  .trio .t .d{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--toxic);margin:7px 0 9px}
+  .trio .t p{margin:0;font-size:14px;color:var(--ink-soft)}
+
+  /* EMAILS */
+  .mails{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .mail{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
+  .mail .top{padding:11px 16px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+  .mail.ben .top{background:rgba(47,143,91,.12);color:var(--benign)}
+  .mail.tox .top{background:rgba(192,69,59,.12);color:var(--toxic)}
+  .mail .body{padding:16px 18px;font-size:14px;white-space:pre-line;color:var(--ink);line-height:1.55}
+  .mail .subj{font-weight:700;margin-bottom:10px}
+  .mail-note{text-align:center;font-family:var(--mono);font-size:12px;color:var(--ink-soft);margin-top:16px}
+
+  /* TABLE */
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+  table{border-collapse:collapse;width:100%;min-width:540px;font-size:14.5px}
+  th,td{text-align:left;padding:12px 15px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);background:var(--paper-2)}
+  td:last-child,th:last-child{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr:last-child td{border-bottom:0}
+  .score{color:var(--accent);font-weight:800}
+  .beats td:first-child{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--slate);white-space:nowrap}
+
+  /* LIMITS */
+  .limits{background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:24px 26px}
+  .limits li{margin:0 0 12px;font-size:15px}
+  .limits li:last-child{margin:0}
+  .limits b{color:var(--accent)}
+
+  footer{padding:38px 0 60px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--ink-soft);letter-spacing:.02em}
+  footer .n{color:var(--accent)}
+
+  @media (max-width:820px){
+    .grid5{grid-template-columns:1fr 1fr}
+    .steps{grid-template-columns:1fr 1fr}
+    .stat-row,.trio,.mails{grid-template-columns:1fr}
+    .acct .ext{min-height:0}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="badge"><span class="pulse"></span> Hackathon IA-GTM · Anthropic × Sillage × FullEnrich</span>
+    <h1>SECOND AVIS</h1>
+    <div class="sub">Le diagnostic différentiel du silence client</div>
+    <svg class="flat" viewBox="0 0 560 40" fill="none" aria-hidden="true">
+      <path d="M0 20 H150 l8 -13 l10 26 l9 -20 l8 7 H560" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.9"/>
+    </svg>
+    <p class="thesis">« Vu de l'intérieur, tous les silences clients se ressemblent. Vu de l'extérieur, ils <span class="hl">divergent</span> — et c'est la seule donnée que votre CSM n'a pas. »</p>
+    <p class="oneliner">Le second avis externe sur un compte devenu silencieux.</p>
+  </div>
+</header>
+<hr class="rule">
+
+<!-- L'AFFAIRE -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">01</span><h2>La douleur — et c'est le CEO qui saigne</h2></div>
+    <p class="sec-sub">Le churn frappe le NRR : la métrique de board, de valorisation, de survie. Or il se manifeste toujours pareil — un compte qui devient silencieux — sans qu'on sache si ce silence est de l'occupation ou une défection qui commence.</p>
+    <div class="stat-row">
+      <div class="stat"><div class="v">20–40 %</div><div class="l">d'un portefeuille client est silencieux <b>à tout instant</b></div></div>
+      <div class="stat"><div class="v">5×</div><div class="l">acquérir un client coûte plus cher que le retenir</div></div>
+      <div class="stat"><div class="v">« just<br>checking in »</div><div class="l">le réflexe aveugle, envoyé trop tard, au mauvais contact</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVERGENCE (héros) -->
+<section class="diverge-band">
+  <div class="wrap">
+    <div class="sec-head"><span class="num">02</span><h2>La divergence — le moment décisif</h2></div>
+    <p class="sec-sub">Cinq comptes. Silence interne <b>strictement identique</b>. Cinq dossiers de faits externes différents (Sillage). Verdicts réels rendus par Claude — chacun cite sa preuve datée et sa condition de falsification.</p>
+    <div class="same">
+      <span>SILENCE INTERNE IDENTIQUE POUR LES 5</span> ·
+      <b>usage −63 % · plus de réponse depuis 24 j · 2 comités de pilotage annulés</b>
+    </div>
+    <div class="grid5">
+      <div class="acct">
+        <div><div class="nm">Northwind</div><div class="arr">90 000 € ARR</div></div>
+        <svg class="spark" viewBox="0 0 100 26"><path d="M0 6 H40 C55 6 60 20 100 21" stroke="#5A6C66" stroke-width="1.6" fill="none"/></svg>
+        <div class="ext">Vague d'embauche : 34 postes ouverts, 2 bureaux. Aucun signal négatif.</div>
+        <div class="vd v-ben"><span class="dot" style="background:var(--benign)"></span>BÉNIN — nourrir</div>
+      </div>
+      <div class="acct">
+        <div><div class="nm">Halcyon</div><div class="arr">120 000 € ARR</div></div>
+        <svg class="spark" viewBox="0 0 100 26"><path d="M0 6 H40 C55 6 60 20 100 21" stroke="#5A6C66" stroke-width="1.6" fill="none"/></svg>
+        <div class="ext">Rachat par un groupe US il y a 3 semaines ; nouveau CFO ; intégration en cours.</div>
+        <div class="vd v-tox"><span class="dot" style="background:var(--toxic)"></span>TOXIQUE — intervenir</div>
+      </div>
+      <div class="acct">
+        <div><div class="nm">Vantle</div><div class="arr">75 000 € ARR</div></div>
+        <svg class="spark" viewBox="0 0 100 26"><path d="M0 6 H40 C55 6 60 20 100 21" stroke="#5A6C66" stroke-width="1.6" fill="none"/></svg>
+        <div class="ext">Le champion (sponsor du deal) est parti il y a 12 j — successeur venu d'un concurrent direct.</div>
+        <div class="vd v-tox"><span class="dot" style="background:var(--toxic)"></span>TOXIQUE — intervenir</div>
+      </div>
+      <div class="acct">
+        <div><div class="nm">Orbix</div><div class="arr">60 000 € ARR</div></div>
+        <svg class="spark" viewBox="0 0 100 26"><path d="M0 6 H40 C55 6 60 20 100 21" stroke="#5A6C66" stroke-width="1.6" fill="none"/></svg>
+        <div class="ext">3 études de cas publiées avec un concurrent direct + 2 recrues venues de ce concurrent.</div>
+        <div class="vd v-tox"><span class="dot" style="background:var(--toxic)"></span>TOXIQUE — intervenir</div>
+      </div>
+      <div class="acct">
+        <div><div class="nm">Calder</div><div class="arr">45 000 € ARR</div></div>
+        <svg class="spark" viewBox="0 0 100 26"><path d="M0 6 H40 C55 6 60 20 100 21" stroke="#5A6C66" stroke-width="1.6" fill="none"/></svg>
+        <div class="ext">Aucun signal externe sur 90 jours. « L'absence de signal n'est pas rassurante. »</div>
+        <div class="vd v-ind"><span class="dot" style="background:var(--indet)"></span>INDÉTERMINÉ — surveiller</div>
+      </div>
+    </div>
+    <p class="diverge-foot">Même silence interne → <b>1 bénin · 3 toxiques · 1 indéterminé assumé</b>. Silence expliqué : 4/5. La courbe interne, identique, ne discrimine rien — seule la moitié externe fait diverger le verdict.</p>
+  </div>
+</section>
+
+<!-- MÉCANISME -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">03</span><h2>Le mécanisme, en cinq temps</h2></div>
+    <div class="steps">
+      <div class="step"><div class="n">01</div><h3>Lire le silence interne</h3><p>Usage, tickets, meetings → un score de silence par compte.</p><div class="who">Code</div></div>
+      <div class="step"><div class="n">02</div><h3>Interroger le monde</h3><p>Sillage constitue un dossier de faits externes datés par compte silencieux.</p><div class="who">Sillage</div></div>
+      <div class="step"><div class="n">03</div><h3>Diagnostic différentiel</h3><p>Claude confronte 4 hypothèses aux faits — chaque verdict cite ses preuves et sa condition de falsification.</p><div class="who">Claude</div></div>
+      <div class="step"><div class="n">04</div><h3>Contact alternatif</h3><p>Silence toxique → FullEnrich sort 2 contacts (le champion muet est souvent le silence).</p><div class="who">FullEnrich</div></div>
+      <div class="step"><div class="n">05</div><h3>Message ou veille</h3><p>Rupture de pattern sur le fait externe ; ou mise en veille avec re-poll daté.</p><div class="who">Claude</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TRIO -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">04</span><h2>Le trio, testé au retrait</h2></div>
+    <div class="trio">
+      <div class="t"><div class="k">Sans Sillage</div><div class="d">→ le système meurt</div><p>Tous les silences redeviennent identiques → « just checking in » aveugle. Le problème de départ.</p></div>
+      <div class="t"><div class="k">Sans Claude</div><div class="d">→ le système meurt</div><p>Deux flux (interne + externe) juxtaposés ; le CSM refait la synthèse à la main sur 80 comptes.</p></div>
+      <div class="t"><div class="k">Sans FullEnrich</div><div class="d">→ le système meurt</div><p>Diagnostic juste, mais le champion muet est le point de silence : impasse sans contact alternatif.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- EMAILS -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">05</span><h2>Deux emails opposés, depuis un silence identique</h2></div>
+    <p class="sec-sub">Générés en live depuis la même courbe interne — la seule différence est le fait externe. Aucun ne mentionne le silence (ce serait accusateur).</p>
+    <div class="mails">
+      <div class="mail ben">
+        <div class="top"><span>● Silence bénin — Northwind</span><span>nourrir</span></div>
+        <div class="body"><span class="subj">Objet : 34 postes ouverts — bravo (et une idée)</span>Je viens de voir vos annonces : 34 recrutements et 2 bureaux, sacrée dynamique. Onboarder autant de monde, c'est souvent là que ça coince — on a des templates prêts pour intégrer vos nouveaux arrivants, zéro effort de votre côté. Dites-moi si c'est utile.</div>
+      </div>
+      <div class="mail tox">
+        <div class="top"><span>● Silence toxique — Halcyon</span><span>intervenir</span></div>
+        <div class="body"><span class="subj">Objet : Intégration Halcyon — un chiffre qui peut vous servir</span>J'ai vu l'annonce du rachat — période dense, entre l'intégration et l'arrivée du nouveau CFO. C'est là qu'on demande de justifier chaque outil : je peux vous préparer un bilan chiffré de ce que la plateforme vous a fait gagner cette année. Une page, prête pour la table du CFO.</div>
+      </div>
+    </div>
+    <p class="mail-note">« Le health score interne, tout le monde l'a. La moitié externe, personne. »</p>
+  </div>
+</section>
+
+<!-- SCORECARD + BEATS -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">06</span><h2>Verdict sur le brief</h2></div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Critère</th><th>Ce qu'apporte SECOND AVIS</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>Trio indispensable</td><td>Chacun mortel au retrait</td><td class="score">9</td></tr>
+          <tr><td>Claude mis en valeur</td><td>Diagnostic différentiel falsifiable (composition, pas parsing)</td><td class="score">9</td></tr>
+          <tr><td>Démontrable 48h</td><td>Cœur prouvé · divergence visible sans événement rare</td><td class="score">8,5</td></tr>
+          <tr><td>Fait bouger l'aiguille</td><td>Attaque le NRR — l'euro le plus lourd du B2B</td><td class="score">8,5</td></tr>
+          <tr><td>Effet-WOW</td><td>2 emails opposés depuis des données internes identiques + poll live</td><td class="score">9</td></tr>
+          <tr><td>Unicité</td><td>La jonction interne × externe n'existe nulle part</td><td class="score">8,5</td></tr>
+          <tr><td>Honnêteté</td><td>« Silence expliqué », indéterminé assumé, zéro score bidon</td><td class="score">9</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- BEATS PREVIOUS -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">07</span><h2>Pourquoi ça bat l'idée précédente</h2></div>
+    <p class="sec-sub">L'exploration de masse (941 douleurs → 308 concepts → réfutation) a écarté la réactivation de deals perdus. Voici pourquoi.</p>
+    <div class="tablewrap">
+      <table class="beats">
+        <thead><tr><th>Axe</th><th>Réactiver les deals perdus</th><th style="text-align:left">SECOND AVIS</th></tr></thead>
+        <tbody>
+          <tr><td>Douleur</td><td>Upside d'AE sur du pipe mort</td><td style="text-align:left;font-family:inherit;white-space:normal">NRR = valorisation. Le CEO saigne.</td></tr>
+          <tr><td>Fréquence</td><td>1–2 déclencheurs / trimestre</td><td style="text-align:left;font-family:inherit;white-space:normal">20–40 % du book, en permanence</td></tr>
+          <tr><td>Wow</td><td>Un email conditionnel à un match rare</td><td style="text-align:left;font-family:inherit;white-space:normal">Deux emails opposés, données internes identiques</td></tr>
+          <tr><td>Dépendance</td><td>Le champ « motif de perte » du CRM (au hasard)</td><td style="text-align:left;font-family:inherit;white-space:normal">Usage + Sillage réel — zéro texte CRM pourri</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- LIMITES -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">08</span><h2>Honnêteté, dès la première slide</h2></div>
+    <div class="limits">
+      <ul>
+        <li><b>On ne prédit pas le churn.</b> On <b>explique le silence</b> qu'on regarde. Rater un compte ne casse rien ; on améliore l'action sur ceux qu'on traite. Métrique : « % de comptes silencieux où un fait externe change l'action ».</li>
+        <li><b>Pas d'oracle.</b> Chaque verdict cite ses preuves datées et sa condition de falsification. Aucun score de confiance numérique à défendre. L'<b>indéterminé</b> est un verdict à part entière.</li>
+        <li><b>La moitié externe est le live.</b> Les données internes suivent un schéma d'export réaliste (« en prod, c'est VOTRE donnée ») ; ce qui tourne devant le jury, c'est le poll Sillage — précisément ce que Gainsight n'a pas.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<hr class="rule">
+
+<footer>
+  <div class="wrap">
+    Exploration de masse · Fable 5 via l'API · <span class="n">941 douleurs → 52 clusters → 308 concepts → 22 réfutés → 14 survivants</span><br>
+    Cœur prouvé — <code>python3 diagnostic.py</code> · coût total de la recherche <span class="n">~13,5 $</span> sur 100
+  </div>
+</footer>
+
+</body>
+</html>

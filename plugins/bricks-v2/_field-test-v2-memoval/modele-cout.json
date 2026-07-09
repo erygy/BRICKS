@@ -1,0 +1,56 @@
+{
+  "campagne": "60 contacts (26 IN + 34 BAND)",
+  "cash_fullenrich": {
+    "V1_enrichit_toute_la_vague": {
+      "emails": 60,
+      "eur": 9.0
+    },
+    "V2_enrichit_IN_puis_selectif": {
+      "emails_IN": 26,
+      "eur_1ere_vague": 3.9
+    },
+    "economie_VOI_par_vague_eur": 5.1
+  },
+  "llm": {
+    "scoring_303_PME": {
+      "V1": "0 token (déterministe)",
+      "V2": "0 token (déterministe)"
+    },
+    "V1_redaction_mails_api_eur": 0.108,
+    "V2_axe_mapper_+_mails_opus_api_eur": 3.55,
+    "V2_variante_mails_haiku_api_eur": 1.85,
+    "regime_abonnement_claude": "LLM ~0€ au marginal (couvert par l'abo, sous rate limits) — les DEUX versions"
+  },
+  "total_campagne": {
+    "V1_abo": {
+      "cash_eur": 9.0,
+      "llm_eur": 0,
+      "total_eur": 9.0
+    },
+    "V2_abo": {
+      "cash_eur": 3.9,
+      "llm_eur": 0,
+      "total_eur": 3.9
+    },
+    "V1_api": {
+      "cash_eur": 9.0,
+      "llm_eur": 0.11,
+      "total_eur": 9.11
+    },
+    "V2_api": {
+      "cash_eur": 3.9,
+      "llm_eur": 1.85,
+      "total_eur": 5.75
+    }
+  },
+  "unitaire": {
+    "cout_scoring_par_entreprise_eur": 0.0,
+    "cout_par_entreprise_ciblee_V2_abo_eur": 0.065,
+    "cout_par_mail_LLM_V2_api_haiku_eur": 0.002,
+    "scoring_10000_PME": {
+      "temps_s": 1.9,
+      "cout_eur": 0.0
+    }
+  },
+  "note": "Scoring = 0 LLM dans les 2 versions (code pur). La seule vraie différence de CASH vient des bandes+VOI de V2 qui ciblent l'enrichissement (IN d'abord) au lieu d'enrichir toute la vague."
+}

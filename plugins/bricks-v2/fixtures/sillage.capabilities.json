@@ -1,0 +1,30 @@
+{
+  "source": "sillage",
+  "transport": "mcp",
+  "discovered_at": "2026-07-08 (pré-rempli depuis la doc publique getsillage.com — à CONFIRMER au Day-1 par le rituel sillage-connect)",
+  "identity_key": "company_domain | company_linkedin_handle | company_linkedin_url",
+  "_notes": [
+    "⚠️ PAS de SIREN/SIRET chez Sillage : la jointure registre↔Sillage↔FullEnrich passe par le DOMAINE (résolution de domaine = étape obligatoire du pipeline, cf. ARCHITECTURE §4.0).",
+    "Modèle opérationnel : on POUSSE des top accounts (async, 202+poll) → on configure des AGENTS (détecteurs) → on lance des SIGNAL RUNS (launch→poll) → on QUERY les signaux (curseur). Pas de webhooks : poller.",
+    "MCP : https://api.getsillage.com/api/mcp/v2 (OAuth 2.1, 1 workspace/connexion, ~35 outils sillage_v2_*). REST : https://api.getsillage.com/api/v2/... (Bearer sk_live_, RFC 9457, offset sauf signals=curseur).",
+    "OpenAPI : https://api.getsillage.com/api/v1/docs/spec — à télécharger au Day-1 pour geler les payloads par type de signal."
+  ],
+  "capabilities": [
+    {"key": "sillage.accounts.add", "kind": "search_filter", "params": {"by": ["domain", "linkedin_url", "linkedin_handle"], "async": true, "quota": "cap à vie en trial (top-account-quota-exceeded)"}, "cost_class": 1, "status": "presumed", "notes": "MCP add_top_accounts / REST top-account add. C'est l'entrée de l'univers dans Sillage."},
+    {"key": "sillage.persona.upsert", "kind": "enrichment", "params": {"icp": "texte structuré"}, "cost_class": 0, "status": "presumed", "notes": "MCP upsert_persona — encoder la thèse pour orienter les agents."},
+    {"key": "sillage.agents.keyword_detection", "kind": "signal_kind", "params": {"keywords": "list[str]", "surface": "posts LinkedIn"}, "cost_class": 2, "since_param": true, "status": "presumed", "notes": "Signal payload connu (camelCase: keywordDetection) : author{full_name,headline,linkedin_url}, keywords_found[], source_url, excerpt, signal_date."},
+    {"key": "sillage.agents.job_posting_keyword_detection", "kind": "signal_kind", "params": {"keywords": "list[str]", "surface": "offres d'emploi"}, "cost_class": 2, "since_param": true, "status": "presumed"},
+    {"key": "sillage.agents.job_update", "kind": "signal_kind", "params": {"scope": "contacts suivis — changement de poste/promotion"}, "cost_class": 2, "since_param": true, "status": "presumed"},
+    {"key": "sillage.agents.competitor", "kind": "signal_kind", "params": {"watchlist": "interactions LinkedIn entité↔compte"}, "cost_class": 2, "status": "presumed"},
+    {"key": "sillage.agents.partner", "kind": "signal_kind", "params": {}, "cost_class": 2, "status": "presumed"},
+    {"key": "sillage.agents.customer", "kind": "signal_kind", "params": {}, "cost_class": 2, "status": "presumed"},
+    {"key": "sillage.agents.influencer", "kind": "signal_kind", "params": {}, "cost_class": 2, "status": "presumed"},
+    {"key": "sillage.agents.champion", "kind": "signal_kind", "params": {}, "cost_class": 2, "status": "presumed"},
+    {"key": "sillage.signals.query", "kind": "search_filter", "params": {"filters": ["signal_start/end_date", "detection_start/end_date", "agent_id", "signal_run_id", "company_id", "company_domain[]", "company_linkedin_handle[]", "company_linkedin_url[]"], "pagination": "cursor (limit 1-100)"}, "cost_class": 1, "status": "presumed"},
+    {"key": "sillage.signal_runs.launch", "kind": "stream", "params": {"mode": "launch → poll jusqu'à état terminal ; PAS de webhook"}, "cost_class": 2, "status": "presumed"},
+    {"key": "sillage.mapping.enrich_company", "kind": "enrichment", "params": {"by": ["domain", "linkedin"], "returns": "profils employés", "async": true}, "cost_class": 2, "status": "presumed", "notes": "Account Mapping — utile pour trouver le dirigeant sur LinkedIn (pont vers keyword_detection + FullEnrich)."},
+    {"key": "sillage.rate_limit.read", "kind": "company_field", "params": {}, "cost_class": 0, "status": "presumed", "notes": "MCP get_rate_limit + headers X-RateLimit-* : lire les quotas RÉELS du workspace au Day-1."}
+  ],
+  "quotas": {"note": "INCONNUS avant connexion — lire sillage_v2_get_rate_limit + tester top-account cap. Erreur 402 = crédits insuffisants."},
+  "probe_log": []
+}

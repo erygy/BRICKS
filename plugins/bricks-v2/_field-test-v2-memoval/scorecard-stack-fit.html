@@ -1,0 +1,175 @@
+<title>BRICKS V1 vs V2 — sur la stack imposée du hackathon</title>
+<style>
+  :root{
+    --paper:#FBF8F4; --paper-2:#F4EEE6; --ink:#1C1815; --ink-2:#5B534A;
+    --line:#E6DDD1; --line-2:#D8CCBB; --accent:#E0551E; --accent-soft:#F7E7DC;
+    --v1:#8A7A66; --v2:#E0551E;
+    --good:#2F7D57; --good-bg:#E7F1EA; --warn:#B47A16; --warn-bg:#F6EDD8; --miss:#B23A2E;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:48px 28px 80px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(29px,4.6vw,44px);line-height:1.05;margin:.35em 0 .1em;text-wrap:balance;letter-spacing:-.01em}
+  .sub{color:var(--ink-2);font-size:16px;max-width:66ch;margin:.2em 0 0}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+  .meta b{color:var(--ink)}
+  section{margin-top:50px}
+  h2{font-family:var(--sans);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);font-weight:700;margin:0 0 18px;display:flex;align-items:center;gap:12px}
+  h2::after{content:"";flex:1;height:1px;background:var(--line)}
+  .verdict{margin-top:32px;border:1px solid var(--line-2);border-radius:14px;background:linear-gradient(180deg,#fff,var(--paper));overflow:hidden}
+  .vtop{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--line)}
+  .vtop .lead{font-family:var(--serif);font-size:21px;line-height:1.28;max-width:50ch}
+  .vtop .lead b{color:var(--accent)}
+  .score2{display:flex;gap:10px}
+  .sb{font-family:var(--mono);text-align:center;border-radius:10px;padding:10px 16px}
+  .sb .n{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
+  .sb .l{font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:4px}
+  .sb.v1{background:var(--paper-2);color:var(--v1)} .sb.v2{background:var(--accent-soft);color:var(--v2)}
+  .vnote{padding:15px 26px;font-size:14px;color:var(--ink-2)} .vnote b{color:var(--ink)}
+  /* pillar bars */
+  .pill{display:flex;flex-direction:column;gap:16px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px}
+  .prow{}
+  .prow .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+  .prow .name{font-weight:600;font-size:15px}
+  .prow .name small{color:var(--ink-2);font-weight:400;font-family:var(--mono);font-size:11.5px}
+  .prow .sc{font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+  .prow .sc b{color:var(--v2)}
+  .gr{height:22px;background:var(--paper-2);border-radius:6px;position:relative;overflow:hidden}
+  .gr .v1b{position:absolute;left:0;top:0;height:100%;background:var(--v1);opacity:.55;border-radius:6px}
+  .gr .v2b{position:absolute;left:0;top:0;height:100%;background:var(--accent);border-radius:6px}
+  .gr .lbl{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:11px;color:#fff;font-weight:700}
+  /* archetypes */
+  .arch{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+  .ac{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px}
+  .ac h3{margin:0 0 4px;font-size:14.5px}
+  .ac .cov{font-family:var(--mono);font-size:12px;margin:8px 0}
+  .ac .bar{height:8px;background:var(--paper-2);border-radius:5px;overflow:hidden;margin:6px 0 10px}
+  .ac .bar i{display:block;height:100%;border-radius:5px}
+  .ac .st{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px}
+  .st.done{background:var(--good-bg);color:var(--good)} .st.new{background:var(--accent-soft);color:var(--accent)}
+  .ac .note{font-size:12.5px;color:var(--ink-2);margin-top:8px;line-height:1.4}
+  .big{margin-top:16px;background:var(--ink);color:#F4EEE6;border-radius:14px;padding:24px 26px}
+  .big .k{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#E0916B}
+  .big .t{font-family:var(--serif);font-size:23px;line-height:1.3;margin-top:8px}
+  .big .t b{color:#F0A57F}
+  .proof{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .chip{font-family:var(--mono);font-size:11.5px;background:rgba(255,255,255,.08);color:#F4EEE6;border:1px solid rgba(255,255,255,.16);border-radius:8px;padding:6px 11px}
+  footer{margin-top:50px;padding-top:22px;border-top:1px solid var(--line);color:var(--ink-2);font-size:12.5px;font-family:var(--mono);line-height:1.7}
+  footer b{color:var(--ink)}
+  @media(max-width:680px){.vtop .lead{font-size:18px}}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Stack imposée · Claude + Sillage + FullEnrich · 09 juillet 2026</div>
+  <h1>V1 vs V2, jugés sur la stack du hackathon</h1>
+  <p class="sub">Le brief impose 3 piliers (Claude, Sillage, FullEnrich) et cite 4 archétypes GTM.
+  La vraie question n'est pas « lequel est meilleur » mais « lequel EXPLOITE la stack qu'on doit utiliser » —
+  et couvre les 4 archétypes que le brief cite mot pour mot.</p>
+  <div class="meta">
+    <div>Brief&nbsp;: <b>« production-ready GTM agents »</b></div>
+    <div>Vérif&nbsp;: <b>10/10 verify.sh</b>, 0 clé</div>
+    <div>Démo E2E&nbsp;: <b>0,4 s, 0 crédit</b></div>
+  </div>
+
+  <div class="verdict">
+    <div class="vtop">
+      <div class="lead">Sur les 3 piliers imposés, V2 exploite <b>2,5×</b> ce que V1 exploite —
+        et couvre désormais <b>les 4 archétypes</b> avec un seul moteur.</div>
+      <div class="score2">
+        <div class="sb v1"><div class="n">3,0</div><div class="l">V1 /10</div></div>
+        <div class="sb v2"><div class="n">7,7</div><div class="l">V2 /10</div></div>
+      </div>
+    </div>
+    <div class="vnote">V1 branche Claude en simple copywriter, n'a <b>pas Sillage du tout</b> (RSS gratuit à la place),
+      et enrichit sans discipline de coût. V2 place Claude aux jonctions de jugement, consomme les signaux Sillage
+      (achat ET risque), et n'enrichit FullEnrich que sous garde VOI.</div>
+  </div>
+
+  <section>
+    <h2>Les 3 piliers imposés — profondeur d'exploitation</h2>
+    <div class="pill">
+      <div class="prow">
+        <div class="top"><div class="name">🧠 Claude <small>raisonnement · rédaction · orchestration</small></div><div class="sc">V1 4 → <b>V2 9</b></div></div>
+        <div class="gr"><div class="v1b" style="width:40%"></div><div class="v2b" style="width:90%"></div><div class="lbl">9</div></div>
+      </div>
+      <div class="prow">
+        <div class="top"><div class="name">📡 Sillage <small>signaux d'intention · 8 types d'agents</small></div><div class="sc">V1 0 → <b>V2 7</b></div></div>
+        <div class="gr"><div class="v1b" style="width:2%"></div><div class="v2b" style="width:70%"></div><div class="lbl">7</div></div>
+      </div>
+      <div class="prow">
+        <div class="top"><div class="name">🗂️ FullEnrich <small>emails · mobiles · people/company data</small></div><div class="sc">V1 5 → <b>V2 8</b></div></div>
+        <div class="gr"><div class="v1b" style="width:50%"></div><div class="v2b" style="width:80%"></div><div class="lbl">8</div></div>
+      </div>
+    </div>
+    <p class="sub" style="margin-top:12px;font-size:13.5px">
+      <b>Claude</b> — V1 : Claude n'écrit que les mails (75 % de précision après 3 corrections HUMAINES des règles).
+      V2 : Claude conçoit l'arbre de signaux + mappe les axes (Opus), cœur de scoring 0-token → 90 % au 1ᵉ run, 0 correction.<br>
+      <b>Sillage</b> — V1 : zéro (RSS Google News). V2 : adapter complet du vrai modèle (push→agents→run→poll) +
+      <b>les 8 types ontologisés</b> (job/keyword pour l'achat ; champion/competitor/customer/leadership/M&A pour le risque).<br>
+      <b>FullEnrich</b> — V1 : waterfall standard. V2 : HMAC, gestion crédits/402/429, + <b>garde VOI</b> (enrichir 26 IN, pas 303) = 6-26 €/campagne vs 177 € Clay.
+    </p>
+  </section>
+
+  <section>
+    <h2>Les 4 archétypes du brief — couverture V2</h2>
+    <div class="arch">
+      <div class="ac">
+        <h3>ICP scoring engine</h3>
+        <div class="bar"><i style="width:95%;background:var(--good)"></i></div>
+        <div class="cov">95 % <span class="st done">construit</span></div>
+        <div class="note">Le joyau : intervalles + bandes + VOI, 90 % de précision mesurée, 22 tests verts.</div>
+      </div>
+      <div class="ac">
+        <h3>Outreach sequencer</h3>
+        <div class="bar"><i style="width:70%;background:var(--good)"></i></div>
+        <div class="cov">70 % <span class="st done">construit</span></div>
+        <div class="note">Fabrique de mails par axe×format + envoi gated + stop-on-reply. Reste : un vrai ordonnanceur de cadence.</div>
+      </div>
+      <div class="ac">
+        <h3>CRM auto-updater</h3>
+        <div class="bar"><i style="width:80%;background:var(--accent)"></i></div>
+        <div class="cov">15 % → 80 % <span class="st new">ce soir</span></div>
+        <div class="note">crm_adapter.py : upsert Account + Task par domaine (Salesforce/HubSpot/Attio), mock prouvé, stub REST prêt.</div>
+      </div>
+      <div class="ac">
+        <h3>Pipeline risk monitor</h3>
+        <div class="bar"><i style="width:75%;background:var(--accent)"></i></div>
+        <div class="cov">10 % → 75 % <span class="st new">ce soir</span></div>
+        <div class="note">pipeline_monitor.py : le MÊME moteur score le risque de churn via Sillage (champion, competitor, M&A). 97 k€ à risque détectés.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>La grande idée — et pourquoi V2 gagne</h2>
+    <div class="big">
+      <div class="k">Un seul moteur, l'autre sens du cycle de vie</div>
+      <div class="t">Scorer <b>qui achète</b> et scorer <b>quel deal meurt</b>, c'est le même calcul bayésien
+        sur la même donnée Sillage. V2 ne colle pas 4 outils — il <b>pointe un seul cerveau</b> dans les deux
+        directions du revenue, et écrit tout dans le CRM.</div>
+      <div class="proof">
+        <span class="chip">score_v2.py réutilisé pour l'achat ET le risque</span>
+        <span class="chip">8 types Sillage ontologisés</span>
+        <span class="chip">acquisition + rétention dans le même CRM</span>
+        <span class="chip">4 archétypes · 1 moteur · 0,4 s · 0 crédit</span>
+      </div>
+    </div>
+    <p class="sub" style="margin-top:14px;font-size:13.5px">
+      Le pitch : <b>« les autres enrichissent une liste et espèrent que Sillage la réveille ;
+      BRICKS est le seul système où les 3 piliers forment une seule boucle de décision — Claude décompose la thèse
+      en arbre de signaux, l'arbre compile les agents Sillage, le VOI ne dépense un crédit FullEnrich que là où
+      l'information fait basculer une décision, et le résultat s'écrit dans votre Salesforce. »</b>
+    </p>
+  </section>
+
+  <footer>
+    <b>Sources.</b> Scores stack = analyse Opus 4.8 adversariale (3 lentilles) sur le code réel des deux plugins.
+    Couvertures archétypes mesurées avant/après les briques construites cette nuit (crm_adapter, pipeline_monitor, arbre de risque, demo_e2e).<br>
+    <b>Vérifiable.</b> `bash verify.sh` → 10/10, zéro clé. `python3 tools/demo_e2e.py` rejoue les 4 archétypes en 0,4 s.
+    <b>Honnête.</b> Sillage réel non encore branché (mock + adapter prêts, rituel Day-1) ; ordonnanceur de cadence et enrichissement payant restent à prouver en live.
+  </footer>
+</div>

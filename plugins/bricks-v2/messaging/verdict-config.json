@@ -1,0 +1,42 @@
+{
+  "_note": "Seuils calibrés par l'agent BUSINESS (08/07/2026, benchmarks cold outbound B2B PME FR, dirigeants 58-68, produit 4500€+249/mois vendu par le fondateur). Priors volontairement conservateurs — le moteur ré-estime dès que le réel arrive. Ne JAMAIS annualiser un taux observé sur N<60.",
+  "n_abstention": 25,
+  "n_min_kill": 120,
+  "positive_reply": {
+    "viable": 0.04,
+    "floor": 0.015,
+    "_benchmarks": "réponses totales 4-9% (IN hyper-perso : 6-12%) ; 20-35% des réponses sont positives → taux positif médian ~2% ; seuil viable 4% = haut du réaliste, honnête"
+  },
+  "meeting": {
+    "viable": 0.03,
+    "floor": 0.01,
+    "_benchmarks": "RDV/contacts 1,5-4%, médian 3% sur bande IN ; <1,5% = ciblage ou message défaillant ; conversion réponse-positive→RDV ~90% si relance <24h"
+  },
+  "conf_viable": 0.70,
+  "conf_kill": 0.15,
+  "prior": { "a0": 1.0, "b0": 32.0, "_note": "prior ≈ 3% attendu, faible poids (≈33 pseudo-observations)" },
+  "close_rate_assumed": 0.15,
+  "_close_note": "RDV→client 10-18%, médian 15% (fondateur, ticket 4500€+abo, cycle émotionnel long) ; 20% si démo sur les VRAIES données du prospect",
+  "cost_baselines": {
+    "clay_mois_eur": "~177 (Starter+crédits) — et ne score pas l'ICP par signaux",
+    "agence_prospection_rdv_eur": "250-500 / RDV + setup ~2000 + engagement 3-6 mois",
+    "sdr_temps_plein_mois_eur": "~4000 chargé + 2-3 mois de rampe",
+    "bricks_campagne_60_cash_eur": 37,
+    "bricks_campagne_60_complet_eur": 237,
+    "bricks_rdv_projete_eur": "21 cash / ~130 charge complète",
+    "valeur_rdv_esperance_eur": "~1570 (LTV 10 476 € × close 15%)"
+  },
+  "eur_per_credit": 0.15,
+  "seuils_evenements_bruts": {
+    "_note": "lecture rapide BUSINESS en événements bruts (complément du calcul bayésien)",
+    "vague_1_n60": { "OUI_precoce": "≥4 réponses positives OU ≥3 RDV tenus", "CONTINUE": "2-3 positives OU 1-2 RDV → vague 2 (+60)", "signal_faible": "0-1 positive" },
+    "cumule_n120": { "OUI_ferme": "≥4 RDV tenus OU ≥5 réponses positives", "NON": "0 RDV ET ≤1 réponse positive" },
+    "borne": "N=180 maximum sous 14 jours ; rester en zone grise à 180 = signal faible négatif (le motion ne scale pas)"
+  },
+  "preuves_qualitatives_obligatoires": [
+    "OBJECTIONS : des 'non' de VENTE (trop cher, pas maintenant) = OK ; ≥3 objections de PERTINENCE (je ne vois pas le problème) = falsification de la thèse ICP, plus grave qu'un taux bas",
+    "WILLINGNESS-TO-PAY : ≥1 prospect qui, en RDV, discute le COMMENT (déploiement, données) et pas le POURQUOI-si-cher",
+    "CANAL PRESCRIPTEUR : toute mention spontanée d'expert-comptable/notaire/CGP = signal de canal B2B2B, vaut plus que 3 RDV directs",
+    "RÈGLE : taux corrects MAIS 0 willingness-to-pay + objections de pertinence = verdict NON malgré les RDV"
+  ]
+}

@@ -1,0 +1,151 @@
+<title>BRICKS — coût & vitesse avec FullEnrich + Sillage imposés</title>
+<style>
+  :root{
+    --paper:#FBF8F4; --paper-2:#F4EEE6; --ink:#1C1815; --ink-2:#5B534A;
+    --line:#E6DDD1; --line-2:#D8CCBB; --accent:#E0551E; --accent-soft:#F7E7DC;
+    --v1:#8A7A66; --v2:#E0551E;
+    --good:#2F7D57; --good-bg:#E7F1EA; --warn:#B47A16; --warn-bg:#F6EDD8;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:48px 28px 80px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(28px,4.6vw,42px);line-height:1.06;margin:.35em 0 .1em;text-wrap:balance;letter-spacing:-.01em}
+  .sub{color:var(--ink-2);font-size:16px;max-width:66ch;margin:.2em 0 0}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+  .meta b{color:var(--ink)}
+  section{margin-top:50px}
+  h2{font-family:var(--sans);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);font-weight:700;margin:0 0 18px;display:flex;align-items:center;gap:12px}
+  h2::after{content:"";flex:1;height:1px;background:var(--line)}
+  .heads{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px;margin-top:32px}
+  .hc{background:#fff;border:1px solid var(--line-2);border-radius:13px;padding:20px}
+  .hc .k{font-family:var(--mono);font-size:30px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1;color:var(--accent)}
+  .hc .k small{font-size:14px;color:var(--ink-2);font-weight:500}
+  .hc .lab{font-size:13.5px;color:var(--ink);margin-top:9px;font-weight:600}
+  .hc .note{font-size:12.5px;color:var(--ink-2);margin-top:5px;line-height:1.4}
+  .hc.warn .k{color:var(--warn)}
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+  table{border-collapse:collapse;width:100%;min-width:660px}
+  th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top}
+  thead th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);font-weight:700;background:var(--paper-2)}
+  tbody tr:last-child td{border-bottom:none}
+  td.dim{color:var(--ink-2);font-weight:600}
+  .val{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  tr.hi td{background:var(--accent-soft)}
+  tr.exp td{background:var(--warn-bg)}
+  .tag{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;border-radius:5px;padding:1px 6px;margin-left:6px}
+  .tag.free{color:var(--good);background:var(--good-bg)} .tag.exp{color:var(--warn);background:var(--warn-bg)}
+  .bars{display:flex;flex-direction:column;gap:11px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px}
+  .brow{display:grid;grid-template-columns:220px 1fr 88px;gap:14px;align-items:center}
+  .brow .bl{font-size:13.5px}.brow .bl small{display:block;color:var(--ink-2);font-size:11.5px;font-family:var(--mono)}
+  .track{height:14px;background:var(--paper-2);border-radius:7px;overflow:hidden}.fill{height:100%;border-radius:7px}
+  .brow .bv{font-family:var(--mono);font-size:12.5px;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .panel h3{margin:0 0 12px;font-size:13px;letter-spacing:.05em;text-transform:uppercase;font-weight:700}
+  .panel.win h3{color:var(--good)} .panel.care h3{color:var(--warn)}
+  .panel ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:11px}
+  .panel li{font-size:14px;color:var(--ink-2);padding-left:20px;position:relative;line-height:1.45}
+  .panel li b{color:var(--ink)}
+  .panel.win li::before{content:"✓";position:absolute;left:0;color:var(--good);font-family:var(--mono);font-weight:700}
+  .panel.care li::before{content:"!";position:absolute;left:2px;color:var(--warn);font-family:var(--mono);font-weight:700}
+  .verdict{margin-top:32px;border:1px solid var(--line-2);border-radius:14px;background:linear-gradient(180deg,#fff,var(--paper));padding:22px 26px}
+  .verdict .lead{font-family:var(--serif);font-size:21px;line-height:1.3;max-width:62ch}
+  .verdict .lead b{color:var(--accent)}
+  footer{margin-top:50px;padding-top:22px;border-top:1px solid var(--line);color:var(--ink-2);font-size:12.5px;font-family:var(--mono);line-height:1.7}
+  footer b{color:var(--ink)}
+  @media(max-width:680px){.cols{grid-template-columns:1fr}.brow{grid-template-columns:130px 1fr 66px}}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Config production · FullEnrich + Sillage imposés · 09 juillet 2026</div>
+  <h1>Et si on impose les deux outils payants ?</h1>
+  <p class="sub">Le scénario réel de demain : Sillage (signaux) + FullEnrich (emails/mobiles)
+  branchés et obligatoires. Ça ajoute du cash et de la latence asynchrone — voici combien,
+  et si ça reste supportable pour un utilisateur normal.</p>
+  <div class="meta">
+    <div>Campagne&nbsp;: <b>60 contacts (26 IN + 34 BAND)</b></div>
+    <div>Tarif&nbsp;: <b>0,15 €/crédit FullEnrich</b> (hyp.)</div>
+    <div>Sillage&nbsp;: <b>essai gratuit</b></div>
+  </div>
+
+  <div class="heads">
+    <div class="hc"><div class="k">0,6<small>s</small></div><div class="lab">Le cerveau, inchangé</div><div class="note">scoring+VOI+fabrique des 303 PME. Les tools payants ne ralentissent pas le calcul.</div></div>
+    <div class="hc"><div class="k">6 → 26<small>€</small></div><div class="lab">Cash / campagne de 60</div><div class="note">email seul 6 € ; avec mobiles ciblés par VOI 26 €. C'est FullEnrich qui coûte.</div></div>
+    <div class="hc"><div class="k">−25<small>€</small></div><div class="lab">Économie VOI sur les mobiles</div><div class="note">le mobile coûte 10× l'email ; V2 ne l'achète que sur la bande IN (13) au lieu des 60.</div></div>
+    <div class="hc warn"><div class="k">?<small> €</small></div><div class="lab">Sillage en payant</div><div class="note">aucun prix public (démo). Gratuit en essai, mais quota de comptes <b>à vie</b>.</div></div>
+  </div>
+
+  <section>
+    <h2>Coût — ce que coûtent vraiment les deux outils</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Poste</th><th>Détail</th><th>Cash</th></tr></thead>
+        <tbody>
+          <tr><td class="dim">Scoring des 303 PME</td><td>code pur, 0 token</td><td class="val">0 €<span class="tag free">gratuit</span></td></tr>
+          <tr><td class="dim">Sillage (signaux)</td><td>essai sans carte, quota comptes à vie</td><td class="val">0 €<span class="tag free">essai</span></td></tr>
+          <tr><td class="dim">LLM (fabrique + axe-mapper)</td><td>sur abonnement Claude</td><td class="val">~0 €</td></tr>
+          <tr><td class="dim">FullEnrich — emails (42 trouvés)</td><td>1 crédit / email</td><td class="val">6,30 €</td></tr>
+          <tr class="exp"><td class="dim">FullEnrich — mobiles</td><td><b>10 crédits / mobile</b> — le poste cher</td><td class="val">19,50–45 €<span class="tag exp">10×</span></td></tr>
+          <tr class="hi"><td class="dim"><b>Total V2 — email + mobiles sur IN (VOI)</b></td><td>mobiles ciblés (13)</td><td class="val"><b>25,80 €</b></td></tr>
+          <tr><td class="dim">Total V1 — mobiles sur les 60 (sans bandes)</td><td>arrosage (30 mobiles)</td><td class="val">51,30 €</td></tr>
+          <tr class="hi"><td class="dim"><b>Total V2 — email seul</b></td><td>sans lane téléphone</td><td class="val"><b>6,30 €</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sub" style="margin-top:12px;font-size:13.5px">Imposer les tools ne casse pas l'économie — <b>tant qu'on est discipliné</b>. Le seul poste qui
+    dérape est le <b>mobile (10× l'email)</b> : c'est exactement là que les bandes + VOI de V2 gagnent, en n'achetant le numéro cher que sur les
+    26 comptes prouvés → <b>25,80 € au lieu de 51,30 €</b>. Sans cette discipline, la lane téléphone double la facture.</p>
+  </section>
+
+  <section>
+    <h2>Vitesse — la latence asynchrone en plus</h2>
+    <div class="bars">
+      <div class="brow"><div class="bl">Cerveau déterministe <small>score+VOI+fabrique, 303</small></div><div class="track"><div class="fill" style="width:1%;background:var(--v2)"></div></div><div class="bv">0,6 s</div></div>
+      <div class="brow"><div class="bl">Setup Sillage <small>push comptes + agents</small></div><div class="track"><div class="fill" style="width:22%;background:var(--v1)"></div></div><div class="bv">~5 min</div></div>
+      <div class="brow"><div class="bl">Résolution domaines <small>obligatoire (Sillage=domaine), 26</small></div><div class="track"><div class="fill" style="width:9%;background:var(--v1)"></div></div><div class="bv">~112 s</div></div>
+      <div class="brow"><div class="bl">FullEnrich bulk 60 <small>async, 100 en parallèle, webhook</small></div><div class="track"><div class="fill" style="width:9%;background:var(--v1)"></div></div><div class="bv">~2 min</div></div>
+      <div class="brow"><div class="bl">Signal run Sillage <small>async, poll — pas de SLA public</small></div><div class="track"><div class="fill" style="width:30%;background:var(--warn)"></div></div><div class="bv">minutes</div></div>
+      <div class="brow"><div class="bl">Fabrique de mails <small>LLM, 26 mails</small></div><div class="track"><div class="fill" style="width:15%;background:var(--accent)"></div></div><div class="bv">~200 s</div></div>
+    </div>
+    <p class="sub" style="margin-top:12px;font-size:13.5px">Le cerveau reste <b>instantané</b>. Tout le temps ajouté est de l'<b>I/O provider asynchrone</b>
+    (Sillage et FullEnrich répondent en push→poll) — donc <b>subi en fond, jamais bloquant</b> : on lance le job, on fait autre chose.
+    Temps <b>actif</b> de l'utilisateur ~12 min ; temps <b>écoulé</b> jusqu'à la 1ʳᵉ vague ~20 min, premier envoi le jour même.</p>
+  </section>
+
+  <section>
+    <h2>Verdict · les réserves honnêtes</h2>
+    <div class="cols">
+      <div class="panel win">
+        <h3>Ça reste supportable & abordable</h3>
+        <ul>
+          <li><b>Prix raisonnable</b> : 6 € email seul, ~26 € avec téléphone ciblé — loin des 177 €/mois de Clay ou 4 000 €/mois d'un SDR.</li>
+          <li><b>Vitesse tolérable</b> : le calcul est instantané ; les attentes sont asynchrones et backgroundables (~20 min, envoi le jour même).</li>
+          <li><b>Le VOI paie enfin</b> : dès qu'il y a du crédit cher à répartir, les bandes de V2 économisent ~25 €/vague.</li>
+        </ul>
+      </div>
+      <div class="panel care">
+        <h3>Ce qu'on ne sait pas encore</h3>
+        <ul>
+          <li><b>Sillage payant = inconnu</b> : aucun prix public ; on ne peut chiffrer que l'essai gratuit. Le quota de comptes est <b>à vie</b> → pousser les mieux scorés d'abord.</li>
+          <li><b>0,15 €/crédit FullEnrich</b> est une hypothèse (pas de prix API public) ; les taux de hit (70 % email, 50 % mobile) varient sur des PME FR.</li>
+          <li><b>Pas de SLA de latence</b> Sillage : « minutes » est une estimation, pas une garantie.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="verdict">
+      <div class="lead">Imposer FullEnrich et Sillage garde BRICKS <b>rapide</b> (le cerveau reste sous la seconde, les attentes sont asynchrones)
+      et <b>abordable</b> — <b>6 à 26 € la vague de 60</b> — à condition de laisser le VOI décider où va le crédit cher.
+      La seule vraie inconnue est le <b>prix payant de Sillage</b>, à obtenir en démo.</div>
+    </div>
+  </section>
+
+  <footer>
+    <b>Sources.</b> FullEnrich : docs officielles (email 1 cr · mobile 10 cr · perso 3 cr · search 0,25 cr ; dédup 3 mois ; async 30-90 s/contact, 100 concurrents).
+    Sillage : getsillage.com — aucun prix public (démo), essai sans carte, quota top-accounts à vie, API asynchrone (push→poll, signal-run→poll, pas de webhook).<br>
+    <b>Hypothèses.</b> 0,15 €/crédit FullEnrich (packs publics ~0,145 $) ; taux de hit 70 % email / 50 % mobile ; LLM ~0 € en régime abonnement Claude ; temps réseau mesurés/estimés, variables selon connexion et charge des APIs.
+  </footer>
+</div>

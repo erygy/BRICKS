@@ -1,0 +1,8 @@
+{"_id": 36, "name": "EGS CLIM", "domain": "egsclim.fr", "domain_confidence": "high", "domain_evidence": "slug:contenu vérifié (2 tokens + ville)"}
+{"_id": 61, "name": "SAUMA INDUSTRIE SA", "domain": null, "domain_confidence": "none", "domain_evidence": "0 candidats testés, aucun vérifié"}
+{"_id": 199, "name": "ETS BALEYDIER", "domain": "baleydier.fr", "domain_confidence": "high", "domain_evidence": "slug:contenu vérifié (1 tokens)"}
+{"_id": 73, "name": "ELEC 4", "domain": "elec.fr", "domain_confidence": "medium", "domain_evidence": "slug:domaine vivant (HTTP 403, WAF) + slug-match fort"}
+{"_id": 107, "name": "JOBS SARL USINES DE LYON (JOBS SARL)", "domain": null, "domain_confidence": "none", "domain_evidence": "0 candidats testés, aucun vérifié"}
+{"_id": 157, "name": "TOUTES TECHNIQUES D'EXPLOITATION CLIMATIQUES (TTEC)", "domain": null, "domain_confidence": "none", "domain_evidence": "0 candidats testés, aucun vérifié"}
+{"_id": 221, "name": "LATHUILIERE ELECTRICITE", "domain": null, "domain_confidence": "none", "domain_evidence": "0 candidats testés, aucun vérifié"}
+{"_id": 149, "name": "SEMA", "domain": "sema.fr", "domain_confidence": "high", "domain_evidence": "slug:contenu vérifié (1 tokens)"}

@@ -1,0 +1,32 @@
+{
+  "H2_v1": {
+    "n": 20,
+    "n_fit": 9,
+    "precision_pct": 45,
+    "verdict": "FAIL (<60%)",
+    "cause": "NAF 71.12B ingenierie 8/20 = anti-ICP; filiales de groupes; gouvernance diluee"
+  },
+  "H2_v2": {
+    "n": 20,
+    "n_fit": 13,
+    "precision_pct": 65,
+    "verdict": "PASS (>=60%)",
+    "cause_restante": "filiales de groupes etrangers (nom ... FRANCE + dirigeant salarie), 6/7 FP"
+  },
+  "H2_v3": {
+    "n": 20,
+    "n_fit": 15,
+    "precision_pct": 75,
+    "verdict": "PASS",
+    "trajectoire": "45->65->75",
+    "residu": "filiales groupes etrangers a nom d enseigne, indetectables sans registre (lane payante)"
+  },
+  "H6_drafts": {
+    "n": 5,
+    "moyenne": 8.4,
+    "pct_sans_hallucination": 100,
+    "cppc": "5/5",
+    "l121": "conforme (claims cote risque)",
+    "verdict": "envoyables, perso sourcee mais superficielle"
+  }
+}

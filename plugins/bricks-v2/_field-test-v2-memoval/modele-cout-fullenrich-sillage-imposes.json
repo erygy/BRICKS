@@ -1,0 +1,64 @@
+{
+  "scenario": "FullEnrich + Sillage IMPOSÉS (config production)",
+  "fullenrich_par_scenario": {
+    "V1_sans_bandes__email_seul": {
+      "emails": 42,
+      "mobiles": 0,
+      "credits": 42,
+      "eur": 6.3
+    },
+    "V1_sans_bandes__email+phone": {
+      "emails": 42,
+      "mobiles": 30,
+      "credits": 342,
+      "eur": 51.3
+    },
+    "V2_VOI__email_seul": {
+      "emails": 42,
+      "mobiles": 0,
+      "credits": 42,
+      "eur": 6.3
+    },
+    "V2_VOI__email+phone_sur_IN": {
+      "emails": 42,
+      "mobiles": 13,
+      "credits": 172,
+      "eur": 25.8
+    }
+  },
+  "sillage": {
+    "cash_essai_eur": 0.0,
+    "contrainte": "quota top-accounts À VIE en essai (pousser les mieux scorés d'abord)",
+    "prix_payant": "INCONNU — démo uniquement, aucun prix public",
+    "cadence": "async : push comptes (202→poll) + signal run (→poll), pas de webhook"
+  },
+  "llm": {
+    "abo_claude_eur": 0.0,
+    "api_eur_V2": 1.85,
+    "api_eur_V1": 0.11,
+    "scoring": "0 token (déterministe) dans les 2 versions"
+  },
+  "total_campagne_60_eur": {
+    "V1_email+phone (arrose les 60)": 51.3,
+    "V2_email+phone (VOI: mobiles sur IN)": 25.8,
+    "V2_email_seul": 6.3
+  },
+  "economie_mobile_grace_au_VOI_eur": 25.5,
+  "vitesse": {
+    "cerveau_deterministe_303_s": 0.6,
+    "resolution_domaines_26_IN_s": 112,
+    "sillage_setup_min": 5,
+    "sillage_signal_run_min": "quelques minutes (async, poll ; pas de SLA public)",
+    "fullenrich_bulk_60_min": 2,
+    "fabrique_mails_26_s": 200,
+    "temps_ACTIF_utilisateur_min": "~12",
+    "temps_ELAPSED_1ere_vague_min": "~20",
+    "note": "le cerveau reste <1 s ; le surcoût de temps est de l'I/O provider ASYNC (poll), subi en fond, pas bloquant"
+  },
+  "hypotheses": {
+    "eur_par_credit_fullenrich": 0.15,
+    "taux_hit_email": 0.7,
+    "taux_hit_mobile": 0.5,
+    "sillage_essai": "gratuit sans carte, quota à vie"
+  }
+}

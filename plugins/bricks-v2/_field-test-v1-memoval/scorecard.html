@@ -1,0 +1,258 @@
+<title>BRICKS × MemoVAL — banc de test scientifique</title>
+<style>
+  :root{
+    --paper:#FBF8F4; --paper-2:#F4EEE6; --ink:#1C1815; --ink-2:#5B534A;
+    --line:#E6DDD1; --line-2:#D8CCBB;
+    --accent:#E0551E;            /* BRICKS orange, deepened */
+    --accent-soft:#F7E7DC;
+    --pass:#2F7D57; --pass-bg:#E7F1EA;
+    --warn:#B47A16; --warn-bg:#F6EDD8;
+    --fail:#B23A2E; --fail-bg:#F6E2DE;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+    line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto;padding:48px 28px 80px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--accent);font-weight:600}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5vw,46px);line-height:1.05;
+    margin:.35em 0 .1em;text-wrap:balance;letter-spacing:-.01em}
+  .sub{color:var(--ink-2);font-size:16px;max-width:62ch;margin:.2em 0 0}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px;font-family:var(--mono);
+    font-size:12.5px;color:var(--ink-2)}
+  .meta b{color:var(--ink);font-weight:600}
+  section{margin-top:52px}
+  h2{font-family:var(--sans);font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-2);font-weight:700;margin:0 0 18px;display:flex;align-items:center;gap:12px}
+  h2::after{content:"";flex:1;height:1px;background:var(--line)}
+  /* verdict banner */
+  .verdict{margin-top:34px;border:1px solid var(--line-2);border-radius:14px;overflow:hidden;
+    background:linear-gradient(180deg,#fff, var(--paper))}
+  .verdict-top{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;
+    padding:22px 26px;border-bottom:1px solid var(--line)}
+  .verdict-top .lead{font-family:var(--serif);font-size:22px;line-height:1.25;max-width:46ch}
+  .verdict-top .lead b{color:var(--accent)}
+  .badges{display:flex;gap:10px;flex-wrap:wrap}
+  .badge{font-family:var(--mono);font-size:12px;font-weight:600;padding:8px 12px;border-radius:9px;
+    display:flex;flex-direction:column;gap:2px;min-width:112px}
+  .badge span{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.75;font-weight:600}
+  .b-pass{background:var(--pass-bg);color:var(--pass)}
+  .b-cond{background:var(--warn-bg);color:var(--warn)}
+  .verdict-note{padding:16px 26px;font-size:14.5px;color:var(--ink-2)}
+  .verdict-note b{color:var(--ink)}
+  /* funnel */
+  .funnel{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .fcell{background:#fff;border:1px solid var(--line);border-radius:11px;padding:16px 16px 14px;
+    position:relative}
+  .fcell .n{font-family:var(--mono);font-size:30px;font-weight:600;letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums;line-height:1}
+  .fcell .lab{font-size:12.5px;color:var(--ink-2);margin-top:7px}
+  .fcell .sub2{font-family:var(--mono);font-size:11px;color:var(--accent);margin-top:5px}
+  .fcell.k .n{color:var(--accent)}
+  /* hypothesis table */
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+  table{border-collapse:collapse;width:100%;min-width:640px}
+  th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);font-weight:700;
+    background:var(--paper-2)}
+  tbody tr:last-child td{border-bottom:none}
+  td .h{font-family:var(--mono);font-weight:600;color:var(--ink)}
+  td .crit{color:var(--ink-2);font-size:13px}
+  td .val{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums}
+  .chip{font-family:var(--mono);font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px;
+    white-space:nowrap;letter-spacing:.03em}
+  .c-pass{background:var(--pass-bg);color:var(--pass)}
+  .c-part{background:var(--warn-bg);color:var(--warn)}
+  .c-fail{background:var(--fail-bg);color:var(--fail)}
+  /* trajectory */
+  .traj{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .step{background:#fff;border:1px solid var(--line);border-radius:11px;padding:16px}
+  .step .v{font-family:var(--mono);font-size:34px;font-weight:600;font-variant-numeric:tabular-nums;
+    letter-spacing:-.02em;display:flex;align-items:baseline;gap:8px}
+  .step .v small{font-size:14px;color:var(--ink-2);font-weight:500}
+  .step.final .v{color:var(--accent)}
+  .step .tag{font-family:var(--mono);font-size:11px;color:var(--ink-2);margin-top:2px}
+  .step .fix{font-size:13px;color:var(--ink-2);margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+  .step .fix b{color:var(--ink);font-weight:600}
+  .bar{height:6px;border-radius:4px;background:var(--paper-2);margin-top:12px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--accent);border-radius:4px}
+  /* two-col panels */
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .panel h3{margin:0 0 12px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--ink);font-weight:700}
+  .panel ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:11px}
+  .panel li{font-size:14px;color:var(--ink-2);padding-left:20px;position:relative;line-height:1.45}
+  .panel li b{color:var(--ink);font-weight:600}
+  .panel.ok li::before{content:"✓";position:absolute;left:0;color:var(--pass);font-family:var(--mono);font-weight:700}
+  .panel.no li::before{content:"×";position:absolute;left:0;color:var(--fail);font-family:var(--mono);font-weight:700}
+  /* drafts */
+  .draft{background:#fff;border:1px solid var(--line);border-radius:11px;padding:15px 18px;
+    display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .draft .who{font-weight:600}
+  .draft .who small{display:block;color:var(--ink-2);font-weight:400;font-size:12.5px;
+    font-family:var(--mono);margin-top:3px}
+  .score{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--accent);
+    font-variant-numeric:tabular-nums;white-space:nowrap}
+  .score small{color:var(--ink-2);font-size:12px;font-weight:400}
+  .stack{display:flex;flex-direction:column;gap:10px}
+  footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);color:var(--ink-2);
+    font-size:12.5px;font-family:var(--mono);line-height:1.7}
+  footer b{color:var(--ink)}
+  @media(max-width:680px){.cols,.traj{grid-template-columns:1fr}.verdict-top .lead{font-size:19px}}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Banc de test · 08 juillet 2026</div>
+  <h1>BRICKS, testé de bout en bout sur MemoVAL</h1>
+  <p class="sub">Une campagne outbound réelle — sourcing → firmographie → signaux → scoring → messages —
+  exécutée avec le plugin tel qu'il existe, l'offre MemoVAL comme cas de test, et des juges adversariaux
+  à chaque étape. Protocole et seuils fixés avant le run.</p>
+  <div class="meta">
+    <div>Cas de test&nbsp;: <b>MemoVAL → PME en transmission</b></div>
+    <div>Périmètre&nbsp;: <b>cœur gratuit</b> (lanes payantes hors ligne)</div>
+    <div>Crédits dépensés&nbsp;: <b>0</b></div>
+    <div>Plantages&nbsp;: <b>0</b></div>
+  </div>
+
+  <div class="verdict">
+    <div class="verdict-top">
+      <div class="lead">La machine tourne de A à Z sans accroc&nbsp;; la pertinence atteint
+        <b>75 %</b> après un cycle de calibrage — la boucle d'amélioration de BRICKS, observée en direct.</div>
+      <div class="badges">
+        <div class="badge b-pass"><span>Machinerie</span>opérationnelle</div>
+        <div class="badge b-cond"><span>Pertinence</span>75 % · calibrée</div>
+      </div>
+    </div>
+    <div class="verdict-note">La chaîne complète s'exécute sans clé API, sans erreur, en respectant la
+      discipline base-de-données/statuts et la règle « rien n'est envoyé sans humain » (<b>0 message sorti</b>).
+      La qualité de ciblage n'est pas acquise d'emblée&nbsp;: elle demande d'affiner les règles d'exclusion —
+      exactement ce pour quoi BRICKS est conçu.</div>
+  </div>
+
+  <section>
+    <h2>Le funnel</h2>
+    <div class="funnel">
+      <div class="fcell"><div class="n">303</div><div class="lab">PME sourcées</div><div class="sub2">API gouv · 0 crédit</div></div>
+      <div class="fcell k"><div class="n">194</div><div class="lab">retenues ICP</div><div class="sub2">109 disqualifiées</div></div>
+      <div class="fcell"><div class="n">131</div><div class="lab">comptes tier A</div><div class="sub2">B&nbsp;55 · C&nbsp;8</div></div>
+      <div class="fcell"><div class="n">5</div><div class="lab">messages rédigés</div><div class="sub2">0 envoyé</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Hypothèses pré-enregistrées</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Test</th><th>Critère fixé</th><th>Mesuré</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><div class="h">H1 · Sourcing</div><div class="crit">trouver de vraies cibles</div></td>
+            <td class="crit">≥ 50 PME</td>
+            <td class="val">303</td>
+            <td><span class="chip c-pass">RÉUSSI</span></td>
+          </tr>
+          <tr>
+            <td><div class="h">H2 · Précision ICP</div><div class="crit">juge adversarial, n=20</div></td>
+            <td class="crit">≥ 60 % de vrais prospects</td>
+            <td class="val">45 → 65 → <b>75 %</b></td>
+            <td><span class="chip c-pass">RÉUSSI*</span></td>
+          </tr>
+          <tr>
+            <td><div class="h">H3 · Firmographie</div><div class="crit">firmo.py, résolution par nom</div></td>
+            <td class="crit">≥ 80 % résolus</td>
+            <td class="val">82 % <span style="color:var(--ink-2)">· SIREN 100 %</span></td>
+            <td><span class="chip c-pass">RÉUSSI</span></td>
+          </tr>
+          <tr>
+            <td><div class="h">H4 · Signaux presse</div><div class="crit">news.py, transmission</div></td>
+            <td class="crit">≥ 50 % de vrais positifs</td>
+            <td class="val">~25 % · 0 exploitable</td>
+            <td><span class="chip c-fail">INADAPTÉ</span></td>
+          </tr>
+          <tr>
+            <td><div class="h">H5 · Priorisation</div><div class="crit">rank-accounts, tiers</div></td>
+            <td class="crit">≥ 3 tiers · sommet ≤ 70 %</td>
+            <td class="val">A 68 % · B · C</td>
+            <td><span class="chip c-pass">RÉUSSI</span></td>
+          </tr>
+          <tr>
+            <td><div class="h">H6 · Qualité messages</div><div class="crit">juge copy, n=5</div></td>
+            <td class="crit">≥ 7/10 · ≥ 80 % sans invention</td>
+            <td class="val">8,4/10 · 100 %</td>
+            <td><span class="chip c-pass">RÉUSSI</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sub" style="margin-top:12px;font-size:13.5px">* H2 échoue au premier réglage (45 %) et passe le seuil après un cycle
+      de correction des règles d'exclusion. H4 : le signal presse est le mauvais instrument pour MemoVAL — voir ci-dessous.</p>
+  </section>
+
+  <section>
+    <h2>La boucle de calibrage, en direct</h2>
+    <div class="traj">
+      <div class="step">
+        <div class="v">45<small>%</small></div><div class="tag">1ᵉ réglage</div>
+        <div class="bar"><i style="width:45%"></i></div>
+        <div class="fix">Trou : le panier NAF aspirait <b>l'ingénierie / conseil</b> (71.12B) — l'anti-ICP.</div>
+      </div>
+      <div class="step">
+        <div class="v">65<small>%</small></div><div class="tag">+ blacklist secteurs</div>
+        <div class="bar"><i style="width:65%"></i></div>
+        <div class="fix">Nouveau trou : <b>filiales de groupes étrangers</b> prises pour des PME indépendantes.</div>
+      </div>
+      <div class="step final">
+        <div class="v">75<small>%</small></div><div class="tag">+ filiale · ancienneté ≥15 ans</div>
+        <div class="bar"><i style="width:75%"></i></div>
+        <div class="fix">Résidu : filiales à <b>nom d'enseigne étrangère</b>, indétectables sans registre (lane payante). Plafond estimé ~90 %.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Ce qui marche · ce qui est bloqué</h2>
+    <div class="cols">
+      <div class="panel ok">
+        <h3>Prouvé sur ce run</h3>
+        <ul>
+          <li><b>Sourcing gratuit</b> via l'API entreprises de l'État — 303 cibles, 0 crédit.</li>
+          <li><b>Firmographie</b> fiable (SIREN 100 %, dirigeant 100 %, effectif 91 %).</li>
+          <li><b>Règles d'exclusion</b> qui apprennent : 45 → 75 % en trois patchs.</li>
+          <li><b>Messages</b> rédigés sourcés, sans invention (8,4/10), jamais envoyés.</li>
+          <li>Discipline <b>base + statuts</b> tenue&nbsp;; run rejouable, réversible.</li>
+        </ul>
+      </div>
+      <div class="panel no">
+        <h3>Hors périmètre (pas de clé)</h3>
+        <ul>
+          <li><b>Emails de contact</b> vérifiés (FullEnrich) — contacts = dirigeants nommés, sans adresse.</li>
+          <li><b>Scraping</b> de sites / registres de groupes (Bright Data) — d'où les filiales résiduelles.</li>
+          <li><b>Signaux presse</b> : bon outil pour l'embauche/le growth, <b>inadapté à MemoVAL</b> dont le déclencheur est un état firmographique (dirigeant 60-68 + société mûre), capté à 100 % au sourcing.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Échantillon de messages — top comptes</h2>
+    <div class="stack">
+      <div class="draft"><div class="who">La Charpenterie <small>charpente bois · 24 ans · dirigeant 67 ans</small></div><div class="score">9,0<small>/10</small></div></div>
+      <div class="draft"><div class="who">EGS Clim <small>génie climatique · Lyon · dirigeant 68 ans</small></div><div class="score">8,5<small>/10</small></div></div>
+      <div class="draft"><div class="who">Éts Bérod-Collet <small>décolletage · 36 ans · dirigeant 68 ans</small></div><div class="score">8,5<small>/10</small></div></div>
+      <div class="draft"><div class="who">PMC Deloy <small>négoce matériaux · dirigeant 68 ans</small></div><div class="score">8,0<small>/10</small></div></div>
+      <div class="draft"><div class="who">Bernay Automation <small>machines spéciales · 44 ans · dirigeante 66 ans</small></div><div class="score">8,0<small>/10</small></div></div>
+    </div>
+  </section>
+
+  <footer>
+    <b>Méthode.</b> Workspace BRICKS isolé · outils réels (workspace.py, db.py, firmo.py, news.py, rank.py) appelés en direct ·
+    ICP = PME FR indépendantes 1,5–10 M€, dirigeant 58-68 ans, secteurs à fort savoir tacite.<br>
+    <b>Juges adversariaux</b> instruits de casser, pas de valider — ils ont refusé de noter des données absentes, preuve de rigueur.<br>
+    <b>Limites honnêtes.</b> Précision jugée sur n=20 (intervalle large) · fuite géographique du filtre département ·
+    champ « dirigeant » parfois = commissaire aux comptes · signal presse non pertinent pour cet ICP.
+  </footer>
+</div>

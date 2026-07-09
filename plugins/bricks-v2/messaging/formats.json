@@ -1,0 +1,35 @@
+{
+  "_note": "Version MACHINE de FORMATS.md — les contrats injectés tels quels dans les prompts compilés. Modifier les deux fichiers ensemble.",
+  "formats": [
+    {
+      "id": "F1",
+      "name": "email premier contact",
+      "contract": "Structure OPPA×CPPC : (1) Observation = UN fait sourcé des ressources, récent, spécifique, non-creepy. (2) Problème posé comme le sujet du segment (« c'est souvent le moment où… »), jamais asserté sur eux. (3) Proposition = UNE issue, une phrase, au conditionnel, sans promesse chiffrée. (4) UNE question basse-friction pour ouvrir une conversation. < 100 mots. Sujet plat en minuscules, sans slogan, idéalement tiré du fait d'ouverture. Aucun lien, aucune pièce jointe. Si aucun fait sourcé disponible : ouvrir sur la douleur du segment (l'axe), ne JAMAIS fabriquer une observation."
+    },
+    {
+      "id": "F2",
+      "name": "relance angle neuf",
+      "contract": "3-5 lignes, autonome (lisible sans le 1er mail), JAMAIS « je me permets de relancer ». Prendre le 2e fait des ressources OU une question de qualification comme angle. Une question différente de celle du 1er mail. Sujet plat court."
+    },
+    {
+      "id": "F3",
+      "name": "breakup",
+      "contract": "3 lignes : on range le dossier sans culpabiliser, la porte reste ouverte, une micro-question de clôture (« je clôture ? »). Digne et léger — c'est souvent le mail au meilleur taux de réponse."
+    },
+    {
+      "id": "F4",
+      "name": "DM LinkedIn",
+      "contract": "Un chat : 2-4 lignes courtes, pas de sujet, pas de signature, une seule idée tirée des ressources, une question. Ton un cran plus direct que l'email, mêmes règles de faits."
+    },
+    {
+      "id": "F5",
+      "name": "invitation LinkedIn",
+      "contract": "PAS de copie : action item « envoyer l'invitation SANS note, profil : <linkedin_url> » (règle maison — le profil fait la crédibilité)."
+    },
+    {
+      "id": "F6",
+      "name": "mini-audit (hot manual)",
+      "contract": "Ouverture = DEUX observations concrètes reliées entre elles (uniquement si ≥2 faits sourcés de poids dans les ressources, sinon retomber sur F1), puis UNE question. 120 mots max. Le reste comme F1."
+    }
+  ]
+}

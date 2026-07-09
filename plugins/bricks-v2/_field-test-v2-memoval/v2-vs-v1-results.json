@@ -1,0 +1,48 @@
+{
+  "V1": {
+    "sourced": 303,
+    "selection": 194,
+    "selection_label": "ICP-fit",
+    "patches": 3,
+    "precision_pct": 75,
+    "precision_path": "45→65→75",
+    "ranking": "tiers plats A131/B55/C8",
+    "signal_model": "état firmo implicite",
+    "messaging": "5 CPPC template unique",
+    "draft_quality": 8.4,
+    "draft_clean_pct": 100,
+    "age_leak": "1 mail (À 68 ans)",
+    "cost": 0
+  },
+  "V2": {
+    "sourced": 303,
+    "selection": "IN=26 / BAND=177 / OUT=100",
+    "patches": 0,
+    "precision_pct": 90,
+    "precision_path": "90 (1er run)",
+    "coherence_vs_v1": "25/26 IN = ICP-fit V1",
+    "ranking": "intervalles + bandes + VOI (80 checks tous décisifs)",
+    "signal_model": "signaux nécessaires 3 couches, explicites",
+    "sillage_mock": "IN 26→41",
+    "messaging": "fabrique 2 axes (Opus) × formats, 8 mails",
+    "draft_quality": 8.5,
+    "draft_clean_pct": 100,
+    "age_leak": "0 (RGPD legal_hold respecté)",
+    "cost": 0
+  },
+  "hypotheses": {
+    "HV1_chaine": "PASS",
+    "HV2_precision_>=75": "PASS (90%)",
+    "HV3_zero_patch": "PASS (0 vs 3)",
+    "HV4_discrimination": "PASS (26/177/100)",
+    "HV5_voi_decision_first": "PASS (100% flips>=1)",
+    "HV6_qualite_>=8.4": "PASS (8.5)",
+    "HV7_axes": "PARTIEL (lisibles, pas pleinement orthogonaux)"
+  },
+  "caveats": [
+    "L'arbre V2 a ENCODÉ les leçons V1 → 0-patch = capitalisation, pas magie ; comparaison juste = V2 1er run vs V1 FINAL",
+    "90% mesuré sur la bande IN (26, plus resserrée) ; V1 75% sur les 194 (plus large) — V2 tiers par confiance, ce n'est pas la même population",
+    "Sillage = MOCK (pas de clés) ; la capacité signal réelle n'est pas prouvée, seulement la machinerie",
+    "Différenciation d'axe lisible mais pas franche (juge) ; template encore visible"
+  ]
+}

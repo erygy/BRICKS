@@ -1,0 +1,32 @@
+[
+  {
+    "company_id": 36, "to_name": "Christophe Guerci", "company": "EGS Clim",
+    "channel": "email-draft", "step": 1, "send_day": 0, "status": "draft", "msg_key": "36-email-1",
+    "subject": "32 ans de génie climatique — et après ?",
+    "body": "Bonjour M. Guerci,\n\nVous dirigez EGS Clim depuis plus de 30 ans à Lyon. En génie climatique, l'essentiel n'est écrit nulle part : quels clients rappellent chaque année, pourquoi telle installation a été faite ainsi, à qui parler chez chaque fournisseur.\n\nLe jour où vous passerez la main, cette mémoire-là part avec vous — et c'est souvent elle qui fait la différence sur le prix de cession.\n\nMemoVAL la met noir sur blanc pour qu'elle reste dans l'entreprise. Seriez-vous ouvert à 15 minutes d'échange sur le sujet ?\n\n[Prénom NOM]"
+  },
+  {
+    "company_id": 65, "to_name": "Patrick Deloy", "company": "PMC Deloy",
+    "channel": "email-draft", "step": 1, "send_day": 0, "status": "draft", "msg_key": "65-email-1",
+    "subject": "La valeur de PMC Deloy qui n'est pas au bilan",
+    "body": "Bonjour M. Deloy,\n\nUn négoce de matériaux, ce sont des relations construites chantier après chantier : les clients qui reviennent, les conditions négociées avec chaque fournisseur, les arrangements qui tiennent depuis des années. Rien de tout cela n'apparaît dans un bilan comptable.\n\nÀ 68 ans, si la transmission se profile, c'est précisément cette part-là qui risque de ne pas se transmettre — et de manquer au repreneur comme à votre prix de vente.\n\nMemoVAL sert à la capturer. Ça vous dirait qu'on en parle brièvement ?\n\n[Prénom NOM]"
+  },
+  {
+    "company_id": 259, "to_name": "Jean-Michel Collet", "company": "Éts Bérod-Collet",
+    "channel": "email-draft", "step": 1, "send_day": 0, "status": "draft", "msg_key": "259-email-1",
+    "subject": "Le décolletage, c'est un savoir-faire — et une mémoire",
+    "body": "Bonjour M. Collet,\n\nEn 36 ans, Bérod-Collet a accumulé ce qui fait un atelier de décolletage : les réglages qui marchent, les pièces délicates, les clients exigeants qu'on sait tenir. Ce savoir vit dans les têtes, rarement dans les dossiers.\n\nQuand vient le moment de transmettre, c'est ce capital-là — le plus difficile à racheter — qui décide souvent qu'une reprise réussit ou s'essouffle.\n\nMemoVAL aide à le mettre par écrit avant le départ. Auriez-vous 15 minutes pour que je vous montre comment ?\n\n[Prénom NOM]"
+  },
+  {
+    "company_id": 279, "to_name": "Daniel Chovin", "company": "La Charpenterie",
+    "channel": "email-draft", "step": 1, "send_day": 0, "status": "draft", "msg_key": "279-email-1",
+    "subject": "Transmettre La Charpenterie, pas seulement l'atelier",
+    "body": "Bonjour M. Chovin,\n\nUne charpente, ça ne se résume pas au bois et aux machines : c'est votre œil sur un chantier, les clients qui ne jurent que par vous, les tours de main appris sur 24 ans. Un repreneur hérite des murs — rarement de ça.\n\nSi la question de la suite commence à se poser, c'est le bon moment pour fixer cette mémoire pendant qu'elle est encore fraîche, plutôt qu'au dernier trimestre avant la vente.\n\nC'est exactement ce que fait MemoVAL. On en discute quelques minutes ?\n\n[Prénom NOM]"
+  },
+  {
+    "company_id": 228, "to_name": "Sylvie Van Den Driessche", "company": "Bernay Automation",
+    "channel": "email-draft", "step": 1, "send_day": 0, "status": "draft", "msg_key": "228-email-1",
+    "subject": "44 ans de machines spéciales, une mémoire à préserver",
+    "body": "Bonjour Madame,\n\nEn machines spéciales, chaque projet est un cas unique : pourquoi telle solution a été retenue, quelles limites ont été contournées, ce qu'attend chaque client historique. Après 44 ans, Bernay Automation en a accumulé une somme considérable — presque entièrement non écrite.\n\nLe jour d'une transmission, c'est ce savoir-là qui est le plus dur à céder, et le plus précieux pour la valeur de l'entreprise.\n\nMemoVAL le structure noir sur blanc, en amont. Seriez-vous ouverte à un court échange à ce sujet ?\n\n[Prénom NOM]"
+  }
+]

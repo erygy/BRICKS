@@ -1,0 +1,22 @@
+{
+  "v2_ciblage": {
+    "score": 0.05684887498500757,
+    "voi": 0.4157963329926133,
+    "materialize": 0.03993029097910039,
+    "resources": 0.03770629200153053,
+    "verdict": 0.05151554199983366
+  },
+  "v1_ciblage": {
+    "score": 0.022924917022464797,
+    "rank": 0.03414266702020541
+  },
+  "reseau": {
+    "gov_page25": 0.9852352919988334
+  },
+  "mesures_anterieures_s": {
+    "firmo_60_comptes": 10.4,
+    "news_303_comptes": 181.8,
+    "domain_resolver_par_compte": 4.3,
+    "axe_mapper_opus": 81.2
+  }
+}

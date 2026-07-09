@@ -1,0 +1,21 @@
+══════════════════════════════════════════════════════════════════════════
+  V3 · MINAGE DES CLIENTS — posts LinkedIn réels (Sillage live) → Claude
+══════════════════════════════════════════════════════════════════════════
+
+▶ Algolia — 25 posts analysés → 4 relations clients détectées
+   [haute  ] MadeiraMadeira               (cas_client) « That's why MadeiraMadeira chose Algolia. Serving 10 million customers, »
+   [haute  ] Frasers Group                (cas_client) « Congrats to Frasers Group on the launch of Ask FRASERS, their new AI s »
+   [haute  ] The Hershey Company          (cas_client) « By implementing Algolia's AI-powered Search into their digital experie »
+   [moyenne] Fyresite                     (projet) « How Fyresite built a Parts Intelligence solution for Shopify using Alg »
+
+▶ Devoteam — 25 posts analysés → 6 relations clients détectées
+   [haute  ] Stena Line                   (cas_client) « Stena Line, one of Europe's largest ferry operators partnered with Dev »
+   [haute  ] Down España                  (cas_client) « Down España supports thousands of people with Down syndrome... Devotea »
+   [haute  ] Vitaly                       (cas_client) « Vitaly partnered with Devoteam | Google Cloud Partner to support them  »
+   [haute  ] Liberty Global               (mention) « worked with global clients like Liberty Global »
+   [moyenne] Strawberry Hotel             (cas_client) « how Strawberry Hotel built an agentic AI assistant that gave 36,000 ho »
+   [basse  ] UGAP                         (projet) « le groupement Inetum, Devoteam et Orange Business, titulaires du march »
+
+══════════════════════════════════════════════════════════════════════════
+  TOTAL : 10 relations clients extraites de 50 posts réels · 1678 tok out
+══════════════════════════════════════════════════════════════════════════

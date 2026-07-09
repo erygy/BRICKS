@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Bricks V2 — buying thesis",
+  "type": "object",
+  "required": ["id", "concept", "statement", "persona"],
+  "properties": {
+    "id": {"type": "string"},
+    "concept": {"type": "string", "description": "Le concept d'entrée, dans les mots de l'utilisateur."},
+    "statement": {
+      "type": "string",
+      "description": "« [type d'organisation] dans [état] achètera [concept] parce que [douleur] devient intenable quand [déclencheur], à condition que [prérequis]. » Falsifiable."
+    },
+    "persona": {
+      "type": "object",
+      "required": ["role"],
+      "properties": {
+        "role": {"type": "string", "description": "Qui signe (cible FullEnrich) — ex. dirigeant-actionnaire, DAF."},
+        "champion": {"type": "string"},
+        "title_patterns": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "universe_hint": {"type": "string", "description": "Description du bassin de candidats (géo, taille) pour le PROSPECTOR."},
+    "validation": {
+      "type": "object",
+      "properties": {
+        "success_metric": {"type": "string", "description": "Ce qui validerait la thèse (ex. taux de RDV tier A ≥ 3× tier C sur 100 contacts)."},
+        "kill_metric": {"type": "string", "description": "Ce qui la falsifierait."}
+      }
+    },
+    "status": {"enum": ["draft", "active", "validated", "falsified"], "default": "draft"}
+  }
+}

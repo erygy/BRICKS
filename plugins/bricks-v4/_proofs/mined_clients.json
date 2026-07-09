@@ -1,0 +1,66 @@
+{
+ "Algolia": [
+  {
+   "client": "MadeiraMadeira",
+   "evidence": "That's why MadeiraMadeira chose Algolia. Serving 10 million customers, the Brazilian home goods leader uses Algolia AI Search & Discovery",
+   "relation": "cas_client",
+   "certainty": "haute"
+  },
+  {
+   "client": "Frasers Group",
+   "evidence": "Congrats to Frasers Group on the launch of Ask FRASERS, their new AI shopping assistant powered by Algolia",
+   "relation": "cas_client",
+   "certainty": "haute"
+  },
+  {
+   "client": "The Hershey Company",
+   "evidence": "By implementing Algolia's AI-powered Search into their digital experience",
+   "relation": "cas_client",
+   "certainty": "haute"
+  },
+  {
+   "client": "Fyresite",
+   "evidence": "How Fyresite built a Parts Intelligence solution for Shopify using Algolia",
+   "relation": "projet",
+   "certainty": "moyenne"
+  }
+ ],
+ "Devoteam": [
+  {
+   "client": "Stena Line",
+   "evidence": "Stena Line, one of Europe's largest ferry operators partnered with Devoteam | ServiceNow Partner",
+   "relation": "cas_client",
+   "certainty": "haute"
+  },
+  {
+   "client": "Down España",
+   "evidence": "Down España supports thousands of people with Down syndrome... Devoteam | AWS Partner built Minerva",
+   "relation": "cas_client",
+   "certainty": "haute"
+  },
+  {
+   "client": "Vitaly",
+   "evidence": "Vitaly partnered with Devoteam | Google Cloud Partner to support them with 2 phases",
+   "relation": "cas_client",
+   "certainty": "haute"
+  },
+  {
+   "client": "Liberty Global",
+   "evidence": "worked with global clients like Liberty Global",
+   "relation": "mention",
+   "certainty": "haute"
+  },
+  {
+   "client": "Strawberry Hotel",
+   "evidence": "how Strawberry Hotel built an agentic AI assistant that gave 36,000 hours back",
+   "relation": "cas_client",
+   "certainty": "moyenne"
+  },
+  {
+   "client": "UGAP",
+   "evidence": "le groupement Inetum, Devoteam et Orange Business, titulaires du marché UGAP",
+   "relation": "projet",
+   "certainty": "basse"
+  }
+ ]
+}

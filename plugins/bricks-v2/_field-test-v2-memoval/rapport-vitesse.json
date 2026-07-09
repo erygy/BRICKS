@@ -1,0 +1,35 @@
+{
+  "machine": "1 Mac mono-thread",
+  "methode": "médiane wall-clock /7, invocations froides sauf demo_e2e (1 process)",
+  "overhead_python_ms": 14.8,
+  "v1_ciblage_ms": {
+    "score_tier": 21.8,
+    "rank": 32.7,
+    "total": 54.5
+  },
+  "v2_acquisition_ms": {
+    "score_v2": 56.8,
+    "voi": 417.9,
+    "materialize": 39.4
+  },
+  "v2_archetypes_ms": {
+    "verdict": 33.0,
+    "pipeline_monitor": 31.8,
+    "crm_writeback": 45.6
+  },
+  "v2_systeme_entier_1process_ms": 457.3,
+  "scalabilite_calcul_pur": {
+    "us_par_entreprise": 67,
+    "ms_303": 21,
+    "ms_10000": 671,
+    "ms_100000": 6711,
+    "cout_eur": 0.0
+  },
+  "reseau_s": {
+    "gouv_page25": 1.0,
+    "firmo_60": 10.4,
+    "news_303": 181.8,
+    "domain_par_compte": 4.3,
+    "axe_mapper_llm": 81.2
+  }
+}

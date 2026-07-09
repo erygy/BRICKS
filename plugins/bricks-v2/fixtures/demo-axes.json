@@ -1,0 +1,22 @@
+{
+  "_note": "Sortie de l'AGENT 1 (AXE-MAPPER, skill prompt-smith-outreach étage 1) sur les groupes du field-test. 4 groupes déterministes → 2 AXES assumés : maturite (n=6) et concentration (n=2) < 5 % de la population → fusionnés par la douleur dans « le fonds invisible » ; la règle 3-6 cède devant l'interchangeabilité des mails (deux axes aux mails distincts valent mieux que quatre clones).",
+  "thesis_id": "memoval-cedant",
+  "axes": [
+    {
+      "axe_id": "horizon",
+      "name": "l'heure tourne",
+      "definition": "Dirigeant de 64-68 ans à la tête d'une PME mûre et indépendante : la fenêtre de transmission n'est plus une abstraction, c'est un horizon daté.",
+      "signals_in": ["S-HOR-04", "P-HOR-02", "S-MAT-03"],
+      "n": 92,
+      "axe_prompt": "QUI ILS SONT : des dirigeants-propriétaires de 64-68 ans, à la tête depuis des décennies d'une PME indépendante (BTP technique, fabrication, négoce spécialisé) qui tient largement par eux.\nCE QUE LE SIGNAL DIT : l'âge combiné à l'ancienneté de la société ne dit pas « il part demain » — il dit que la question de la suite est déjà posée le soir, même si rien n'est annoncé. C'est une période où l'on pense patrimoine, pas croissance.\nLA DOULEUR D'AXE : ce qu'ils ont construit vaut plus que ce que le bilan montre — et ils le savent. Ce qui les inquiète : que cette part invisible (clients fidèles, arrangements fournisseurs, tours de main) ne pèse pas le jour où il faudra transmettre, et que la maison s'affaiblisse après eux.\nANGLE D'OUVERTURE : l'ancienneté et le métier, JAMAIS l'âge de la personne. Bon : « Trente-deux ans de génie climatique à Lyon, l'essentiel n'est écrit nulle part. » Mauvais (créepy/interdit) : « À 67 ans, vous pensez sûrement à la retraite » — on ne mentionne JAMAIS l'âge du dirigeant ni sa retraite ; c'est LUI qui posera le mot « transmission » s'il le veut.\nREGISTRE : sobre, concret, respectueux du travail accompli — ni flatterie ni urgence artificielle. Vocabulaire de l'artisan et du patrimoine, zéro vocabulaire SaaS.\nPIÈGES : (1) ne jamais dater sa sortie à sa place ; (2) ne pas vendre un « logiciel » — on parle de mettre par écrit ce qui fait la valeur ; (3) une seule idée par mail, ce segment ne lit pas deux paragraphes."
+    },
+    {
+      "axe_id": "nature_actif",
+      "name": "le fonds invisible",
+      "definition": "PME dont l'actif dominant est relationnel et non écrit : clients récurrents B2B, ancrage local fort, gouvernance resserrée, mémoire profonde — quel que soit l'horizon du dirigeant.",
+      "signals_in": ["S-REL-07", "S-REL-08", "S-CON-01", "S-CON-02", "S-MAT-03"],
+      "n": 111,
+      "axe_prompt": "QUI ILS SONT : des PME de territoire (négoce, travaux, fabrication) dont le fonds de commerce réel est un carnet de relations construit sur 15-70 ans, concentré sur un ou deux dirigeants.\nCE QUE LE SIGNAL DIT : gouvernance resserrée + clientèle récurrente + mono-établissement = la valeur tient dans des liens personnels que personne n'a jamais documentés. Pas d'urgence datée — mais une fragilité structurelle permanente : tout repose sur une tête.\nLA DOULEUR D'AXE : si le dirigeant s'arrête six mois, que reste-t-il ? La réponse honnête les dérange. Le sujet n'est pas la vente de l'entreprise, c'est la solidité de ce qui a été construit.\nANGLE D'OUVERTURE : le métier et la relation. Bon : « Un négoce de matériaux, ce sont des conditions négociées chantier après chantier — rien de tout ça n'est au bilan. » Mauvais : « Votre entreprise dépend trop de vous » (agressif, culpabilisant — on POSE le sujet du secteur, on n'accuse pas LEUR organisation).\nREGISTRE : pair-à-pair, ancré métier, phrases courtes. On peut être un cran plus direct que sur l'axe horizon (pas de sujet sensible lié à la personne).\nPIÈGES : (1) ne pas transformer la fragilité en peur — c'est un constat de secteur, pas un diagnostic sur eux ; (2) ne pas promettre que « tout sera capturé » (anti-L121) ; (3) l'ouverture doit citer LEUR métier précis (négoce matériaux ≠ mécano-soudure), sinon c'est un clone."
+    }
+  ]
+}

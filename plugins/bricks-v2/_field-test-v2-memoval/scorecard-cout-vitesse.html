@@ -1,0 +1,153 @@
+<title>BRICKS V1 vs V2 — coût & vitesse (mesurés)</title>
+<style>
+  :root{
+    --paper:#FBF8F4; --paper-2:#F4EEE6; --ink:#1C1815; --ink-2:#5B534A;
+    --line:#E6DDD1; --line-2:#D8CCBB; --accent:#E0551E; --accent-soft:#F7E7DC;
+    --v1:#8A7A66; --v2:#E0551E;
+    --good:#2F7D57; --good-bg:#E7F1EA;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:48px 28px 80px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5vw,44px);line-height:1.05;margin:.35em 0 .1em;text-wrap:balance;letter-spacing:-.01em}
+  .sub{color:var(--ink-2);font-size:16px;max-width:64ch;margin:.2em 0 0}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+  .meta b{color:var(--ink)}
+  section{margin-top:50px}
+  h2{font-family:var(--sans);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);font-weight:700;margin:0 0 18px;display:flex;align-items:center;gap:12px}
+  h2::after{content:"";flex:1;height:1px;background:var(--line)}
+  /* headline cards */
+  .heads{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:34px}
+  .hc{background:#fff;border:1px solid var(--line-2);border-radius:13px;padding:20px}
+  .hc .k{font-family:var(--mono);font-size:33px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1;color:var(--accent)}
+  .hc .k small{font-size:15px;color:var(--ink-2);font-weight:500}
+  .hc .lab{font-size:13.5px;color:var(--ink);margin-top:9px;font-weight:600}
+  .hc .note{font-size:12.5px;color:var(--ink-2);margin-top:5px;line-height:1.4}
+  /* table */
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+  table{border-collapse:collapse;width:100%;min-width:640px}
+  th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top}
+  thead th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);font-weight:700;background:var(--paper-2)}
+  thead th.v1{color:var(--v1)} thead th.v2{color:var(--v2)}
+  tbody tr:last-child td{border-bottom:none}
+  td.dim{color:var(--ink-2);font-weight:600;width:34%}
+  .val{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  td.c2{background:var(--accent-soft)}
+  .free{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--good);background:var(--good-bg);border-radius:5px;padding:1px 6px;margin-left:6px}
+  /* time budget bars */
+  .bars{display:flex;flex-direction:column;gap:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px}
+  .brow{display:grid;grid-template-columns:210px 1fr 74px;gap:14px;align-items:center}
+  .brow .bl{font-size:13.5px;color:var(--ink)}
+  .brow .bl small{display:block;color:var(--ink-2);font-size:11.5px;font-family:var(--mono)}
+  .track{height:14px;background:var(--paper-2);border-radius:7px;overflow:hidden}
+  .fill{height:100%;border-radius:7px}
+  .brow .bv{font-family:var(--mono);font-size:13px;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .panel h3{margin:0 0 12px;font-size:13px;letter-spacing:.05em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+  .panel ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:11px}
+  .panel li{font-size:14px;color:var(--ink-2);padding-left:20px;position:relative;line-height:1.45}
+  .panel li b{color:var(--ink);font-weight:600}
+  .panel li::before{content:"→";position:absolute;left:0;color:var(--accent);font-family:var(--mono);font-weight:700}
+  .verdict{margin-top:34px;border:1px solid var(--line-2);border-radius:14px;background:linear-gradient(180deg,#fff,var(--paper));padding:22px 26px}
+  .verdict .lead{font-family:var(--serif);font-size:21px;line-height:1.3;max-width:60ch}
+  .verdict .lead b{color:var(--accent)}
+  footer{margin-top:52px;padding-top:22px;border-top:1px solid var(--line);color:var(--ink-2);font-size:12.5px;font-family:var(--mono);line-height:1.7}
+  footer b{color:var(--ink)}
+  @media(max-width:680px){.cols{grid-template-columns:1fr}.brow{grid-template-columns:130px 1fr 60px}}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Banc coût & vitesse · mesuré · 09 juillet 2026</div>
+  <h1>BRICKS tourne-t-il vite et pas cher ?</h1>
+  <p class="sub">Comparaison V1 vs V2 sur le même travail (303 PME MemoVAL). Temps
+  wall-clock chronométrés (médiane sur 5), coûts aux tarifs publics. Focus : est-ce
+  supportable et abordable pour un utilisateur normal ?</p>
+  <div class="meta">
+    <div>Machine&nbsp;: <b>1 Mac, mono-thread</b></div>
+    <div>Univers&nbsp;: <b>303 PME (constant)</b></div>
+    <div>Dépendances&nbsp;: <b>0 (stdlib)</b></div>
+  </div>
+
+  <div class="heads">
+    <div class="hc"><div class="k">57<small>ms</small></div><div class="lab">Scorer 303 PME (V2)</div><div class="note">intervalles + bandes + VOI ; V1 : 23 ms. Le cerveau est instantané.</div></div>
+    <div class="hc"><div class="k">1,9<small>s</small></div><div class="lab">Scorer 10 000 PME</div><div class="note">projeté du mesuré, <b>0 €</b> — le scoring ne coûte rien, à toute échelle.</div></div>
+    <div class="hc"><div class="k">3,90<small>€</small></div><div class="lab">Cash d'une vague de 60</div><div class="note">FullEnrich sur la bande IN ; V1 en enrichit 60 → 9 €. Le LLM = 0 € sur abo.</div></div>
+    <div class="hc"><div class="k">~14<small>s</small></div><div class="lab">Liste → décision</div><div class="note">sourcing + sélection scorée. La réponse « qui contacter » est quasi immédiate.</div></div>
+  </div>
+
+  <section>
+    <h2>Vitesse — où passe le temps (mesuré)</h2>
+    <div class="bars">
+      <div class="brow"><div class="bl">Scoring 303 PME <small>le cerveau, V2</small></div><div class="track"><div class="fill" style="width:1%;background:var(--v2)"></div></div><div class="bv">0,06 s</div></div>
+      <div class="brow"><div class="bl">Cerveau complet V2 <small>score+VOI+bandes+fabrique+verdict</small></div><div class="track"><div class="fill" style="width:4%;background:var(--v2)"></div></div><div class="bv">0,6 s</div></div>
+      <div class="brow"><div class="bl">Sourcing gouv <small>réseau, ~13 pages</small></div><div class="track"><div class="fill" style="width:7%;background:var(--v1)"></div></div><div class="bv">~13 s</div></div>
+      <div class="brow"><div class="bl">Résolution domaines <small>réseau, 26 comptes IN</small></div><div class="track"><div class="fill" style="width:26%;background:var(--v1)"></div></div><div class="bv">~110 s</div></div>
+      <div class="brow"><div class="bl">Fabrique de mails <small>LLM, 26 mails + axe-mapper</small></div><div class="track"><div class="fill" style="width:48%;background:var(--accent)"></div></div><div class="bv">~200 s</div></div>
+      <div class="brow"><div class="bl">Scan presse <small>réseau, 303, OPTIONNEL/fond</small></div><div class="track"><div class="fill" style="width:43%;background:var(--line-2)"></div></div><div class="bv">~182 s</div></div>
+    </div>
+    <p class="sub" style="margin-top:12px;font-size:13.5px">Le calcul (le « cerveau ») est <b>sous la seconde</b> dans les deux versions —
+    imperceptible. Tout le temps ressenti est du <b>réseau I/O</b> (identique V1/V2, subi passivement, backgroundable).
+    Une campagne complète de 26 comptes ciblés avec mails = <b>~7 minutes</b> ; la seule décision « qui contacter » = <b>~14 s</b>.</p>
+  </section>
+
+  <section>
+    <h2>Coût — décomposé (campagne type de 60 contacts)</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Poste</th><th class="v1">V1</th><th class="v2">V2</th></tr></thead>
+        <tbody>
+          <tr><td class="dim">Scorer les 303 PME (le ciblage)</td><td class="val">0 €<span class="free">déterministe</span></td><td class="c2 val">0 €<span class="free">déterministe</span></td></tr>
+          <tr><td class="dim">LLM — régime abonnement Claude</td><td class="val">~0 €</td><td class="c2 val">~0 €</td></tr>
+          <tr><td class="dim">LLM — régime API payante</td><td class="val">0,11 €</td><td class="c2 val">1,85 € <span style="color:var(--ink-2)">(axe-mapper + mails haiku)</span></td></tr>
+          <tr><td class="dim">Cash FullEnrich (emails vérifiés)</td><td class="val">9,00 € <span style="color:var(--ink-2)">(60 enrichis)</span></td><td class="c2 val">3,90 € <span style="color:var(--v2)">(26 IN — VOI cible)</span></td></tr>
+          <tr><td class="dim"><b>Total campagne (abo + cash)</b></td><td class="val"><b>9,00 €</b></td><td class="c2 val"><b>3,90 €</b></td></tr>
+          <tr><td class="dim">Coût par entreprise scorée</td><td class="val">0 €</td><td class="c2 val">0 €</td></tr>
+          <tr><td class="dim">Coût par mail (LLM, API haiku)</td><td class="val">~0,002 €</td><td class="c2 val">~0,002 €</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sub" style="margin-top:12px;font-size:13.5px"><b>V2 n'est pas plus cher — il est moins cher en cash</b> : ses bandes + VOI
+    enrichissent d'abord les 26 comptes prouvés (3,90 €) au lieu d'arroser les 60 (9 €), soit <b>~5 € économisés par vague</b>.
+    Son seul surcoût est l'axe-mapper (~2 € en API, 0 € sur abo), amorti sur toute la campagne.</p>
+  </section>
+
+  <section>
+    <h2>Face au marché · verdict utilisateur lambda</h2>
+    <div class="cols">
+      <div class="panel">
+        <h3>Le même travail, ailleurs</h3>
+        <ul>
+          <li><b>Clay</b> : ~177 €/mois — et ne score pas l'ICP par signaux.</li>
+          <li><b>Agence de prospection</b> : 250-500 € par RDV + setup + engagement.</li>
+          <li><b>SDR salarié</b> : ~4 000 €/mois + 2-3 mois de rampe.</li>
+          <li><b>BRICKS</b> : <b>4 à 9 € la vague de 60</b>, sans abonnement ni engagement.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Pour un utilisateur normal</h3>
+        <ul>
+          <li><b>Vitesse tolérable ?</b> Oui — la décision en ~14 s, une campagne complète en ~7 min ; le calcul est imperceptible.</li>
+          <li><b>Prix raisonnable ?</b> Oui — quelques euros par vague, scoring gratuit à toute échelle (10 000 PME = 1,9 s, 0 €).</li>
+          <li><b>Passe à l'échelle ?</b> Le cerveau est linéaire et gratuit ; seul le réseau/les crédits croissent avec le volume.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="verdict">
+      <div class="lead">Le cerveau de BRICKS coûte <b>0 € et tourne sous la seconde</b>, quelle que soit la taille de la liste.
+      Une vraie campagne se paie en <b>quelques euros</b> de crédits et s'exécute en <b>minutes</b> — V2 fait tout ce que V1 fait, en mieux,
+      pour <b>moins cher en cash</b> et un temps ressenti identique.</div>
+    </div>
+  </section>
+
+  <footer>
+    <b>Méthode.</b> Temps = médiane wall-clock sur 5 exécutions (1 Mac mono-thread) des vraies commandes ; étapes réseau mesurées 1× (rate-limitées).
+    Coûts LLM aux tarifs publics annoncés (Opus 15/75 $/M tok, Haiku 1/5 $/M tok) ; FullEnrich 0,15 €/email ; USD→EUR 0,92.<br>
+    <b>Limites honnêtes.</b> Le scoring est déterministe (0 token, mesuré) ; les tailles de mails/prompts sont mesurées, les tokens de l'axe-mapper relevés du run réel.
+    Le régime « abonnement » suppose un forfait Claude couvrant l'usage sous rate limits. Les temps réseau varient avec la connexion et les APIs.
+  </footer>
+</div>

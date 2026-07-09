@@ -1,0 +1,44 @@
+══════════════════════════════════════════════════════════════════════════
+  APPEL · LE TRIBUNAL DE FALSIFICATION — triptyque (Fable 5, verdicts réels)
+  Événement identique pour les 3 : « Série B de 22M€ menée par Accel, annoncée publiquement »
+══════════════════════════════════════════════════════════════════════════
+
+▶ TechFlow (48000€) — perdu : « Trop cher, pas de budget alloué cette année »  [type: BUDGET]
+   ⚖️ FALSIFIÉE → ROUVRIR   (confiance 92%)
+   polarité   : falsifie
+   falsificateur : « Série B de 22M€ menée par Accel, annoncée publiquement »
+   raisonnement : L'objection reposait sur l'absence de budget alloué ; une levée de 22M€ postérieure à la
+                  perte rend l'hypothèse 'ils n'ont pas les moyens' caduque et datée. Le lien budget × capital
+                  frais est direct.
+   risque       : 'Trop cher' peut refléter une perception de valeur insuffisante et non un manque d'argent :
+                  la levée ne garantit pas qu'un budget sera alloué à cette catégorie de dépense.
+   VOI          : FullEnrich : search 0,25 (comité actuel) + email 1 (bon vivant) → dossier de réouverture (+1.25 crédit)
+
+▶ DataNimbus (60000€) — perdu : « Ont choisi un concurrent (Rival Corp) »  [type: COMPETITOR]
+   🛑 INTACTE → LAISSER DORMIR   (confiance 90%)
+   polarité   : renforce
+   raisonnement : L'objection est un choix concurrentiel, pas un manque de moyens. Une Série B de 22M€ donne à
+                  DataNimbus plus de ressources pour investir et se déployer davantage chez Rival Corp —
+                  l'objection tient, voire se renforce.
+   risque       : Une levée peut parfois déclencher une réévaluation de la stack (nouveaux dirigeants, nouvelle
+                  échelle) ; si Rival Corp ne suit pas la croissance, une fenêtre pourrait s'ouvrir — mais aucun
+                  élément de l'événement ne le prouve.
+   VOI          : objection non falsifiée → aucun crédit, on laisse dormir (+0.0 crédit)
+
+▶ Postbox (32000€) — perdu : « Other »  [type: DIRTY]
+   🤔 ABSTENTION → DEMANDER AU REP   (confiance 95%)
+   polarité   : sans_rapport
+   raisonnement : La raison de perte 'Other' est générique et illisible : on ne sait pas quelle objection a été
+                  plaidée, donc aucun événement ne peut la falsifier. Un tribunal ne juge que ce qui a été plaidé.
+   risque       : Si des notes CRM cachées révélaient que 'Other' masquait en réalité une objection budgétaire,
+                  la Série B de 22M€ deviendrait un falsificateur direct.
+   VOI          : objection non falsifiée → aucun crédit, on laisse dormir (+0.0 crédit)
+
+══════════════════════════════════════════════════════════════════════════
+  COMPTEUR DE RETENUE : 3 jugés · 1 rouvert · 2 laissés dormir · 1.25 crédits · 0 token pour le tri déterministe
+  (jugement LLM : 3032 tokens in / 743 out ≈ 0,01 $ sur Fable 5)
+══════════════════════════════════════════════════════════════════════════
+
+# Capturé le 2026-07-09. MÊME événement, TROIS verdicts opposés, chacun raisonné
+# et porteur de son propre contre-argument (champ 'risque'). C'est le moment-wow
+# du pitch, prouvé — pas raconté. Reproduire : `python3 tribunal.py`.

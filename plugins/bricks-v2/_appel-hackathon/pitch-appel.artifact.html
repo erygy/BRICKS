@@ -1,0 +1,285 @@
+<style>
+  :root{
+    --ink:#1A1714; --ink-soft:#4A423B; --bone:#EFE9DC; --bone-deep:#E4DCCB;
+    --oxblood:#7B2D26; --brass:#A67C3D; --line:#CDC2AB;
+    --falsifie:#3E6B4A; --intacte:#5C5952; --abstention:#B08331;
+    --paper:#F4EFE4;
+    --serif:Georgia,'Iowan Old Style','Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:'SF Mono',ui-monospace,'JetBrains Mono','Menlo',monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bone); color:var(--ink);
+    font-family:var(--sans); line-height:1.6; font-size:17px;
+    background-image:radial-gradient(circle at 15% -10%,#F6F1E6 0,transparent 45%),
+                     radial-gradient(circle at 90% 5%,#F1EADB 0,transparent 40%);
+  }
+  .wrap{max-width:1000px; margin:0 auto; padding:0 24px}
+  .rule{height:1px;background:var(--line);border:0;margin:0}
+  h1,h2,h3{font-family:var(--serif); font-weight:700; line-height:1.15; text-wrap:balance; margin:0}
+  .eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--oxblood)}
+  .muted{color:var(--ink-soft)}
+
+  /* ── MASTHEAD ── */
+  header{padding:64px 0 40px; text-align:center; position:relative}
+  .seal{
+    width:96px;height:96px;margin:0 auto 26px;border-radius:50%;
+    border:2px solid var(--oxblood); color:var(--oxblood);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+    box-shadow:inset 0 0 0 5px var(--bone), inset 0 0 0 6px rgba(123,45,38,.25);
+    transform:rotate(-6deg);
+  }
+  .seal .g{font-family:var(--serif); font-size:34px; font-weight:700; line-height:1}
+  .seal .s{font-family:var(--mono); font-size:8px; letter-spacing:.18em; margin-top:3px}
+  header h1{font-size:clamp(46px,9vw,86px); letter-spacing:.02em}
+  header .sub{font-family:var(--mono); font-size:13px; letter-spacing:.24em; text-transform:uppercase; color:var(--brass); margin-top:10px}
+  .thesis{
+    max-width:680px;margin:30px auto 0;font-family:var(--serif);font-style:italic;
+    font-size:clamp(19px,2.6vw,25px);line-height:1.5;color:var(--ink);
+  }
+  .thesis .drop{color:var(--oxblood)}
+  .oneliner{margin-top:20px;font-size:15px;color:var(--ink-soft)}
+
+  section{padding:44px 0}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:26px}
+  .sec-head .num{font-family:var(--mono);font-size:13px;color:var(--brass)}
+  .sec-head h2{font-size:clamp(24px,4vw,32px)}
+
+  /* ── L'AFFAIRE ── */
+  .brief{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:start}
+  .brief p{margin:0 0 14px}
+  .aside{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--oxblood);
+    padding:20px 22px;font-size:15px}
+  .aside b{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--oxblood);display:block;margin-bottom:8px}
+
+  /* ── TRIPTYQUE (héros) ── */
+  .triptyque-band{background:var(--ink);color:var(--bone);
+    background-image:radial-gradient(circle at 50% 0,#241f1a 0,transparent 60%)}
+  .triptyque-band .eyebrow{color:var(--brass)}
+  .triptyque-band h2{color:var(--bone)}
+  .same-event{font-family:var(--mono);font-size:13px;color:#C9BDA4;
+    border:1px dashed rgba(201,189,164,.4);padding:12px 16px;border-radius:2px;margin-bottom:28px;text-align:center}
+  .same-event b{color:var(--brass)}
+  .verdicts{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{background:#211D18;border:1px solid #342E27;border-radius:4px;padding:22px 20px;position:relative;overflow:hidden}
+  .card .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9A8F7C}
+  .card .deal{font-family:var(--serif);font-size:22px;margin:4px 0 2px;color:var(--bone)}
+  .card .reason{font-size:14px;color:#B7AB94;font-style:italic;min-height:42px}
+  .verdict-line{display:flex;align-items:center;gap:9px;margin:16px 0 4px;font-family:var(--serif);font-size:20px;font-weight:700}
+  .dot{width:12px;height:12px;border-radius:50%;flex:none}
+  .conf{font-family:var(--mono);font-size:12px;color:#8C8272;margin-bottom:12px}
+  .why{font-size:13.5px;color:#C6BBA5;line-height:1.5}
+  .decision{margin-top:14px;padding-top:12px;border-top:1px solid #342E27;font-family:var(--mono);font-size:12px;letter-spacing:.04em}
+  .v-fals2{color:#7FC08E}
+  .footnote-live{margin-top:24px;text-align:center;font-family:var(--mono);font-size:12px;color:#9A8F7C}
+
+  /* ── MÉCANISME ── */
+  .steps{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--line);border:1px solid var(--line)}
+  .step{background:var(--bone);padding:20px 22px}
+  .step .n{font-family:var(--mono);font-size:12px;color:var(--oxblood);letter-spacing:.1em}
+  .step h3{font-size:18px;margin:6px 0 6px}
+  .step p{margin:0;font-size:14.5px;color:var(--ink-soft)}
+  .step .who{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--brass);margin-top:9px}
+
+  /* ── TRIO AU RETRAIT ── */
+  .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .trio .t{background:var(--paper);border:1px solid var(--line);padding:20px;border-radius:3px}
+  .trio .t .k{font-family:var(--serif);font-size:20px}
+  .trio .t .dies{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--oxblood);margin:8px 0 10px}
+  .trio .t p{margin:0;font-size:14px;color:var(--ink-soft)}
+
+  /* ── COMPTEUR ── */
+  .counter{background:var(--oxblood);color:var(--bone);border-radius:4px;padding:30px;text-align:center}
+  .counter .k{font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#E7C9C3;margin-bottom:18px}
+  .stats{display:flex;justify-content:center;gap:0;flex-wrap:wrap}
+  .stat{padding:0 26px;border-right:1px solid rgba(239,233,220,.25)}
+  .stat:last-child{border-right:0}
+  .stat .v{font-family:var(--serif);font-size:38px;font-weight:700;line-height:1}
+  .stat .l{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:#EAD3CE;margin-top:6px;text-transform:uppercase}
+  .counter .punch{margin-top:22px;font-family:var(--serif);font-style:italic;font-size:19px}
+
+  /* ── SCORECARD ── */
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px}
+  table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+  th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line)}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);background:var(--paper)}
+  td:last-child,th:last-child{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr:last-child td{border-bottom:0}
+  .score{color:var(--oxblood);font-weight:700}
+
+  /* ── LIMITES ── */
+  .limits{background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:26px 28px}
+  .limits li{margin:0 0 12px;font-size:15px}
+  .limits li:last-child{margin-bottom:0}
+  .limits b{color:var(--oxblood)}
+
+  footer{padding:40px 0 60px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--ink-soft);letter-spacing:.03em}
+  footer .cost{color:var(--brass)}
+
+  @media (max-width:760px){
+    .brief,.verdicts,.steps,.trio{grid-template-columns:1fr}
+    .stat{border-right:0;padding:14px 0}
+    .card .reason{min-height:0}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .card{transition:transform .2s ease,border-color .2s ease}
+    .card:hover{transform:translateY(-3px);border-color:#4a4238}
+  }
+</style>
+<header>
+  <div class="wrap">
+    <div class="seal" aria-hidden="true"><span class="g">A</span><span class="s">FALSIFIÉ · DATÉ</span></div>
+    <div class="eyebrow">Hackathon IA-GTM · Anthropic × Sillage × FullEnrich</div>
+    <h1>APPEL</h1>
+    <div class="sub">Le Tribunal de Falsification</div>
+    <p class="thesis">« Chaque raison de perte est une <span class="drop">hypothèse datée sur le monde</span>. APPEL surveille le monde, et quand le monde tue l'objection, il livre le certificat de décès. Quand le monde ne la tue pas, il refuse de rouvrir. »</p>
+    <p class="oneliner">La cour d'appel du <em>closed-lost</em> — le seul « appel » qu'un rep ait envie de passer.</p>
+  </div>
+</header>
+<hr class="rule">
+
+<!-- L'AFFAIRE -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">01</span><h2>L'affaire</h2></div>
+    <div class="brief">
+      <div>
+        <p>Le cimetière des <em>closed-lost</em> est le plus gros actif dormant de tout CRM : le coût d'acquisition est déjà payé, la relation déjà tiède. Et pourtant <b>personne ne re-teste jamais l'objection</b> qui a tué le deal.</p>
+        <p>« Pas de budget » était vrai en novembre. Puis l'entreprise lève 22 M€ en juillet — et l'objection est morte, datée, prouvée. Mais aucun rep ne le voit : il faudrait croiser <em>la raison de perte</em> avec <em>un événement du monde réel</em>, à l'échelle de centaines de deals oubliés.</p>
+        <p>C'est exactement l'angle mort que ni un CRM, ni un outil de nurture, ni même UserGems (qui tracke les <em>contacts</em>, jamais l'<em>objection</em>) ne couvre.</p>
+      </div>
+      <div class="aside">
+        <b>Comment on est arrivé là</b>
+        Exploration double-diamant sur Fable&nbsp;5 : 6 lentilles-problème → critique adversariale → 6 architectes-solution → double matrice → jury à 3 têtes. Le « gagnant confortable » (un radar de churn) a été <b>renversé par la critique</b> — trop proche d'un concurrent existant, indémontrable en 48h. La falsification d'objection a gagné en réalité, pas par flatterie.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LE TRIPTYQUE -->
+<section class="triptyque-band">
+  <div class="wrap">
+    <div class="sec-head"><span class="num" style="color:var(--brass)">02</span><h2>Le triptyque — le moment décisif</h2></div>
+    <div class="same-event">MÊME ÉVÉNEMENT POUR LES TROIS &nbsp;·&nbsp; <b>Série B de 22 M€ menée par Accel, annoncée publiquement</b> &nbsp;·&nbsp; verdicts réels rendus par Claude</div>
+    <div class="verdicts">
+      <div class="card">
+        <div class="tag">Deal A · 48 000 €</div>
+        <div class="deal">TechFlow</div>
+        <div class="reason">« Trop cher, pas de budget alloué cette année »</div>
+        <div class="verdict-line"><span class="dot" style="background:var(--falsifie)"></span><span class="v-fals2">FALSIFIÉE</span></div>
+        <div class="conf">confiance 92 % · l'objection est morte</div>
+        <div class="why">Une levée de 22 M€ postérieure à la perte rend l'hypothèse « ils n'ont pas les moyens » caduque et datée. Lien budget × capital frais : direct.</div>
+        <div class="decision" style="color:#7FC08E">⚖︎ ROUVRIR · +1,25 crédit contact</div>
+      </div>
+      <div class="card">
+        <div class="tag">Deal B · 60 000 €</div>
+        <div class="deal">DataNimbus</div>
+        <div class="reason">« Ont choisi un concurrent (Rival Corp) »</div>
+        <div class="verdict-line"><span class="dot" style="background:var(--intacte)"></span><span style="color:#B9B2A5">INTACTE</span></div>
+        <div class="conf">confiance 90 % · l'objection se renforce</div>
+        <div class="why">Un choix concurrentiel n'est pas un manque de moyens. Plus de capital = ils investiront <em>davantage</em> chez Rival Corp. L'objection tient, voire se renforce.</div>
+        <div class="decision" style="color:#B9B2A5">🛑 LAISSER DORMIR · 0 crédit</div>
+      </div>
+      <div class="card">
+        <div class="tag">Deal C · 32 000 €</div>
+        <div class="deal">Postbox</div>
+        <div class="reason">« Other »</div>
+        <div class="verdict-line"><span class="dot" style="background:var(--abstention)"></span><span style="color:var(--abstention)">ABSTENTION</span></div>
+        <div class="conf">confiance 95 % · rien n'a été plaidé</div>
+        <div class="why">« Other » est illisible : on ignore quelle objection a été plaidée, donc aucun événement ne peut la falsifier. Un tribunal ne juge que ce qui a été plaidé.</div>
+        <div class="decision" style="color:var(--abstention)">🤔 DEMANDER AU REP · 0 crédit</div>
+      </div>
+    </div>
+    <p class="footnote-live">Même levée. Trois verdicts opposés. Aucune table de règles ne fait ça — c'est le seul maillon que Claude rend et qu'un <code>if/else</code> ne rendra jamais.</p>
+  </div>
+</section>
+
+<!-- MÉCANISME -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">03</span><h2>Le mécanisme, en six temps</h2></div>
+    <div class="steps">
+      <div class="step"><div class="n">01</div><h3>Typer l'objection</h3><p>La raison de perte brute est classée (budget, concurrent, timing, autorité, besoin, ou « sale »). Déterministe, 0 token.</p><div class="who">Code</div></div>
+      <div class="step"><div class="n">02</div><h3>Surveiller le monde</h3><p>Push une fois la liste fermée des domaines closed-lost, poll pour toujours. Usage rêvé de l'asynchrone et du quota d'essai.</p><div class="who">Sillage</div></div>
+      <div class="step"><div class="n">03</div><h3>Instruire le procès</h3><p>Procureur (le falsificateur) contre défense (les anti-signaux). La polarité <em>raison × événement</em> est jugée.</p><div class="who">Claude</div></div>
+      <div class="step"><div class="n">04</div><h3>Rendre le verdict</h3><p>FALSIFIÉE · INTACTE · ABSTENTION — avec la citation exacte du falsificateur et le contre-argument honnête.</p><div class="who">Claude</div></div>
+      <div class="step"><div class="n">05</div><h3>Décider la dépense</h3><p>Le gate VOI ne débloque un crédit que si l'objection est falsifiée <em>et</em> le deal rentable. Sinon : zéro dépense.</p><div class="who">Code · FullEnrich</div></div>
+      <div class="step"><div class="n">06</div><h3>Livrer le dossier</h3><p>Contact actuel vérifié (successeur si l'ancien est parti) + preuve datée + brouillon + prix → écriture CRM.</p><div class="who">FullEnrich · Claude</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TRIO AU RETRAIT -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">04</span><h2>Le trio, testé au retrait</h2></div>
+    <div class="trio">
+      <div class="t"><div class="k">Sans Sillage</div><div class="dies">→ le système meurt</div><p>Il ne reste que du nurture calendaire à l'aveugle — le statu quo qu'on attaque. Pas de vérité extérieure, pas de falsificateur.</p></div>
+      <div class="t"><div class="k">Sans Claude</div><div class="dies">→ le système meurt</div><p>Des alertes Crunchbase brutes, sans polarité. La levée déclenche un mail idiot au deal B comme au deal A. Du bruit dans Slack.</p></div>
+      <div class="t"><div class="k">Sans FullEnrich</div><div class="dies">→ boiterie grave</div><p>Un dossier de réouverture parfait… adressé à un fantôme. 20-30&nbsp;% des contacts ont bougé à 8-18 mois <span class="muted">(estimation, pas un fait)</span>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPTEUR -->
+<section>
+  <div class="wrap">
+    <div class="counter">
+      <div class="k">Le compteur de retenue — la démo, chiffrée</div>
+      <div class="stats">
+        <div class="stat"><div class="v">200</div><div class="l">surveillés</div></div>
+        <div class="stat"><div class="v">5</div><div class="l">rouverts</div></div>
+        <div class="stat"><div class="v">195</div><div class="l">laissés dormir</div></div>
+        <div class="stat"><div class="v">~15</div><div class="l">crédits</div></div>
+        <div class="stat"><div class="v">0</div><div class="l">token pour le tri</div></div>
+      </div>
+      <p class="punch">Dans une salle où tous les systèmes démontrent qu'ils <em>envoient plus</em>, le seul qui sait&nbsp;: ne pas envoyer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SCORECARD -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">05</span><h2>Verdict sur le brief</h2></div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Critère du hackathon</th><th>Ce qu'APPEL apporte</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>Trio indispensable</td><td>Chacun mortel ou estropiant au retrait</td><td class="score">9/10</td></tr>
+          <tr><td>Claude mis en valeur</td><td>Polarité raison × événement, impossible en règles</td><td class="score">9/10</td></tr>
+          <tr><td>Démontrable en 48h</td><td>70 % des briques existent · cœur déjà prouvé</td><td class="score">8,5/10</td></tr>
+          <tr><td>Fait bouger l'aiguille</td><td>Rouvre l'actif dormant n°1 du CRM, sans cramer</td><td class="score">8/10</td></tr>
+          <tr><td>Effet-WOW jury</td><td>Triptyque · destruction live · compteur de retenue</td><td class="score">9/10</td></tr>
+          <tr><td>Unicité (récit inoccupé)</td><td>Personne ne raisonne sur la raison de perte × événement</td><td class="score">9/10</td></tr>
+          <tr><td>Honnêteté / anti-slop</td><td>Métrique bornée · abstention en fierté · limites assumées</td><td class="score">9/10</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- LIMITES -->
+<section>
+  <div class="wrap">
+    <div class="sec-head"><span class="num">06</span><h2>La jurisprudence appliquée à soi-même</h2></div>
+    <div class="limits">
+      <ul>
+        <li><b>Garbage in.</b> On ne juge que ce qui a été plaidé. 40-60 % des raisons sont sales → abstention. Le taux d'abstention est une <b>métrique de fierté</b>, pas un aveu.</li>
+        <li><b>Couverture partielle.</b> On ne rouvre qu'une fraction du cimetière — mais rater n'a <b>aucun coût</b> : le deal était déjà mort. C'est ce qui rend ce terrain supérieur au radar de churn.</li>
+        <li><b>Une réouverture n'est pas un deal gagné.</b> La métrique s'arrête au dossier livré : objection falsifiée + preuve datée + contact vérifié + brouillon. Aucun revenu revendiqué.</li>
+        <li><b>Le mock est avoué à l'écran.</b> Au moins un signal Sillage réellement live pendant le hackathon ; le reste en replay daté, dit explicitement. Le mock découvert tue ; le mock assumé survit.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<hr class="rule">
+
+<footer>
+  <div class="wrap">
+    Exploration double-diamant · Fable 5 via l'API · Diamant 1 (problème) + Diamant 2 (solution) + jury adversarial<br>
+    Cœur prouvé empiriquement — <code>python3 tribunal.py</code> · coût total de la recherche <span class="cost">~2,43 $</span> sur 100 $
+  </div>
+</footer>

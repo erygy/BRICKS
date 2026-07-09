@@ -1,0 +1,73 @@
+══════════════════════════════════════════════════════════════════════════════
+  SECOND AVIS · DIAGNOSTIC DIFFÉRENTIEL DU SILENCE (Fable 5, verdicts réels)
+  Silence INTERNE identique pour les 5 : chute d'usage franche, plus aucune réponse, comité de pilotage annulé
+══════════════════════════════════════════════════════════════════════════════
+
+▶ Northwind (90000€) — dehors : Vague d'embauche : 34 postes ouverts (dont 12 en engineering), 2 b…
+   🟢 BÉNIN — nourrir
+   hypothèse : Northwind est en pleine phase d'hypercroissance : les équipes sont absorbées par les recrutements et l'ouverture de bureaux, pas en train de partir.
+   preuve    : Vague d'embauche en cours : 34 postes ouverts dont 12 en engineering, et 2 nouveaux bureaux annoncés, sans aucun signal négatif détecté par Sillage.
+   falsifié si : Un départ du champion (surtout vers un concurrent), un engagement public avec un outil concurrent, un gel des embauches, ou si le silence persiste au-delà du pic de recrutement (60-90 jours) malgré la stabilisation des équipes.
+   action    : Ne pas forcer un QBR maintenant : envoyer une valeur asynchrone légère (rapport d'impact, offre d'onboarding pour les 12 nouveaux ingénieurs) qui transforme leur croissance en raison de ré-engagement, puis proposer un point court aligné sur leur montée en charge.  
+
+▶ Halcyon (120000€) — dehors : Rachat annoncé il y a 3 semaines par un groupe US ; intégration en…
+   🔴 TOXIQUE — intervenir
+   hypothèse : Le silence n'est pas de la distraction passagère : le rachat par un groupe US avec nomination d'un nouveau CFO déclenche typiquement un gel des dépenses et une revue de rationalisation des outils, où un contrat de 120000€ ARR sans sponsor actif est une cible de coupe.
+   preuve    : Rachat annoncé il y a 3 semaines par un groupe US, intégration en cours, nouveau CFO nommé — le timing coïncide exactement avec la chute d'usage (-63% il y a 24 jours) et les 2 QBR annulés, ce qui suggère un lien causal et non une simple surcharge.
+   falsifié si : Si le nouveau CFO ou l'équipe d'intégration confirme le renouvellement, si l'usage remonte après la phase d'intégration, ou si l'acquéreur n'utilise pas de solution concurrente et cherche à harmoniser sur notre outil — alors le silence serait requalifié en distraction bénigne de transition.
+   action    : Ne pas attendre le renouvellement : identifier sous 2 semaines qui décide côté acquéreur (nouveau CFO, équipe intégration), vérifier quel outil équivalent le groupe US utilise déjà, et construire un dossier de valeur chiffré (ROI, coût de migration) à présenter au nouveau décideur avant que la revue des fournisseurs ne soit bouclée sans nous.  [+ contact alternatif FullEnrich]
+
+▶ Vantle (75000€) — dehors : Le champion (VP Ops, sponsor du deal) a quitté l'entreprise il y a…
+   🔴 TOXIQUE — intervenir
+   hypothèse : Le silence n'est pas de la distraction mais un désengagement organisé : le sponsor du deal est parti et son remplaçant, venu d'un concurrent direct, prépare probablement un remplacement de solution.
+   preuve    : Départ du champion (VP Ops, sponsor du deal) il y a 12 jours, avec un successeur issu d'un concurrent direct — chronologie cohérente avec la chute d'usage de -63 % il y a 24 jours et les 2 QBR annulés.
+   falsifié si : Le successeur accepte un rendez-vous d'onboarding et maintient le prochain comité de pilotage, ou l'usage remonte spontanément dans les équipes opérationnelles malgré le changement de direction.
+   action    : Ne pas attendre le renouvellement : lancer immédiatement une manœuvre de re-vente — cartographier les utilisateurs actifs restants, sécuriser un second sponsor (finance ou métier), et demander un entretien exécutif avec le successeur en arrivant avec un bilan de valeur chiffré, pas un pitch produit.  [+ contact alternatif FullEnrich]
+
+▶ Orbix (60000€) — dehors : L'entreprise a publié 3 posts d'étude de cas avec un concurrent di…
+   🔴 TOXIQUE — intervenir
+   hypothèse : Orbix a déjà basculé opérationnellement vers un concurrent direct et prépare la non-reconduction en évitant les échanges.
+   preuve    : 3 posts d'étude de cas publiés avec un concurrent direct, accompagnés du recrutement de 2 personnes venant de ce même concurrent — c'est un engagement public et un transfert de compétences vers l'alternative, pas une simple distraction.
+   falsifié si : Les études de cas concernent un produit non concurrent de notre périmètre, ou les recrutements sont sur des fonctions sans lien avec notre usage ; un retour d'usage significatif ou une réponse du sponsor confirmant un simple gel budgétaire renverserait aussi le verdict.
+   action    : Escalade immédiate au niveau exécutif : provoquer un échange direction-à-direction sous 7 jours avec une proposition de re-négociation ciblée (valeur différenciante vs le concurrent cité), et préparer en parallèle un plan de sauvetage ou de sortie propre avant l'échéance contractuelle.  [+ contact alternatif FullEnrich]
+
+▶ Calder (45000€) — dehors : Aucun signal externe détecté sur les 90 derniers jours.…
+   🟡 INDÉTERMINÉ — surveiller
+   hypothèse : Le silence est sévère (usage -63 %, 2 QBR annulés) mais aucun fait externe ne permet d'en identifier la cause : ni signe d'occupation bénigne, ni signe de départ.
+   falsifié si : Un signal Sillage daté trancherait : vague d'embauche ou levée de fonds → bénin (occupé) ; départ du champion vers un concurrent, engagement avec un concurrent, gel budgétaire ou M&A → toxique.
+   action    : Surveiller en priorité : mouvements LinkedIn du champion et des utilisateurs clés, offres d'emploi mentionnant un outil concurrent, annonces M&A/restructuration. En parallèle, contourner le champion silencieux pour obtenir un fait interne : contacter un autre utilisateur actif ou le sponsor exécutif avec un message court à faible friction. L'absence de signal externe ne doit pas être lue comme rassurante — deux QBR annulés d'affilée sont compatibles avec un désengagement volontaire non encore visible publiquement.  [+ contact alternatif FullEnrich]
+
+══════════════════════════════════════════════════════════════════════════════
+  MÊME silence interne → 1 bénin · 3 toxique · 1 indéterminé
+  Silence EXPLIQUÉ : 4/5 comptes → action ciblée au lieu du 'just checking in' aveugle
+══════════════════════════════════════════════════════════════════════════════
+
+── DEUX EMAILS OPPOSÉS, générés depuis un silence interne IDENTIQUE ──
+
+▷ SILENCE BÉNIN — Northwind
+**Objet : 34 postes ouverts — bravo (et une idée)**
+
+Bonjour,
+
+Je viens de voir passer vos annonces : 34 recrutements et 2 nouveaux bureaux, c'est une sacrée dynamique. Félicitations à toute l'équipe.
+
+Onboarder autant de monde en si peu de temps, c'est souvent là que ça coince. Si ça peut aider, on a des templates prêts à l'emploi pour intégrer rapidement vos nouveaux arrivants sur la plateforme — je peux vous les envoyer, zéro effort de votre côté.
+
+Dites-moi si c'est utile, sinon bonne route avec tout ça 🚀
+
+Thomas
+
+▷ SILENCE TOXIQUE — Halcyon
+**Objet : Intégration Halcyon — un chiffre qui peut vous servir**
+
+Bonjour Claire,
+
+J'ai vu l'annonce du rachat — période dense pour vous, j'imagine, entre l'intégration et l'arrivée du nouveau CFO.
+
+C'est justement dans ces moments-là qu'on demande aux équipes de justifier chaque outil. Alors autant vous armer : je peux vous préparer un bilan chiffré de ce que la plateforme vous a fait gagner cette année (temps, coûts évités, usage réel). Une page, du concret, prêt à poser sur la table du CFO.
+
+Dites-moi si ça vous est utile, je vous l'envoie sous 48h.
+
+Thomas
+
+(jugement + rédaction : 5115 tokens in / 2954 out)

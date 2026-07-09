@@ -1,0 +1,8 @@
+EXPLORATION DE MASSE — chiffres réels (Fable 5 via API)
+  douleurs générées : 941 (42 points de vue)
+  clusters maîtres  : 52
+  concepts générés  : 308 (14 clusters x 2 lentilles)
+  finalistes réfutés: 22
+  survivants        : 14
+  gagnant           : GhostAccount Detector / SECOND AVIS (révisé 66)
+  coût total        : ~13,5 $ sur 100
