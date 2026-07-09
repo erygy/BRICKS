@@ -1,0 +1,18 @@
+# données de travail (workspaces, bases, exports)
+bricks/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+staging/
+*.manifest.json
+
+# python
+__pycache__/
+*.pyc
+.venv/
+
+# secrets & local
+.env
+.claude/settings.local.json
+.DS_Store
