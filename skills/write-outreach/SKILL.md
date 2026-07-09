@@ -5,10 +5,10 @@ description: Write multi-channel outreach drafts — email sequences AND LinkedI
 
 # Write outreach
 
-**Before anything, read `CONVENTIONS.md`.**
+**Before anything, read `${CLAUDE_PLUGIN_ROOT}/CONVENTIONS.md`.**
 
 Writes personalized multi-channel drafts into `messages`. The strategy
-was decided upstream by `/plan-outreach` (`context/strategy.md` +
+was decided upstream by `/bricks:plan-outreach` (`context/strategy.md` +
 `contacts.channel_plan`) — this skill EXECUTES it, per contact, in the
 contact's assigned lane(s). It applies the context, it does not invent
 positioning. Drafts forever: nothing leaves the machine without a human.
@@ -16,7 +16,7 @@ positioning. Drafts forever: nothing leaves the machine without a human.
 ## Before anything — three gates
 
 1. **`context/strategy.md` (HARD)** — absent → stop: "run
-   `/plan-outreach` first". The sequence templates, cadence and
+   `/bricks:plan-outreach` first". The sequence templates, cadence and
    tier treatments live there; without them this brick would guess.
 2. **`context/offer.md` (HARD)** — TODO → stop and collect it; refuse to
    write generic spam. In a chain, the GO must have satisfied this gate
@@ -43,7 +43,7 @@ when the user opts in at the GO — drafts are text, sending stays gated
 either way. Then read their companies (pitch, language, and the priority
 columns) and their `signals`. The opener is chosen in this order:
 **`companies.why_now` first** (join by the contact's `company_id`) —
-`/rank-accounts` already fused the account's strongest fresh
+`/bricks:rank-accounts` already fused the account's strongest fresh
 signal into one trigger line, `why_now_url` its evidence; it supersedes
 and generalizes `hiring_angle` (still honored when `why_now` is absent).
 Otherwise fresh `signals` directly: only `freshness='fresh'` rows

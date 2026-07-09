@@ -5,15 +5,15 @@ description: Prioritize accounts — fuse ICP fit and every fresh signal into a 
 
 # Rank accounts
 
-**Before anything, read `CONVENTIONS.md`.**
+**Before anything, read `${CLAUDE_PLUGIN_ROOT}/CONVENTIONS.md`.**
 
-The prioritization brick — the call-list brain. `/score` says how
+The prioritization brick — the call-list brain. `/bricks:score` says how
 well a company FITS the ICP (static); the signal bricks say what is
 happening NOW. This brick answers the question NEITHER does: *across all
 my accounts, which do I call NOW, and why?* It fuses the fit (`tier`)
 with every fresh `signals` row into one `priority_score` and a `why_now`
-line, then hands both to the bus — `/plan-outreach` reads the
-priority, `/write-outreach` reads the `why_now` as its opener. It
+line, then hands both to the bus — `/bricks:plan-outreach` reads the
+priority, `/bricks:write-outreach` reads the `why_now` as its opener. It
 NEVER calls another brick.
 
 The maths live in a frozen script — `scripts/rank.py`: one deterministic
@@ -29,7 +29,7 @@ This brick is **free** and touches no external service. It runs LATE
 
 - **No `tier` column** (score never ran) → the ranking still runs on fit
   defaults, but SAY SO: "priorité basée sur les seuls signaux — lance
-  `/score` pour intégrer le fit ICP".
+  `/bricks:score` pour intégrer le fit ICP".
 - **No `signals` table / no rows** → every account scores on fit alone
   and lands in `week`/`nurture` with an empty `why_now` — that is the
   correct, honest result for a no-signal base (the control-group case),
@@ -56,10 +56,10 @@ so ("mets hiring à 40", "seuil now à 75") and you edit that one value.
 
    ```bash
    RUN="bricks/tmp/rank-<date>"; mkdir -p "$RUN"
-   python3 "tools/core/db.py" select companies \
+   python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/db.py" select companies \
      --where "status IS NULL OR status!='disqualified'" \
      --cols _id,name,<tier-col> --limit -1 > "$RUN/companies.json"
-   python3 "tools/core/db.py" select signals \
+   python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/db.py" select signals \
      --cols company_id,company_name,kind,freshness,date,summary,evidence_url \
      --limit -1 > "$RUN/signals.json"
    ```
@@ -67,9 +67,9 @@ so ("mets hiring à 40", "seuil now à 75") and you edit that one value.
 3. Compute:
 
    ```bash
-   python3 "skills/rank-accounts/scripts/rank.py" run \
+   python3 "${CLAUDE_PLUGIN_ROOT}/skills/rank-accounts/scripts/rank.py" run \
      --companies "$RUN/companies.json" --signals "$RUN/signals.json" \
-     --spec "skills/rank-accounts/scripts/rank_spec.json" \
+     --spec "${CLAUDE_PLUGIN_ROOT}/skills/rank-accounts/scripts/rank_spec.json" \
      --tier-col <tier-col> --out "$RUN/updates.json"
    ```
 
@@ -82,7 +82,7 @@ so ("mets hiring à 40", "seuil now à 75") and you edit that one value.
 ONE write (§4):
 
 ```bash
-python3 "tools/core/db.py" modify companies \
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/db.py" modify companies \
   --updates - < "$RUN/updates.json"
 ```
 
@@ -108,5 +108,5 @@ priority_score/tier → why_now`. If `rank.py` reports `linkedByName > 0`
 or `orphanedSignals > 0`, SAY SO — a signal writer omitted `company_id`
 (the fallback recovered it by name, or dropped it): flag the brick to fix
 upstream, don't let it pass silently. End with a **statement**, never a
-question — e.g. "Next: `/write-outreach` attaquera les comptes
+question — e.g. "Next: `/bricks:write-outreach` attaquera les comptes
 `now` en premier, `why_now` prêt en accroche."

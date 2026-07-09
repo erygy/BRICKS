@@ -6,7 +6,7 @@ argument-hint: "new <name> | switch <name> | list | status | (nothing)"
 
 # Workspace — create, switch, inspect
 
-**Before anything, read `CONVENTIONS.md`** — the shared
+**Before anything, read `${CLAUDE_PLUGIN_ROOT}/CONVENTIONS.md`** — the shared
 contract every skill obeys (§2 covers workspace resolution).
 
 Manages the Bricks data root (`bricks/` in the current working directory) and
@@ -14,7 +14,7 @@ the current-workspace pointer in `bricks/config.json`. Never create or edit
 these files by hand — always through the tool:
 
 ```bash
-python3 "tools/core/workspace.py" <command>
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/workspace.py" <command>
 ```
 
 Every command prints JSON. The root is created LAZILY (§2): nothing exists
@@ -53,9 +53,9 @@ session open — the user must always know which world they are in.
   name is implied, ask for one.
 - **After `new`** → the workspace has fresh `context/` files (`offer.md`,
   `icp.md`, `personas/`) still empty (TODO placeholders) and an empty
-  database. Hand off immediately to `/gtm-onboard` to discover and
+  database. Hand off immediately to `/bricks:gtm-onboard` to discover and
   fill the ICP — it is the brick that infers, challenges and (via
-  `/context-write`) fills the context; do not fill `context/` by hand
+  `/bricks:context-write`) fills the context; do not fill `context/` by hand
   here. Any objective the user stated feeds that onboarding, not a flag. If
   the user declines onboarding for now, leave the TODO placeholders and move
   on.
@@ -70,6 +70,6 @@ session open — the user must always know which world they are in.
 
 ## Not in this skill
 
-Filling `context/icp.md` and `context/offer.md` is `/gtm-onboard`'s
+Filling `context/icp.md` and `context/offer.md` is `/bricks:gtm-onboard`'s
 job, not this skill's. `workspace` only manages the container (which
 database, which context files exist) — never their content.

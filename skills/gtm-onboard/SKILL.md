@@ -14,9 +14,9 @@ one falsifiable v1 ICP conforming to the schema.
 It never writes the context itself. When the profile is filled and
 challenged, it delegates:
 
-- to `/context-write` (sister skill, not user-invocable) to persist
+- to `/bricks:context-write` (sister skill, not user-invocable) to persist
   the ICP;
-- to `/workspace` (sister skill) when a brand-new workspace is
+- to `/bricks:workspace` (sister skill) when a brand-new workspace is
   warranted.
 
 The ICP it produces is always a **v1 hypothesis**, never "the right ICP" —
@@ -24,13 +24,13 @@ downstream bricks (outreach, ads) are what raise its confidence.
 
 ## Before anything: read the conventions, then inspect the workspace
 
-**First, always read `CONVENTIONS.md` in full** — this
+**First, always read `${CLAUDE_PLUGIN_ROOT}/CONVENTIONS.md` in full** — this
 is mandatory, not optional. It is the shared contract every brick obeys
 (workspace resolution, the context gate, and the rule to never name context
 files to the user). Do this before any other action in an onboarding.
 
 Then follow §2: run
-`python3 "tools/core/workspace.py" status`. Do NOT edit any
+`python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/workspace.py" status`. Do NOT edit any
 file here — the status output is the raw material for Phase 0's routing
 decision. When a current workspace exists, read the offer and ICP context to
 know what is already defined (talk about their content, never their file
@@ -65,7 +65,7 @@ confirmation question — never decide unilaterally. Example: *"Ça ressemble
 Je te crée un nouveau workspace dédié, ou on reste ici ?"*
 
 **Workspace handoff (case D, user says yes).** Hand off to
-`/workspace` to create a `new <name> --goal "<the user's objective,
+`/bricks:workspace` to create a `new <name> --goal "<the user's objective,
 one line>"`. Display the returned banner +
 welcome line VERBATIM (CONVENTIONS §2), then resume at Phase 1 inside the
 fresh workspace (mode `append`, first ICP) — the project the user described
@@ -114,7 +114,7 @@ banks (3-4 per dimension) live in
 
 ## Phase 3 — Handoff to context-write
 
-Schema filled and challenged → call `/context-write`, handing it:
+Schema filled and challenged → call `/bricks:context-write`, handing it:
 
 1. the complete ICP object (per the schema);
 2. the **mode** — `overwrite` with the target ICP id, or `append`;

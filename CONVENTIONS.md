@@ -22,7 +22,7 @@ The Bricks root (`bricks/` in the working directory) is created LAZILY, on the
 first GTM action — nothing is created just by opening a session. Begin any GTM
 action with:
 
-    python3 "tools/core/workspace.py" status
+    python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/workspace.py" status
 
 - Not initialized here, or no **current workspace** → create one (`new <slug>`,
   which also creates the root) or `switch` to an existing one. If the user's
@@ -38,7 +38,7 @@ enriching, read `context/offer.md` and `context/icp.md`. Talk about their
 *content*, never their filenames. If the request contradicts the context
 (different product, different ICP, different target), STOP and ask: switch, new
 workspace, or update the context. If the ICP is still empty (TODO placeholders),
-hand off to `/gtm-onboard` before sourcing. If the ICP has kill rules
+hand off to `/bricks:gtm-onboard` before sourcing. If the ICP has kill rules
 matching columns being written, flag matching rows in the receipt — never
 disqualify silently.
 
@@ -50,7 +50,7 @@ and columns are dynamic; `_id` is auto-generated (never pass it in). An
 enrichment column `X` is paired with `X_status` using the shared vocabulary:
 `pending | running | done | not_found | failed`. `not_found` is a result, not
 an error; `failed` means retryable; NEVER fabricate a value. Full CLI and
-function signatures in `/tools-guide`.
+function signatures in `/bricks:tools-guide`.
 
 ## §5 — The iron gate: preview → GO → commit
 
@@ -76,13 +76,13 @@ erases a bad run entirely (fields nulled, statuses reset, child rows removed).
   `runner.py` (steps and/or `--ai` → `agent.py`). One mode per run — never a
   third path: no per-row loops in the conversation, no hand-calling `agent.py`
   row by row (≲5 rows dictated in-session is the exception — see
-  `/brickgent`).
+  `/bricks:brickgent`).
 
 ## §7 — References, cost & billing
 
 - Reference other skills as slash commands, never as file paths:
-  `/find`, `/enrich`, `/score`, `/tools-guide`… —
-  pattern `/<skill-directory-name>`.
+  `/bricks:find`, `/bricks:enrich`, `/bricks:score`, `/bricks:tools-guide`… —
+  pattern `/bricks:<skill-directory-name>`.
 - Per-row work defaults to `haiku` — the strong model is for orchestration,
   not for 500 identical worker turns. Announce a batch's scope and worst-case
   cost (rows × pages × credits) BEFORE committing it. Below the big-spend

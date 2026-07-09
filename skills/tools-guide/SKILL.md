@@ -6,18 +6,18 @@ user-invocable: true
 
 # Tools guide — how to call each Bricks script
 
-The shared runtime contract is `CONVENTIONS.md` — this
+The shared runtime contract is `${CLAUDE_PLUGIN_ROOT}/CONVENTIONS.md` — this
 guide is the tool-by-tool reference behind it.
 
-Core scripts live under `tools/core/`, provider adapters
-under `tools/providers/`. Every script prints **JSON on
+Core scripts live under `${CLAUDE_PLUGIN_ROOT}/tools/core/`, provider adapters
+under `${CLAUDE_PLUGIN_ROOT}/tools/providers/`. Every script prints **JSON on
 stdout** (errors on stderr, exit 1) AND is importable as plain Python functions
 — same code paths both ways. Skills orchestrate; tools execute.
 
 CLI prefix:
 
 ```bash
-python3 "tools/core/<script>.py" ...
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/<script>.py" ...
 ```
 
 Function mode (from a step file or any script):
@@ -44,8 +44,8 @@ subcommand.
 | `init` | Create the Bricks root without a workspace (rare — `new` does it for you) |
 
 ```bash
-python3 "tools/core/workspace.py" status
-python3 "tools/core/workspace.py" new acme-outbound --goal "vendre X aux PME Y"
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/workspace.py" status
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/workspace.py" new acme-outbound --goal "vendre X aux PME Y"
 ```
 
 **When to use:** always run `status` before any GTM work. Never edit
@@ -82,11 +82,11 @@ immediate transactions).
 | `drop-table <table> --confirm` | Delete a whole table — irreversible | Start over |
 
 ```bash
-python3 "tools/core/db.py" add companies \
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/db.py" add companies \
   --rows '[{"name":"Acme","domain":"acme.com"}]' --key domain
-python3 "tools/core/db.py" import-csv companies ./bricks/tmp/companies.csv --key domain
-python3 "tools/core/db.py" modify companies --set hq_status=pending --where "domain IS NOT NULL"
-python3 "tools/core/db.py" claim companies hq_status --limit 25 --cols _id,domain
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/db.py" import-csv companies ./bricks/tmp/companies.csv --key domain
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/db.py" modify companies --set hq_status=pending --where "domain IS NOT NULL"
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/db.py" claim companies hq_status --limit 25 --cols _id,domain
 ```
 
 Function mode: `db.resolve(db=None)`, `db.connect(path)`, `db.columns(conn, t)`,
@@ -149,7 +149,7 @@ the command runs; stdout is the final receipt only.
 
 ```bash
 # PREVIEW — 10 pilot rows, written tagged, streamed live
-python3 "tools/core/runner.py" run --table companies \
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/runner.py" run --table companies \
   --status-col hq_status --run-id hq-2026-07-09 \
   --ai '{"prompt":"Ville du siège de {{name}} ({{domain}}) ?","schema":{"type":"object","properties":{"hq_city":{"type":"string"}}},"web":true}' \
   --preview 10
@@ -160,8 +160,8 @@ python3 "tools/core/runner.py" run --table companies \
 ### `rollback` & `release`
 
 ```bash
-python3 "tools/core/runner.py" rollback --manifest <run>.manifest.json
-python3 "tools/core/runner.py" release --table companies --status-col hq_status
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/runner.py" rollback --manifest <run>.manifest.json
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/runner.py" release --table companies --status-col hq_status
 ```
 
 `rollback` nulls the run's fields, resets statuses to `pending`, removes child
@@ -190,7 +190,7 @@ The session always compiles the prompt; the agent executes.
 | `--timeout` | Seconds (default 120) |
 
 ```bash
-python3 "tools/core/agent.py" \
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/agent.py" \
   --prompt "Ville du siège de acme.com ?" --web --model haiku \
   --schema '{"type":"object","properties":{"hq_city":{"type":"string"}}}'
 ```
@@ -206,7 +206,7 @@ Messages API (API credits; `ANTHROPIC_API_KEY` in `~/.bricks/env`) — required
 where the SDK cannot run (Python < 3.10, no AVX). An `ANTHROPIC_API_KEY`
 present in the env takes precedence over the subscription login on BOTH paths.
 
-**When to use:** isolated one-off research (≲5 rows — see `/brickgent`).
+**When to use:** isolated one-off research (≲5 rows — see `/bricks:brickgent`).
 For table-wide enrichment, go through `runner.py`, never repeated `agent.py`
 calls.
 
@@ -222,9 +222,9 @@ CLI AND a `step(row, ctx, args)` function that plugs into `runner.py --step`.
 | `fullenrich.py` | FullEnrich people search, wave cascade per company (`FULLENRICH_API_KEY`) | `fullenrich.py:step {"params":{…},"out_table":"contacts"}` — inserts verified contacts as child rows tagged `source_run` |
 
 ```bash
-python3 "tools/core/runner.py" run --table companies \
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/runner.py" run --table companies \
   --status-col enrich_status --run-id enrich-2026-07-09 \
-  --step "tools/providers/fullenrich.py:step" --preview 10
+  --step "${CLAUDE_PLUGIN_ROOT}/tools/providers/fullenrich.py:step" --preview 10
 ```
 
 ---
@@ -241,7 +241,7 @@ Enrich many rows (AI)?       → runner.py run --ai … --preview 10 → GO → 
 Enrich many rows (provider)? → runner.py run --step providers/<x>.py:step …
 Chain both on one pass?      → runner.py run --step … --step … --ai …
 Undo a bad run?              → runner.py rollback --manifest <run>.manifest.json
-One-off AI question (≲5)?    → agent.py --prompt … (or /brickgent)
-GTM sourcing / enrichment?   → /find | /enrich
-No ICP yet?                  → /gtm-onboard
+One-off AI question (≲5)?    → agent.py --prompt … (or /bricks:brickgent)
+GTM sourcing / enrichment?   → /bricks:find | /bricks:enrich
+No ICP yet?                  → /bricks:gtm-onboard
 ```

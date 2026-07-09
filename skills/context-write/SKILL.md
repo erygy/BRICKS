@@ -8,17 +8,17 @@ user-invocable: false
 
 Takes one free-text sentence describing an ICP and writes it, structured,
 into the current workspace's `context/icp.md`, following the ICP schema
-verbatim. When `/gtm-onboard` also hands over a buying committee,
+verbatim. When `/bricks:gtm-onboard` also hands over a buying committee,
 it persists one persona file per role under `context/personas/`. This is
 the one brick whose output is the context itself, not database rows: no
 `db.py`, no `bricks.db` — just the markdown files the other bricks read
-as their client brain. Called by `/gtm-onboard`, never by the user
+as their client brain. Called by `/bricks:gtm-onboard`, never by the user
 directly.
 
 ## Before anything: resolve the workspace
 
-Follow `CONVENTIONS.md` §2: run
-`python3 "tools/core/workspace.py" status` and work
+Follow `${CLAUDE_PLUGIN_ROOT}/CONVENTIONS.md` §2: run
+`python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/workspace.py" status` and work
 exclusively inside the returned current workspace. The target file is
 `<workspace>/context/icp.md`. The database rules (§4-§6) do not apply
 here — this brick only edits markdown under `context/`.
@@ -28,7 +28,7 @@ here — this brick only edits markdown under `context/`.
 A single sentence (or short paragraph) carrying all the ICP facts, e.g.
 « On vise les scale-ups SaaS B2B françaises de 50 à 500 salariés, on
 écarte les <10 salariés et le secteur public, on cible les VP Sales et
-les Head of Growth. » `/gtm-onboard` hands it in — never
+les Head of Growth. » `/bricks:gtm-onboard` hands it in — never
 re-interview the user here.
 
 ## Mapping — one fact, one field
@@ -83,7 +83,7 @@ Mapping rules:
 
 ## Personas — one file per buying role
 
-When `/gtm-onboard` hands over a buying committee (more than the
+When `/bricks:gtm-onboard` hands over a buying committee (more than the
 single decision-maker — a champion, an end user, a DG/office-manager
 layer), do NOT let it live only in the conversation: persist it, or the
 writing bricks never see it. For each identified role write

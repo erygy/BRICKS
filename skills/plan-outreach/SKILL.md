@@ -1,27 +1,27 @@
 ---
 name: plan-outreach
-description: Decide the outreach strategy from evidence — motion, channel mix (LinkedIn / email / both), cadence, volumes, per-tier treatment. Use when the user says "définis la stratégie", "on attaque par où ?", "LinkedIn ou email ?", "stratégie de prospection", "plan outreach". Runs AFTER enrichment and scoring; writes context/strategy.md (user-confirmed, persisted) + contacts.channel_plan. It never writes a message — /write-outreach executes.
+description: Decide the outreach strategy from evidence — motion, channel mix (LinkedIn / email / both), cadence, volumes, per-tier treatment. Use when the user says "définis la stratégie", "on attaque par où ?", "LinkedIn ou email ?", "stratégie de prospection", "plan outreach". Runs AFTER enrichment and scoring; writes context/strategy.md (user-confirmed, persisted) + contacts.channel_plan. It never writes a message — /bricks:write-outreach executes.
 ---
 
 # Plan outreach
 
-**Before anything, read `CONVENTIONS.md`.**
+**Before anything, read `${CLAUDE_PLUGIN_ROOT}/CONVENTIONS.md`.**
 
 The strategy brick. It turns the workspace's EVIDENCE into one confirmed
 outreach strategy — it sits LATE in the pipeline, after find/enrich/score
 have filled the table, because a strategy without evidence is vibes. It
-decides; `/write-outreach` executes; the orchestrator (the
-session, or `/playbook-outbound`) sequences. It never writes a
+decides; `/bricks:write-outreach` executes; the orchestrator (the
+session, or `/bricks:playbook-outbound`) sequences. It never writes a
 message and never talks to another brick — its output is artifacts on the
 bus.
 
 HARD gate: `context/offer.md` + `icp.md` + `personas/` filled (TODO → run
-`/gtm-onboard` first). Then read the EVIDENCE from the base via
+`/bricks:gtm-onboard` first). Then read the EVIDENCE from the base via
 `db.py select`/`count` (§4 — use the receipts' `matching` counts, never
 dumps):
 company sizes and sectors (firmo), `tier` distribution (score run?
 absent → the strategy is uniform-degraded and SAYS SO, recommending
-`/score` first), fresh signals (hiring, news, job changes), and
+`/bricks:score` first), fresh signals (hiring, news, job changes), and
 contact coverage — % with a `linkedin_url`, % with a verified email,
 seniority mix. These numbers ARE the strategy's raw material.
 
@@ -70,7 +70,7 @@ wave, a channel's coverage doubling).
 
 - **`context/strategy.md`** — the strategy document, human-readable:
   motion, channel mix, cadence and volumes, per-tier treatment, the
-  sequence template per lane (steps + send_days `/write-outreach`
+  sequence template per lane (steps + send_days `/bricks:write-outreach`
   will follow), the evidence that justified each choice, and the date.
 - **`contacts.channel_plan`** = `email` | `linkedin` | `linkedin+email` |
   `hot-manual` — assigned per row from evidence (verified email?
@@ -85,5 +85,5 @@ wave, a channel's coverage doubling).
   line (§8).
 
 Receipt: the channel_plan distribution + the strategy in 5 lines + the
-next step as a statement ("Next: `/write-outreach` — dis le
+next step as a statement ("Next: `/bricks:write-outreach` — dis le
 mot"). Never a question, never a message written, never a send.

@@ -5,7 +5,7 @@ description: Enrich rows of an existing table in the current Bricks workspace da
 
 # Enrich — fill columns on existing rows
 
-**Before anything, read `CONVENTIONS.md`** — the
+**Before anything, read `${CLAUDE_PLUGIN_ROOT}/CONVENTIONS.md`** — the
 shared contract every skill obeys (workspace §2, context gate §3, the
 only door §4, the iron gate §5, the two enrichment modes in §6).
 
@@ -17,9 +17,9 @@ pages per row in the session.
 
 ## Gates (before anything)
 
-1. `python3 "tools/core/workspace.py" status` — a
+1. `python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/workspace.py" status` — a
    current workspace with an existing table is required; if none, tell
-   the user to run `/find` first (or ask which data to import)
+   the user to run `/bricks:find` first (or ask which data to import)
    instead of inventing rows.
 2. Read `context/icp.md` and `context/offer.md`; on contradiction apply
    the drift guardrail (§3). Kill rules mapping to enriched columns →
@@ -35,7 +35,7 @@ pages per row in the session.
      pick `fullenrich`, sign in in the browser, then retry. Never
      fabricate enrichment values as a fallback, and never scrape around
      this gate. (French official firmographics have their own free lane:
-     `/enrich-firmographics`.)
+     `/bricks:enrich-firmographics`.)
    - **Web-content data computed per row** (what the site says: pitch,
      positioning, offering, language, hiring page…) → **Lane B**, the
      engine: `runner.py` → `agent.py`.
@@ -82,7 +82,7 @@ validate targeting.
    target columns, web or not, model (`haiku` by default, §7).
 2. **PREVIEW (mandatory, non-skippable)**:
    ```
-   python3 "tools/core/runner.py" run --table companies \
+   python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/runner.py" run --table companies \
      --status-col hq_status --run-id hq-<date> \
      --ai '{"prompt":"…{{name}} ({{domain}})…","schema":{"type":"object","properties":{"hq_city":{"type":"string"}}},"web":true,"model":"haiku"}' \
      --preview 10
@@ -90,7 +90,7 @@ validate targeting.
    The 10 pilot rows are computed, WRITTEN (tagged with the run-id) and
    streamed as NDJSON on **stderr** — relay each `preview_row` to the
    user as it arrives and have them check the rows in
-   `/interface`; stdout is the final receipt only. Long missions:
+   `/bricks:interface`; stdout is the final receipt only. Long missions:
    compile the params to `prompts/<slug>/params.json` in the workspace
    and pass `--ai @<abs path>/params.json`. `"max_pages":N` caps
    browsing per row.

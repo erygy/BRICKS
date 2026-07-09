@@ -2,8 +2,9 @@
 
 Sélection minimale extraite de Bricks-v2 : **le moteur qui survit** au passage
 sur le stack sponsors (Claude + Sillage + FullEnrich), débarrassé de tout le
-scraping maison et du packaging plugin. C'est la fondation de la nouvelle
-version du projet — pas une application complète.
+scraping maison. Le packaging plugin d'origine est conservé (hook SessionStart,
+workspaces, namespace `/bricks:*`). C'est la fondation de la nouvelle version
+du projet — pas une application complète.
 
 > ⚠️ **Ce repo n'est PAS le repo de soumission du hackathon.**
 > Règle de l'événement : « Build entirely during the event. No prior commits. »
@@ -14,7 +15,10 @@ version du projet — pas une application complète.
 ## Structure
 
 ```
-tools/core/           le moteur (inchangé, chemins repo-relatifs)
+.claude-plugin/plugin.json  manifeste du plugin (nom, version, pointeur MCP)
+.mcp.json             serveurs MCP embarqués (fullenrich)
+hooks/hooks.json      hook SessionStart → session_start.py
+tools/core/           le moteur (inchangé)
   db.py               la SEULE porte vers SQLite — tables/colonnes dynamiques,
                       claim atomique, import-csv, receipts JSON
   runner.py           LA boucle batch — preview 10 → GO → commit, statuts,
@@ -22,13 +26,14 @@ tools/core/           le moteur (inchangé, chemins repo-relatifs)
   agent.py            un prompt → une réponse (transport SDK abonnement)
   agent_api.py        même contrat via l'API Anthropic (BRICKS_AGENT_TRANSPORT=api)
   workspace.py        cycle de vie workspace (bricks/ + config.json + context/)
+  session_start.py    injecte workspace courant + banner au démarrage de session
   envfile.py          chargement ~/.bricks/env
   session_auth.py     détection d'auth (dépendance d'agent.py)
 tools/providers/
   fullenrich.py       recherche personnes + cascade d'enrichissement (child rows)
 skills/               les playbooks GARDÉS comme matière première (voir bas)
 templates/context/    gabarits offer/icp/personas copiés par workspace.py new
-CONVENTIONS.md        le contrat runtime (adapté : chemins relatifs, plus de namespace)
+CONVENTIONS.md        le contrat runtime (namespace /bricks:*, ${CLAUDE_PLUGIN_ROOT})
 ```
 
 ## Gardé / jeté (depuis Bricks-v2)
@@ -37,12 +42,15 @@ CONVENTIONS.md        le contrat runtime (adapté : chemins relatifs, plus de na
 `gtm-onboard`, `context-write`, `enrich`, `rank-accounts`, `plan-outreach`,
 `write-outreach`, `playbook-outbound`, `workspace`, `tools-guide`.
 
+**Gardé aussi** : le packaging plugin (`.claude-plugin/plugin.json`,
+`hooks/hooks.json`, `session_start.py`, `.mcp.json` réduit à fullenrich).
+
 **Jeté** : `jobs.py`, `news.py`, `firmo.py` (remplacés par Sillage/FullEnrich),
-toute la voie Bright Data, le front table (`front/`), le packaging plugin
-(`.claude-plugin`, hooks, session_start), et 16 skills liées au scraping ou
-hors scope (find*, enrich-buying-committee, enrich-person-profile,
-signal-person, score, transform, interface, scan-mentions, lookalike*,
-create-landing-page, brickgent, tools de session).
+toute la voie Bright Data (y compris son serveur MCP), le front table
+(`front/`), et 16 skills liées au scraping ou hors scope (find*,
+enrich-buying-committee, enrich-person-profile, signal-person, score,
+transform, interface, scan-mentions, lookalike*, create-landing-page,
+brickgent, tools de session).
 
 ## À construire (volontairement absent — rien n'est codé ici)
 
