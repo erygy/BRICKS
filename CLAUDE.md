@@ -1,11 +1,17 @@
 # BRICKS-FINAL — règles du repo
 
-Base curée de Bricks-v2 (voir README.md pour le pipeline, le périmètre
-gardé/jeté et l'état de la v3), distribuée comme **plugin Claude Code** — l'architecture
-d'origine est conservée : manifeste `.claude-plugin/plugin.json`, hook
-SessionStart (`hooks/hooks.json` → `tools/core/session_start.py`), MCP servers
-dans `.mcp.json`, skills namespacées `/bricks:*`, chemins via
+Base curée de Bricks-v2 (voir `plugins/bricks/README.md` pour le pipeline,
+le périmètre gardé/jeté et l'état de la v3), distribuée via la
+**marketplace de ce repo** (`.claude-plugin/marketplace.json`) qui expose
+DEUX plugins indépendants : `plugins/bricks/` (le produit courant, tout ce
+contrat s'applique à lui) et `plugins/diggr/` (la lignée v2/v4 de Rémi —
+on n'y touche pas depuis ce contrat). L'architecture plugin d'origine est
+conservée sous `plugins/bricks/` : manifeste `.claude-plugin/plugin.json`,
+hook SessionStart (`hooks/hooks.json` → `tools/core/session_start.py`), MCP
+servers dans `.mcp.json`, skills namespacées `/bricks:*`, chemins via
 `${CLAUDE_PLUGIN_ROOT}`, workspaces `bricks/` par répertoire de travail.
+En dev sur ce repo, les chemins ci-dessous s'entendent relatifs à
+`plugins/bricks/`.
 
 ## Les règles qui survivent
 
@@ -53,11 +59,12 @@ tables. Besoin d'un champ nouveau → huddle 2 min à trois, **seul Robin
 n'est pas une migration, c'est la LISTE FERMÉE des colonnes autorisées et
 de qui les écrit.
 
-Propriété des chemins — Thomas : `front/**` + `tools/steps/intercept.py` ·
-Robin : `skills/**` + `tools/core/score.py` + `tools/providers/emelia.py` +
-`CLAUDE.md` · Dev 3 : `tools/providers/sillage.py` + `fullenrich.py` +
-`seed/`. Besoin d'une fonction chez l'autre → on la demande, on ne
-l'écrit pas.
+Propriété des chemins (sous `plugins/bricks/`) — Thomas : `front/**` +
+`tools/steps/intercept.py` · Robin : `skills/**` + `tools/core/score.py` +
+`tools/providers/emelia.py` + `CLAUDE.md` (racine) · Dev 3 :
+`tools/providers/sillage.py` + `fullenrich.py` + `seed/` — et
+`plugins/diggr/**` (son plugin). Besoin d'une fonction chez l'autre → on
+la demande, on ne l'écrit pas.
 
 ### Conventions transverses
 

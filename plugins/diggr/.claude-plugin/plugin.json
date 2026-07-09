@@ -1,0 +1,10 @@
+{
+  "name": "diggr",
+  "description": "Diggr — open-source GTM engine (lignée Bricks v2). Workspace management, find, enrich and transform skills over a per-workspace SQLite database, plus the Diggr front (v4/) and the v2 experiments (v2/ — agents, schemas, scoring).",
+  "version": "0.22.2",
+  "mcpServers": "./.mcp.json",
+  "author": {
+    "name": "Rémi Lagorce & Robin Jehanno",
+    "url": "https://github.com/remilagorce"
+  }
+}

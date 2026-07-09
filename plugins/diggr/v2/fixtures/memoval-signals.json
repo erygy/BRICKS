@@ -1,0 +1,694 @@
+{
+  "thesis_id": "memoval-cedant",
+  "version": "0.1.0-demo",
+  "_note": "Arbre de DÉMONSTRATION (~28 signaux latents, ~50 proxies) — opérationnel sur l'univers mock. En production, les SIGNAL-ARCHITECTS génèrent 50-150 signaux/thèse × 5-30 proxies = des milliers de sous-signaux, dans CE format exact. Les proxies source=sillage sont 'presumed' (confirmés au Day-1), les llm_check passent par l'engine V1 — les deux produisent des INCONNUS tant qu'ils ne sont pas vérifiés : c'est ce qui alimente les intervalles et le VOI.",
+  "defaults": {
+    "prior": {
+      "P": 0.5,
+      "S": 0.35,
+      "O": 0.3
+    },
+    "gate_floor": 0.05
+  },
+  "signals": [
+    {
+      "id": "P-IND-01",
+      "layer": "P",
+      "claim": "Entreprise commerciale indépendante (ni filiale de groupe, ni forme non-commerciale)",
+      "rationale": "Un acheteur MemoVAL est un cédant-propriétaire ; une filiale n'a pas de dirigeant-cédant. Quasi tous les acheteurs sont indépendants ; beaucoup de non-acheteurs du bassin sont des filiales.",
+      "cluster": "independance",
+      "crit": 2,
+      "proxies": [
+        {
+          "id": "P-IND-01.a",
+          "source": "registry",
+          "field": "nature_juridique",
+          "op": "not_prefix_in",
+          "value": [
+            "7",
+            "9"
+          ],
+          "fidelity": 0.95,
+          "fpr": 0.35,
+          "coverage": 0.99,
+          "cost_class": 0
+        },
+        {
+          "id": "P-IND-01.b",
+          "source": "registry",
+          "field": "name",
+          "op": "not_regex",
+          "value": "(HOLDING|PARTICIPATION|FINANCI[EÈ]RE|\\bSCI\\b|IMMOBILIER|PATRIMOINE)",
+          "fidelity": 0.9,
+          "fpr": 0.3,
+          "coverage": 1.0,
+          "cost_class": 0
+        },
+        {
+          "id": "P-IND-01.c",
+          "source": "fullenrich",
+          "capability": "fullenrich.company.lookup",
+          "op": "eq",
+          "value": "independent",
+          "fidelity": 0.6,
+          "fpr": 0.1,
+          "coverage": 0.7,
+          "cost_class": 2,
+          "status": "presumed"
+        },
+        {
+          "id": "P-IND-01.d",
+          "source": "llm_check",
+          "capability": "web.site_ownership_check",
+          "op": "eq",
+          "value": "independent",
+          "fidelity": 0.65,
+          "fpr": 0.08,
+          "coverage": 0.7,
+          "cost_class": 3
+        }
+      ]
+    },
+    {
+      "id": "P-HOR-02",
+      "layer": "P",
+      "claim": "Le dirigeant-décideur est dans la fenêtre de transmission (58-68 ans)",
+      "rationale": "La douleur MemoVAL n'existe qu'à horizon de sortie 1-3 ans. En dessous de 55 ans, la transmission est théorique.",
+      "cluster": "horizon",
+      "crit": 2,
+      "legal_flag": true,
+      "proxies": [
+        {
+          "id": "P-HOR-02.a",
+          "source": "registry",
+          "field": "dirigeant_age",
+          "op": "between",
+          "value": [
+            58,
+            68
+          ],
+          "fidelity": 0.85,
+          "fpr": 0.1,
+          "coverage": 0.95,
+          "cost_class": 0
+        },
+        {
+          "id": "P-HOR-02.b",
+          "source": "sillage",
+          "capability": "sillage.signals.job_update",
+          "op": "eq",
+          "value": "dirigeant_still_in_role",
+          "fidelity": 0.4,
+          "fpr": 0.1,
+          "coverage": 0.5,
+          "cost_class": 2,
+          "status": "confirmed_from_docs",
+          "decay": {
+            "fresh_days": 90,
+            "context_days": 365,
+            "context_mult": 0.6,
+            "stale_mult": 0.2
+          }
+        }
+      ],
+      "legal_hold": true,
+      "_legal_note": "GELÉ jusqu'à validation juriste + DPIA légère (red-team D3) : tracking de posts/rôle d'une personne physique nommée = traitement à finalité commerciale, base légale à documenter. Ne pas activer au hackathon sans feu vert."
+    },
+    {
+      "id": "P-TAC-03",
+      "layer": "P",
+      "claim": "Secteur à fort savoir tacite opérationnel (la mémoire N'EST PAS déjà documentée dans des livrables)",
+      "rationale": "Anti-signal prouvé au field-test 08/07 : ingénierie/conseil/CAC = mémoire déjà écrite → 45%→65% de précision en l'excluant. Fabrication/BTP/négoce spécialisé = tours de main et relations non écrites.",
+      "cluster": "savoir_tacite",
+      "crit": 1,
+      "proxies": [
+        {
+          "id": "P-TAC-03.a",
+          "source": "registry",
+          "field": "naf",
+          "op": "not_prefix_in",
+          "value": [
+            "71",
+            "70",
+            "74",
+            "69",
+            "68",
+            "64",
+            "66",
+            "63"
+          ],
+          "fidelity": 0.9,
+          "fpr": 0.25,
+          "coverage": 1.0,
+          "cost_class": 0
+        },
+        {
+          "id": "P-TAC-03.b",
+          "source": "registry",
+          "field": "naf",
+          "op": "prefix_in",
+          "value": [
+            "10",
+            "13",
+            "16",
+            "22",
+            "25",
+            "28",
+            "31",
+            "33",
+            "41",
+            "43",
+            "46"
+          ],
+          "fidelity": 0.85,
+          "fpr": 0.35,
+          "coverage": 1.0,
+          "cost_class": 0
+        }
+      ]
+    },
+    {
+      "id": "P-TAI-04",
+      "layer": "P",
+      "claim": "Taille dans la bande où la décote est significative et le budget existe (CA 1,5-10 M€)",
+      "rationale": "Sous 1,5M€ pas de budget 4500€+abo ; au-dessus de 10-15M€ le M&A est structuré avec conseils dédiés.",
+      "cluster": "taille",
+      "crit": 1,
+      "proxies": [
+        {
+          "id": "P-TAI-04.a",
+          "source": "registry",
+          "field": "ca_eur",
+          "op": "between",
+          "value": [
+            1500000,
+            10000000
+          ],
+          "fidelity": 0.9,
+          "fpr": 0.1,
+          "coverage": 0.9,
+          "cost_class": 0
+        },
+        {
+          "id": "P-TAI-04.b",
+          "source": "registry",
+          "field": "categorie",
+          "op": "eq",
+          "value": "PME",
+          "fidelity": 0.85,
+          "fpr": 0.2,
+          "coverage": 0.95,
+          "cost_class": 0
+        }
+      ]
+    },
+    {
+      "id": "P-MEM-05",
+      "layer": "P",
+      "claim": "L'entreprise a une mémoire accumulée à capturer (ancienneté ≥ 15 ans)",
+      "rationale": "Field-test 08/07 : une société de 3 ans n'a rien à transmettre — plancher gravé après le run v3.",
+      "cluster": "maturite",
+      "crit": 1,
+      "proxies": [
+        {
+          "id": "P-MEM-05.a",
+          "source": "registry",
+          "field": "age_societe",
+          "op": "gte",
+          "value": 15,
+          "fidelity": 0.95,
+          "fpr": 0.1,
+          "coverage": 0.98,
+          "cost_class": 0
+        }
+      ]
+    },
+    {
+      "id": "S-CON-01",
+      "layer": "S",
+      "claim": "La mémoire est CONCENTRÉE sur le dirigeant (gouvernance resserrée)",
+      "rationale": "Acheteur type : 1-2 dirigeants, le patron sait tout. Non-acheteur : gouvernance à 5+, mémoire distribuée.",
+      "cluster": "concentration",
+      "lr_class": "x5",
+      "proxies": [
+        {
+          "id": "S-CON-01.a",
+          "source": "registry",
+          "field": "nb_dirigeants",
+          "op": "lte",
+          "value": 2,
+          "fidelity": 0.8,
+          "fpr": 0.35,
+          "coverage": 0.98,
+          "cost_class": 0
+        },
+        {
+          "id": "S-CON-01.b",
+          "source": "llm_check",
+          "capability": "web.team_page_size",
+          "op": "eq",
+          "value": "founder_centric",
+          "fidelity": 0.5,
+          "fpr": 0.2,
+          "coverage": 0.6,
+          "cost_class": 3
+        }
+      ]
+    },
+    {
+      "id": "S-CON-02",
+      "layer": "S",
+      "claim": "Entreprise éponyme / patronymique (identité fondateur = identité entreprise)",
+      "rationale": "Nom de famille dans la raison sociale = fondateur-mémoire très probable, transmission émotionnellement chargée.",
+      "cluster": "concentration",
+      "lr_class": "x2",
+      "proxies": [
+        {
+          "id": "S-CON-02.a",
+          "source": "llm_check",
+          "capability": "llm.name_vs_dirigeant_match",
+          "op": "eq",
+          "value": true,
+          "fidelity": 0.9,
+          "fpr": 0.1,
+          "coverage": 1.0,
+          "cost_class": 3
+        }
+      ]
+    },
+    {
+      "id": "S-MAT-03",
+      "layer": "S",
+      "claim": "Société très mûre (≥ 25 ans) — mémoire profonde, dirigeant historique",
+      "rationale": "Plus l'entreprise est ancienne, plus la part non-écrite de sa valeur est grande.",
+      "cluster": "maturite",
+      "lr_class": "x2",
+      "proxies": [
+        {
+          "id": "S-MAT-03.a",
+          "source": "registry",
+          "field": "age_societe",
+          "op": "gte",
+          "value": 25,
+          "fidelity": 0.9,
+          "fpr": 0.3,
+          "coverage": 0.98,
+          "cost_class": 0
+        }
+      ]
+    },
+    {
+      "id": "S-HOR-04",
+      "layer": "S",
+      "claim": "Le dirigeant est en fin de fenêtre (64-68 ans) — urgence maximale",
+      "rationale": "À 64+ la sortie n'est plus une option lointaine ; le taux d'acheteurs monte fortement avec l'âge dans la fenêtre.",
+      "cluster": "horizon",
+      "lr_class": "x5",
+      "legal_flag": true,
+      "proxies": [
+        {
+          "id": "S-HOR-04.a",
+          "source": "registry",
+          "field": "dirigeant_age",
+          "op": "gte",
+          "value": 64,
+          "fidelity": 0.9,
+          "fpr": 0.15,
+          "coverage": 0.95,
+          "cost_class": 0
+        }
+      ]
+    },
+    {
+      "id": "S-EVT-05",
+      "layer": "S",
+      "claim": "Événement public de préparation de sortie (BODACC gouvernance, annonce presse cession/transmission)",
+      "rationale": "Le signal le plus direct qui existe — rare mais quasi décisif quand il est présent. BODACC = open data GRATUIT (bodacc.fr), PAS via Sillage (qui ne connaît pas le SIREN).",
+      "cluster": "evenement_sortie",
+      "lr_class": "x20",
+      "proxies": [
+        {
+          "id": "S-EVT-05.a",
+          "source": "registry",
+          "capability": "bodacc.opendata.modifications",
+          "op": "in",
+          "value": [
+            "modification_dirigeant",
+            "changement_forme_juridique"
+          ],
+          "fidelity": 0.15,
+          "fpr": 0.02,
+          "coverage": 0.9,
+          "cost_class": 1,
+          "decay": {
+            "fresh_days": 120,
+            "context_days": 540,
+            "context_mult": 0.6,
+            "stale_mult": 0.15
+          }
+        },
+        {
+          "id": "S-EVT-05.b",
+          "source": "news",
+          "capability": "news.transmission_mention",
+          "op": "eq",
+          "value": true,
+          "fidelity": 0.08,
+          "fpr": 0.01,
+          "coverage": 0.05,
+          "cost_class": 1,
+          "decay": {
+            "fresh_days": 180,
+            "context_days": 540,
+            "context_mult": 0.5,
+            "stale_mult": 0.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "S-EVT-06",
+      "layer": "S",
+      "claim": "Recrutement récent d'un second (DG, directeur d'exploitation) — délégation avant sortie",
+      "rationale": "Un dirigeant qui prépare sa sortie recrute souvent son relais 12-24 mois avant. Sillage job_posting_keyword_detection = capacité RÉELLE documentée.",
+      "cluster": "evenement_sortie",
+      "lr_class": "x5",
+      "proxies": [
+        {
+          "id": "S-EVT-06.a",
+          "source": "sillage",
+          "capability": "sillage.agents.job_posting_keyword_detection",
+          "op": "in",
+          "value": [
+            "directeur général",
+            "directeur général adjoint",
+            "directeur d'exploitation",
+            "directeur de site",
+            "bras droit"
+          ],
+          "fidelity": 0.2,
+          "fpr": 0.03,
+          "coverage": 0.6,
+          "cost_class": 2,
+          "status": "confirmed_from_docs",
+          "decay": {
+            "fresh_days": 90,
+            "context_days": 365,
+            "context_mult": 0.5,
+            "stale_mult": 0.2
+          }
+        },
+        {
+          "id": "S-EVT-06.b",
+          "source": "jobs",
+          "capability": "jobs.hunt_dg_roles",
+          "op": "eq",
+          "value": true,
+          "fidelity": 0.25,
+          "fpr": 0.05,
+          "coverage": 0.7,
+          "cost_class": 1
+        }
+      ]
+    },
+    {
+      "id": "S-EVT-13",
+      "layer": "S",
+      "claim": "Le dirigeant s'exprime publiquement sur la transmission / l'avenir / son parcours (posts LinkedIn)",
+      "rationale": "Un dirigeant qui poste « 30 ans déjà », « penser à la suite », « transmettre » verbalise la douleur MemoVAL. Sillage keyword_detection sur les posts = capacité RÉELLE documentée, LinkedIn-natif.",
+      "cluster": "evenement_sortie",
+      "lr_class": "x5",
+      "legal_flag": true,
+      "proxies": [
+        {
+          "id": "S-EVT-13.a",
+          "source": "sillage",
+          "capability": "sillage.agents.keyword_detection",
+          "op": "in",
+          "value": [
+            "transmission",
+            "céder",
+            "passer la main",
+            "reprise",
+            "repreneur",
+            "retraite",
+            "30 ans de",
+            "40 ans de",
+            "successeur"
+          ],
+          "fidelity": 0.15,
+          "fpr": 0.01,
+          "coverage": 0.35,
+          "cost_class": 2,
+          "status": "confirmed_from_docs",
+          "decay": {
+            "fresh_days": 90,
+            "context_days": 270,
+            "context_mult": 0.5,
+            "stale_mult": 0.2
+          }
+        }
+      ],
+      "legal_hold": true,
+      "_legal_note": "GELÉ jusqu'à validation juriste + DPIA légère (red-team D3) : tracking de posts/rôle d'une personne physique nommée = traitement à finalité commerciale, base légale à documenter. Ne pas activer au hackathon sans feu vert."
+    },
+    {
+      "id": "S-REL-07",
+      "layer": "S",
+      "claim": "Le fonds de commerce repose sur des RELATIONS longues (clients récurrents B2B, pas de la vente transactionnelle)",
+      "rationale": "La mémoire relationnelle est l'actif que MemoVAL capture ; une activité transactionnelle (retail, e-commerce) en a peu.",
+      "cluster": "nature_actif",
+      "lr_class": "x5",
+      "proxies": [
+        {
+          "id": "S-REL-07.a",
+          "source": "registry",
+          "field": "naf",
+          "op": "prefix_in",
+          "value": [
+            "25",
+            "28",
+            "33",
+            "43",
+            "46"
+          ],
+          "fidelity": 0.75,
+          "fpr": 0.3,
+          "coverage": 1.0,
+          "cost_class": 0
+        },
+        {
+          "id": "S-REL-07.b",
+          "source": "llm_check",
+          "capability": "web.customer_nature_check",
+          "op": "eq",
+          "value": "b2b_recurring",
+          "fidelity": 0.6,
+          "fpr": 0.15,
+          "coverage": 0.65,
+          "cost_class": 3
+        }
+      ]
+    },
+    {
+      "id": "S-REL-08",
+      "layer": "S",
+      "claim": "Ancrage local fort (mono-établissement, clientèle de territoire)",
+      "rationale": "L'entreprise de territoire tient par le réseau personnel du patron — mémoire non transférable sans capture.",
+      "cluster": "nature_actif",
+      "lr_class": "x2",
+      "proxies": [
+        {
+          "id": "S-REL-08.a",
+          "source": "registry",
+          "field": "nb_etablissements",
+          "op": "lte",
+          "value": 2,
+          "fidelity": 0.8,
+          "fpr": 0.4,
+          "coverage": 0.9,
+          "cost_class": 0
+        }
+      ]
+    },
+    {
+      "id": "S-DOC-09",
+      "layer": "S",
+      "claim": "Faible outillage documentaire visible (pas de wiki/CRM/process publiés — la mémoire est dans les têtes)",
+      "rationale": "Une entreprise déjà process-isée a moins besoin de MemoVAL ; l'absence d'outillage est un prédicteur d'achat.",
+      "cluster": "documentation",
+      "lr_class": "x2",
+      "proxies": [
+        {
+          "id": "S-DOC-09.a",
+          "source": "llm_check",
+          "capability": "web.site_maturity_check",
+          "op": "eq",
+          "value": "artisanal_site",
+          "fidelity": 0.65,
+          "fpr": 0.3,
+          "coverage": 0.7,
+          "cost_class": 3
+        },
+        {
+          "id": "S-DOC-09.b",
+          "source": "fullenrich",
+          "capability": "fullenrich.company.specialties",
+          "op": "not_regex",
+          "value": "(digital|data|CRM|SaaS)",
+          "fidelity": 0.3,
+          "fpr": 0.18,
+          "coverage": 0.4,
+          "cost_class": 2,
+          "status": "presumed"
+        }
+      ]
+    },
+    {
+      "id": "S-FIN-10",
+      "layer": "S",
+      "claim": "Entreprise saine (CA stable/croissant — le dirigeant a quelque chose à vendre, pas à liquider)",
+      "rationale": "MemoVAL protège une valeur ; une entreprise en détresse vend à la casse et n'investit pas 4500€. Tendance CA calculable GRATUITEMENT via l'API gouv (finances multi-années).",
+      "cluster": "sante",
+      "lr_class": "x2",
+      "proxies": [
+        {
+          "id": "S-FIN-10.a",
+          "source": "registry",
+          "capability": "gouv.finances.ca_trend",
+          "op": "in",
+          "value": [
+            "stable",
+            "growing"
+          ],
+          "fidelity": 0.8,
+          "fpr": 0.3,
+          "coverage": 0.85,
+          "cost_class": 1
+        },
+        {
+          "id": "S-FIN-10.b",
+          "source": "news",
+          "capability": "news.distress_flag",
+          "op": "eq",
+          "value": false,
+          "fidelity": 0.9,
+          "fpr": 0.4,
+          "coverage": 1.0,
+          "cost_class": 1
+        }
+      ]
+    },
+    {
+      "id": "O-APP-01",
+      "layer": "O",
+      "claim": "Anniversaire d'entreprise proche (chiffre rond) — accroche naturelle",
+      "rationale": "Ne prédit pas l'achat ; ouvre la conversation (« 50 ans cette année »).",
+      "cluster": "accroche",
+      "lr_class": "x1.2",
+      "proxies": [
+        {
+          "id": "O-APP-01.a",
+          "source": "registry",
+          "field": "age_societe",
+          "op": "in",
+          "value": [
+            19,
+            20,
+            24,
+            25,
+            29,
+            30,
+            39,
+            40,
+            49,
+            50,
+            59,
+            60,
+            69,
+            70
+          ],
+          "fidelity": 0.95,
+          "fpr": 0.5,
+          "coverage": 0.98,
+          "cost_class": 0
+        }
+      ]
+    },
+    {
+      "id": "O-APP-02",
+      "layer": "O",
+      "claim": "Présence presse locale récente (notoriété, fierté) — canal d'approche",
+      "rationale": "Un dirigeant qui parle à la presse locale répond mieux à une approche qui cite l'article.",
+      "cluster": "accroche",
+      "lr_class": "x1.2",
+      "proxies": [
+        {
+          "id": "O-APP-02.a",
+          "source": "news",
+          "capability": "news.local_mention",
+          "op": "eq",
+          "value": true,
+          "fidelity": 0.35,
+          "fpr": 0.15,
+          "coverage": 1.0,
+          "cost_class": 1,
+          "decay": {
+            "fresh_days": 120,
+            "context_days": 365,
+            "context_mult": 0.5,
+            "stale_mult": 0.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "O-GEO-03",
+      "layer": "O",
+      "claim": "Proximité géographique Lyon (RDV physique possible — canal de closing)",
+      "rationale": "Le closing MemoVAL passe par la confiance ; le face-à-face aide. N'affecte pas la pertinence du besoin.",
+      "cluster": "canal",
+      "lr_class": "x1.2",
+      "proxies": [
+        {
+          "id": "O-GEO-03.a",
+          "source": "registry",
+          "field": "dept",
+          "op": "in",
+          "value": [
+            "69",
+            "38",
+            "42",
+            "01"
+          ],
+          "fidelity": 0.95,
+          "fpr": 0.5,
+          "coverage": 1.0,
+          "cost_class": 0
+        }
+      ]
+    },
+    {
+      "id": "S-INO-11",
+      "layer": "S",
+      "claim": "Le dirigeant n'a PAS de successeur familial identifié",
+      "rationale": "Successeur familial en place = transmission organisée sans MemoVAL (ou avec, mais douleur moindre). Sans successeur = cession à tiers = décote maximale = douleur maximale.",
+      "cluster": "succession",
+      "lr_class": "x5",
+      "legal_flag": true,
+      "proxies": [],
+      "unobservable_question": "La reprise, vous l'imaginez plutôt en famille, par un salarié, ou par un repreneur extérieur ?"
+    },
+    {
+      "id": "S-INO-12",
+      "layer": "S",
+      "claim": "Le dirigeant a déjà consulté (expert-comptable/CGP) sur la valorisation",
+      "rationale": "Un dirigeant qui a déjà un chiffre en tête comprend la décote en 30 secondes.",
+      "cluster": "succession",
+      "lr_class": "x2",
+      "legal_flag": true,
+      "proxies": [],
+      "unobservable_question": "Avez-vous déjà une idée de ce que vaut l'entreprise aujourd'hui — et de ce qui manque au dossier ?"
+    }
+  ]
+}

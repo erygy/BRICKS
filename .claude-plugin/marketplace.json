@@ -1,0 +1,25 @@
+{
+  "name": "bricks",
+  "owner": {
+    "name": "Rémi Lagorce & Robin Jehanno",
+    "url": "https://github.com/remilagorce"
+  },
+  "metadata": {
+    "description": "Bricks marketplace — deux moteurs GTM open-source pour Claude Code : bricks (Signal Interceptor, stack Claude + Sillage + FullEnrich + Emelia) et diggr (lignée v2/v4).",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "bricks",
+      "source": "./plugins/bricks",
+      "description": "Signal Interceptor — l'agent GTM qui surveille comptes et concurrents (Sillage), intercepte les prospects qui parlent aux concurrents, qualifie, score le WHY NOW, prépare la file de la semaine, rédige, audite et envoie (Emelia). UI locale avec fiche cold-call et graphe.",
+      "version": "3.0.0-alpha.1"
+    },
+    {
+      "name": "diggr",
+      "source": "./plugins/diggr",
+      "description": "Diggr — open-source GTM engine (lignée Bricks v2). Workspace management, find, enrich and transform sur SQLite par workspace, plus le front Diggr (v4/) et les expérimentations v2/.",
+      "version": "0.22.2"
+    }
+  ]
+}

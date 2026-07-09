@@ -1,0 +1,7 @@
+{"company_id": 1, "proxy_id": "S-CHAMP-01.a", "value": true, "event_date": "2026-06-28", "evidence_url": "https://linkedin.com/in/acme-vp-data"}
+{"company_id": 2, "proxy_id": "S-COMP-01.a", "value": true, "event_date": "2026-07-01", "evidence_url": "https://linkedin.com/posts/globex-competitor"}
+{"company_id": 5, "proxy_id": "S-MA-01.a", "value": true, "event_date": "2026-06-20", "evidence_url": "https://news.example/stark-acquired"}
+{"company_id": 4, "proxy_id": "S-LEAD-01.a", "value": true, "event_date": "2026-06-15", "evidence_url": "https://news.example/umbrella-new-cfo"}
+{"company_id": 6, "proxy_id": "S-SILENT-01.a", "value": false, "event_date": "2026-07-06"}
+{"company_id": 8, "proxy_id": "S-CHAMP-01.b", "value": true, "event_date": "2026-06-25", "evidence_url": "https://linkedin.com/in/piedpiper-cto"}
+{"company_id": 8, "proxy_id": "S-COMP-01.a", "value": true, "event_date": "2026-06-30", "evidence_url": "https://linkedin.com/posts/piedpiper-competitor"}

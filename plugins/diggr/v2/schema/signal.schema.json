@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Bricks V2 — signal tree",
+  "description": "Arbre de signaux d'une thèse : signaux LATENTS (3 couches P/S/O) portant des PROXIES observables. Les poids vivent au niveau latent (classes ordinales), les proxies portent fidélité/couverture/coût.",
+  "type": "object",
+  "required": ["thesis_id", "version", "signals"],
+  "properties": {
+    "thesis_id": {"type": "string"},
+    "version": {"type": "string"},
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "prior": {"type": "object", "properties": {"P": {"type": "number"}, "S": {"type": "number"}, "O": {"type": "number"}}},
+        "gate_floor": {"type": "number", "minimum": 0, "maximum": 0.5}
+      }
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "layer", "claim", "cluster", "proxies"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[PSO]-[A-Z]{2,6}-[0-9]{2}$"},
+          "layer": {"enum": ["P", "S", "O"]},
+          "claim": {"type": "string", "description": "Le trait latent, formulé comme une affirmation vérifiable sur l'entreprise."},
+          "rationale": {"type": "string", "description": "P(signal|acheteur) vs P(signal|non-acheteur), en une phrase chacun."},
+          "cluster": {"type": "string", "description": "Groupe de corrélation — les contributions intra-cluster sont plafonnées (anti-double-comptage)."},
+          "crit": {"type": "integer", "enum": [1, 2], "description": "P uniquement : criticité du gate (exposant)."},
+          "gate_floor": {"type": "number", "description": "P uniquement : plancher du gate doux (défaut : defaults.gate_floor)."},
+          "lr_class": {"enum": ["x1.2", "x2", "x5", "x20"], "description": "S/O : classe ordinale de likelihood-ratio. JAMAIS un nombre libre."},
+          "prior": {"type": "number", "minimum": 0.01, "maximum": 0.99},
+          "legal_flag": {"type": "boolean", "description": "true si le signal porte sur une personne ou frôle un critère sensible → doit être levé explicitement par le CRITIC."},
+          "status": {"enum": ["proposed", "kept", "demoted", "killed"], "default": "proposed"},
+          "unobservable_question": {"type": "string", "description": "Si aucun proxy n'est disponible : la question de qualification à poser au premier échange."},
+          "proxies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "source", "fidelity", "fpr", "coverage", "cost_class"],
+              "properties": {
+                "id": {"type": "string"},
+                "source": {"enum": ["registry", "sillage", "fullenrich", "web", "news", "jobs", "llm_check"]},
+                "capability": {"type": "string", "description": "Clé du catalogue de capacités (ex. sillage.signals.governance_change). status=presumed tant que la découverte ne l'a pas confirmée."},
+                "field": {"type": "string", "description": "Pour source=registry : colonne de la table companies."},
+                "op": {"enum": ["gte", "lte", "eq", "neq", "in", "not_in", "prefix_in", "not_prefix_in", "regex", "not_regex", "between", "exists"]},
+                "value": {},
+                "fidelity": {"type": "number", "minimum": 0.02, "maximum": 0.99, "description": "SENSIBILITÉ : P(proxy observé vrai | trait latent vrai). Peut être basse pour un événement rare — l'exigence est fidelity > fpr (informativité), et fidelity ≤ coverage (on ne peut pas observer plus souvent que ce qui est mesurable)."},
+                "fpr": {"type": "number", "minimum": 0.005, "maximum": 0.5, "description": "P(proxy observé vrai | trait latent faux)."},
+                "coverage": {"type": "number", "minimum": 0, "maximum": 1, "description": "Part des candidats chez qui ce proxy est mesurable."},
+                "cost_class": {"type": "integer", "minimum": 0, "maximum": 3, "description": "0=gratuit déjà en base · 1=requête bulk · 2=lookup unitaire · 3=cher (LLM/scrape/enrich)."},
+                "decay": {"type": "object", "properties": {"fresh_days": {"type": "integer"}, "context_days": {"type": "integer"}, "context_mult": {"type": "number"}, "stale_mult": {"type": "number"}}, "description": "Proxies événementiels : décote de fraîcheur."},
+                "status": {"enum": ["presumed", "confirmed", "absent"], "default": "presumed"}
+              }
+            }
+          }
+        },
+        "allOf": [
+          {"if": {"properties": {"layer": {"const": "P"}}}, "then": {"required": ["crit"]}},
+          {"if": {"properties": {"layer": {"enum": ["S", "O"]}}}, "then": {"required": ["lr_class"]}}
+        ]
+      }
+    }
+  }
+}

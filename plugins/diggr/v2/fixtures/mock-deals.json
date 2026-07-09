@@ -1,0 +1,10 @@
+[
+  {"_id": 1, "name": "Acme Analytics", "domain": "acme-analytics.com", "stage": "negotiation", "amount_eur": 48000, "monitorable": "true", "days_since_last_touch": 26, "champion": "VP Data"},
+  {"_id": 2, "name": "Globex SaaS", "domain": "globex.io", "stage": "proposal", "amount_eur": 31000, "monitorable": "true", "days_since_last_touch": 9, "champion": "Head of Ops"},
+  {"_id": 3, "name": "Initech Cloud", "domain": "initech.co", "stage": "discovery", "amount_eur": 18000, "monitorable": "true", "days_since_last_touch": 40, "champion": "IT Director"},
+  {"_id": 4, "name": "Umbrella Corp", "domain": "umbrella-corp.com", "stage": "negotiation", "amount_eur": 62000, "monitorable": "true", "days_since_last_touch": 12, "champion": "CFO office"},
+  {"_id": 5, "name": "Stark Industries", "domain": "stark-ind.com", "stage": "proposal", "amount_eur": 55000, "monitorable": "true", "days_since_last_touch": 15, "champion": "COO"},
+  {"_id": 6, "name": "Wayne Enterprises", "domain": "wayne-ent.com", "stage": "negotiation", "amount_eur": 40000, "monitorable": "true", "days_since_last_touch": 4, "champion": "Head of RevOps"},
+  {"_id": 7, "name": "Hooli", "domain": "hooli.com", "stage": "proposal", "amount_eur": 22000, "monitorable": "true", "days_since_last_touch": 7, "champion": "VP Eng"},
+  {"_id": 8, "name": "Pied Piper", "domain": "piedpiper.com", "stage": "negotiation", "amount_eur": 51000, "monitorable": "true", "days_since_last_touch": 30, "champion": "CTO"}
+]

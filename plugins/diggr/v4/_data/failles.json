@@ -1,0 +1,459 @@
+[
+ {
+  "id": "depart-dirigeant-cle",
+  "name": "Départ d'un fondateur ou C-level",
+  "what": "Un CEO/CTO/CPO du concurrent change de poste ou annonce son départ sur LinkedIn",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "job_update sur profils exécutifs cartographiés via account_mapping du concurrent",
+   "keywords": []
+  },
+  "other_detection": "Presse spécialisée, registre du commerce (changement de mandataire)",
+  "levier": "Question ouverte : 'Comment voyez-vous la roadmap de votre outil actuel évoluer sur 18 mois ?' — semer le doute sur la continuité de vision sans citer le départ. Si le client le mentionne lui-même, offrir une garantie de stabilité (roadmap publique, accès direct au produit).",
+  "strength": 8,
+  "freq_per_competitor_year": 0.2,
+  "guard": "Vérifier que le départ est public et confirmé (post LinkedIn du concerné). Ne jamais spéculer sur les raisons du départ."
+ },
+ {
+  "id": "exode-csm-support",
+  "name": "Vague de départs CSM/Support",
+  "what": "3+ profils Customer Success ou Support du concurrent changent de poste sur une fenêtre de 90 jours",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "job_update sur cohorte CS/Support issue de account_mapping, agrégation temporelle côté Claude",
+   "keywords": []
+  },
+  "other_detection": "Croiser avec avis Glassdoor récents (scraper tiers type Apify)",
+  "levier": "Le client va vivre un changement de CSM imminent (rotation forcée). Timing d'approche : 'La continuité de l'accompagnement est souvent le point de rupture — chez nous, voici notre taux de rétention CSM et le nom de la personne qui vous suivrait dès le jour 1.'",
+  "strength": 9,
+  "freq_per_competitor_year": 0.8,
+  "guard": "Seuil minimal de 3 départs vérifiés sur profils réellement CS (pas un rebadging interne). Ne pas nommer les partants au client."
+ },
+ {
+  "id": "depart-champion-produit",
+  "name": "Départ du VP Product ou lead produit historique",
+  "what": "Le porteur public de la roadmap (celui qui poste les releases) quitte l'entreprise",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "job_update sur profils produit identifiés via top_account_content (auteurs récurrents des annonces produit)",
+   "keywords": []
+  },
+  "other_detection": "Changelog du concurrent qui ralentit (diffing mensuel)",
+  "levier": "Pousser un comparatif de vélocité produit : 'Voici nos 12 derniers releases datés.' Laisser le client faire lui-même la comparaison avec le silence d'en face.",
+  "strength": 7,
+  "freq_per_competitor_year": 0.3,
+  "guard": "Attendre 30 jours pour confirmer que la vélocité chute réellement avant d'armer le levier vélocité."
+ },
+ {
+  "id": "recrutement-support-panique",
+  "name": "Recrutement support en urgence",
+  "what": "Offres d'emploi support/CS avec marqueurs d'urgence ou volume anormal (3+ postes simultanés)",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "job_posting_keyword_detection",
+   "keywords": [
+    "customer support",
+    "support client",
+    "urgent",
+    "ASAP",
+    "immediate start",
+    "customer success manager"
+   ]
+  },
+  "other_detection": "Welcome to the Jungle / Indeed scraping pour le volume historique",
+  "levier": "Signal de saturation du support. Approche : 'Quel est votre temps de réponse support actuel ?' — question factuelle qui fait émerger la douleur. Puis SLA contractuel en face.",
+  "strength": 6,
+  "freq_per_competitor_year": 1.5,
+  "guard": "Distinguer croissance saine (recrutement proportionnel aux ventes) de rattrapage panique (ratio offres support/ventes anormal sur 6 mois)."
+ },
+ {
+  "id": "avis-negatifs-recents",
+  "name": "Cluster d'avis négatifs récents",
+  "what": "3+ avis ≤2 étoiles sur G2/Capterra/Trustpilot en 60 jours, avec thème récurrent (support, bugs, prix)",
+  "sillage": {
+   "detectable": false,
+   "agent_type": "",
+   "keywords": []
+  },
+  "other_detection": "Scraping G2/Capterra/Trustpilot (Apify ou SerpAPI), extraction du thème dominant par Claude",
+  "levier": "Ne jamais citer les avis. Attaquer le THÈME : si le cluster dit 'reporting cassé', ouvrir le démarchage sur une démo reporting. Le client fait le lien tout seul.",
+  "strength": 8,
+  "freq_per_competitor_year": 2.0,
+  "guard": "Ignorer les avis isolés et les avis suspects (comptes créés le jour même). Exiger un thème récurrent sur 3+ avis distincts."
+ },
+ {
+  "id": "incident-public",
+  "name": "Panne ou incident public",
+  "what": "Outage visible : status page en rouge, clients qui se plaignent publiquement sur LinkedIn",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "keyword_detection sur les posts, ciblé sur la watchlist customers du concurrent",
+   "keywords": [
+    "down",
+    "en panne",
+    "outage",
+    "ne fonctionne plus",
+    "incident",
+    "inaccessible"
+   ]
+  },
+  "other_detection": "Monitoring des status pages publiques (uptime scraping horaire), Downdetector",
+  "levier": "Fenêtre de 72h. Message : 'Voici notre historique d'uptime public et notre architecture de redondance.' Fait, pas opinion. Jamais 'j'ai vu que X était down'.",
+  "strength": 7,
+  "freq_per_competitor_year": 2.5,
+  "guard": "Ne jamais démarcher PENDANT l'incident (vautour). Attendre 48h, arriver avec de la valeur, pas du sarcasme."
+ },
+ {
+  "id": "hausse-prix",
+  "name": "Hausse de prix annoncée",
+  "what": "Annonce de nouveau pricing, fin de grandfathering, ou posts de clients mécontents du prix",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "keyword_detection + top_account_content du concurrent analysé par Claude",
+   "keywords": [
+    "nouveau pricing",
+    "price increase",
+    "hausse de tarif",
+    "new plans",
+    "pricing update"
+   ]
+  },
+  "other_detection": "Diffing hebdomadaire de la page pricing du concurrent (scraper + Claude compare)",
+  "levier": "Le plus fort levier de switch B2B. Timing : contacter les clients 2-4 semaines avant l'entrée en vigueur avec un calcul de TCO comparé et une offre de migration à coût gelé 24 mois.",
+  "strength": 10,
+  "freq_per_competitor_year": 0.7,
+  "guard": "Vérifier que la hausse touche le segment du client visé (souvent seuls certains plans montent). Chiffres exacts, pas d'approximation."
+ },
+ {
+  "id": "sunset-fonctionnalite",
+  "name": "Sunset d'une fonctionnalité",
+  "what": "Le concurrent annonce la dépréciation d'une feature, d'une API ou d'un plan legacy",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "keyword_detection + top_account_content",
+   "keywords": [
+    "deprecated",
+    "sunset",
+    "end of life",
+    "fin de support",
+    "sera retiré",
+    "migration obligatoire"
+   ]
+  },
+  "other_detection": "Changelog et docs API du concurrent (diffing), forums communautaires",
+  "levier": "Identifier les clients qui utilisent la feature condamnée (leurs posts, leurs offres d'emploi mentionnant la stack). Message : 'On maintient et investit sur exactement ce use case — voici la roadmap.'",
+  "strength": 8,
+  "freq_per_competitor_year": 1.0,
+  "guard": "Confirmer que la feature n'a pas de remplaçant équivalent annoncé. S'engager par écrit sur le maintien côté propre produit."
+ },
+ {
+  "id": "levee-upmarket",
+  "name": "Levée de fonds qui déplace le focus upmarket",
+  "what": "Série B/C annoncée + offres d'emploi Enterprise AE + discours qui glisse vers grands comptes",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "keyword_detection (annonce) + job_posting_keyword_detection (confirmation)",
+   "keywords": [
+    "Series B",
+    "levée de fonds",
+    "Enterprise Account Executive",
+    "strategic accounts",
+    "mid-market",
+    "enterprise sales"
+   ]
+  },
+  "other_detection": "Crunchbase/Dealroom, analyse Claude du glissement sémantique des posts du compte (top_account_content sur 6 mois)",
+  "levier": "Cibler les PETITS clients du concurrent : 'Votre segment est notre cœur de métier, pas notre bas de tableau.' Vendre l'attention, la roadmap SMB, le support sans tiering.",
+  "strength": 9,
+  "freq_per_competitor_year": 0.3,
+  "guard": "La levée seule ne suffit pas — exiger 2 signaux convergents (levée + recrutement enterprise OU levée + refonte pricing) avant d'armer le discours."
+ },
+ {
+  "id": "rachat-acquisition",
+  "name": "Rachat du concurrent",
+  "what": "Le concurrent est acquis ; incertitude sur roadmap, pricing, équipe, intégration",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "keyword_detection + agent competitor sur watchlist",
+   "keywords": [
+    "acquisition",
+    "acquired by",
+    "rejoint",
+    "rachat",
+    "merger",
+    "nous sommes fiers d'annoncer"
+   ]
+  },
+  "other_detection": "Presse M&A, LinkedIn du CEO acquéreur",
+  "levier": "Fenêtre de 6 mois d'incertitude maximale. Message aux clients : 'Les 12 prochains mois vont clarifier beaucoup de choses chez votre fournisseur — pendant ce temps, voici notre engagement de roadmap signé.' Historique factuel : la plupart des produits acquis ralentissent.",
+  "strength": 10,
+  "freq_per_competitor_year": 0.1,
+  "guard": "Ne pas prédire la mort du produit. Parler uniquement d'incertitude, qui est factuelle et que le client ressent déjà."
+ },
+ {
+  "id": "pivot-repositionnement",
+  "name": "Pivot ou repositionnement produit",
+  "what": "Le discours public du concurrent change de catégorie (nouveau tagline, nouvelle cible, refonte du site)",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "top_account_content sur 6 mois, analyse de dérive sémantique par Claude",
+   "keywords": []
+  },
+  "other_detection": "Diffing de la homepage et de la nav du site concurrent (mensuel), Wayback Machine",
+  "levier": "Cibler les clients de l'ANCIEN positionnement : 'Vous nous avez choisis pour X — X reste 100% de ce qu'on fait.' Le client orphelin du pivot est le plus chaud de tout le système.",
+  "strength": 8,
+  "freq_per_competitor_year": 0.3,
+  "guard": "Un pivot se confirme sur 3 mois de contenu cohérent, pas sur un post isolé. Faire valider par Claude avec 3 preuves datées."
+ },
+ {
+  "id": "nouvelle-verticale",
+  "name": "Bascule vers une nouvelle verticale",
+  "what": "Offres d'emploi et contenus orientés vers un secteur différent de celui du client visé",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "job_posting_keyword_detection + top_account_content",
+   "keywords": [
+    "healthcare",
+    "fintech",
+    "vertical",
+    "industry lead",
+    "secteur",
+    "spécialiste marché"
+   ]
+  },
+  "other_detection": "Pages sectorielles ajoutées/retirées du site concurrent",
+  "levier": "Auprès des clients hors de la nouvelle verticale : 'Combien de features de vos 12 derniers releases concernaient VOTRE métier ?' Question qui se répond toute seule.",
+  "strength": 6,
+  "freq_per_competitor_year": 0.5,
+  "guard": "L'expansion verticale n'est pas un abandon — n'armer le levier que si le changelog confirme un déséquilibre réel des features."
+ },
+ {
+  "id": "licenciements",
+  "name": "Licenciements",
+  "what": "Vague de posts 'open to work' d'employés du concurrent, annonce publique de layoffs",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "job_update en masse sur profils account_mapping + keyword_detection",
+   "keywords": [
+    "open to work",
+    "à l'écoute d'opportunités",
+    "layoff",
+    "impacted",
+    "restructuration",
+    "plan social"
+   ]
+  },
+  "other_detection": "Layoffs.fyi, presse tech, delta headcount LinkedIn mensuel",
+  "levier": "Ne JAMAIS mentionner les layoffs. Levier indirect : vendre la pérennité — 'Voici notre santé financière, notre croissance d'effectifs, notre horizon.' Proposer une clause de réversibilité des données qui rassure sur les deux fournisseurs à la fois.",
+  "strength": 9,
+  "freq_per_competitor_year": 0.3,
+  "guard": "Sujet humain sensible. Interdiction absolue de capitaliser publiquement ou de recruter agressivement les licenciés dans le même message commercial."
+ },
+ {
+  "id": "gel-embauches",
+  "name": "Gel des embauches",
+  "what": "Chute de 60%+ du volume d'offres d'emploi publiées sur 2 trimestres consécutifs",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "job_posting_keyword_detection utilisé en compteur (baseline vs présent, agrégation Claude)",
+   "keywords": []
+  },
+  "other_detection": "Historique LinkedIn Jobs / Welcome to the Jungle",
+  "levier": "Signal faible d'anticipation, pas d'attaque directe. Sert à PRIORISER : monter les clients de ce concurrent en haut de la pile de démarchage avant que le signal devienne public.",
+  "strength": 5,
+  "freq_per_competitor_year": 0.4,
+  "guard": "Peut refléter une simple discipline financière saine. Signal de priorisation interne uniquement, jamais un argument client."
+ },
+ {
+  "id": "fermeture-bureau",
+  "name": "Fermeture de bureau ou retrait d'un marché",
+  "what": "Le concurrent ferme sa présence locale (bureau France, équipe régionale dissoute)",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "job_update groupé sur profils d'une même géo + keyword_detection",
+   "keywords": [
+    "fermeture",
+    "closing our office",
+    "quitte le marché",
+    "fin de nos opérations"
+   ]
+  },
+  "other_detection": "Registre du commerce local, presse régionale",
+  "levier": "Auprès des clients de cette géo : 'Support dans votre fuseau, contrat en droit local, équipe qui parle votre langue.' Levier de proximité, purement positif.",
+  "strength": 8,
+  "freq_per_competitor_year": 0.15,
+  "guard": "Distinguer passage en remote (neutre) de vrai retrait de marché (support et vente relocalisés ailleurs)."
+ },
+ {
+  "id": "ratio-croissance-support",
+  "name": "Sur-croissance : ventes qui dépassent le support",
+  "what": "Ratio offres d'emploi sales/support > 4:1 sur 2 trimestres + annonces de croissance record",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "job_posting_keyword_detection double flux (sales vs support), ratio calculé par Claude",
+   "keywords": [
+    "account executive",
+    "sales development",
+    "customer support",
+    "technical support"
+   ]
+  },
+  "other_detection": "Croiser avec avis G2 récents mentionnant les délais de réponse",
+  "levier": "Signal prédictif : la qualité de service va chuter dans 3-6 mois. Semer maintenant ('gardons contact'), récolter quand la douleur arrive. Nurturing programmé, pas pitch immédiat.",
+  "strength": 6,
+  "freq_per_competitor_year": 0.5,
+  "guard": "Corrélation, pas causalité. N'utiliser en discours client QUE si des avis récents confirment la dégradation réelle."
+ },
+ {
+  "id": "backlog-onboarding",
+  "name": "File d'attente d'onboarding",
+  "what": "Recrutements urgents d'implementation managers + avis/posts mentionnant des délais de déploiement",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "job_posting_keyword_detection + keyword_detection sur watchlist customers",
+   "keywords": [
+    "implementation manager",
+    "onboarding specialist",
+    "délai de mise en place",
+    "toujours en attente",
+    "deployment backlog"
+   ]
+  },
+  "other_detection": "Avis Capterra filtrés sur 'onboarding' et 'setup' des 90 derniers jours",
+  "levier": "Cibler les clients RÉCENTS du concurrent (encore en déploiement, engagement psychologique faible) : 'Live en 2 semaines, garanti contractuellement.' Le switch coûte le moins cher avant le go-live.",
+  "strength": 8,
+  "freq_per_competitor_year": 0.6,
+  "guard": "Ne promettre le délai que si l'équipe peut réellement le tenir. Un switch raté ici brûle deux fois le prospect."
+ },
+ {
+  "id": "perte-partenaire-cle",
+  "name": "Le concurrent perd son partenaire clé",
+  "what": "Une intégration majeure du concurrent est dépréciée, ou le partenaire annonce une exclusivité ailleurs",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "agent partner sur watchlist des partenaires du concurrent + keyword_detection",
+   "keywords": [
+    "fin du partenariat",
+    "deprecated integration",
+    "no longer supported",
+    "exclusive partnership"
+   ]
+  },
+  "other_detection": "Marketplace du partenaire (listing retiré), changelog des deux côtés",
+  "levier": "Identifier les clients dont le workflow dépend de cette intégration (offres d'emploi mentionnant les deux outils). Message : 'Cette connexion est native et stratégique chez nous — démo du flux exact.'",
+  "strength": 8,
+  "freq_per_competitor_year": 0.4,
+  "guard": "Vérifier que l'intégration est réellement coupée, pas juste renommée ou migrée de version d'API."
+ },
+ {
+  "id": "dependance-techno-fragilisee",
+  "name": "Dépendance technologique fragilisée",
+  "what": "Le fournisseur critique du concurrent (API, LLM, data provider) change ses prix ou ses conditions",
+  "sillage": {
+   "detectable": false,
+   "agent_type": "",
+   "keywords": []
+  },
+  "other_detection": "Veille pricing des fournisseurs d'infra connus du concurrent (BuiltWith pour la stack + monitoring des annonces fournisseurs)",
+  "levier": "Anticiper la répercussion de coûts : quand le concurrent monte ses prix 3 mois plus tard, l'explication est déjà semée et le levier hausse-prix est pré-armé.",
+  "strength": 5,
+  "freq_per_competitor_year": 0.5,
+  "guard": "Chaîne d'inférence longue (fournisseur → concurrent → client). Ne jamais en faire un argument direct, seulement un déclencheur de veille renforcée."
+ },
+ {
+  "id": "churn-logos-publics",
+  "name": "Logos qui disparaissent du site concurrent",
+  "what": "Des clients référence sont retirés de la page 'customers' du concurrent",
+  "sillage": {
+   "detectable": false,
+   "agent_type": "",
+   "keywords": []
+  },
+  "other_detection": "Diffing mensuel de la page clients/case studies du concurrent (scraper + Wayback Machine), croisement Claude",
+  "levier": "Double usage : (1) le logo parti est un prospect ultra-chaud à contacter immédiatement, (2) auprès des autres clients, ne rien dire — mais renforcer la preuve sociale propre au même moment.",
+  "strength": 7,
+  "freq_per_competitor_year": 3.0,
+  "guard": "Un logo retiré peut être un simple refresh de site. Confirmer le churn par un second signal (offre d'emploi du client mentionnant un autre outil, post LinkedIn) avant contact."
+ },
+ {
+  "id": "silence-produit",
+  "name": "Silence produit prolongé",
+  "what": "Aucune annonce de release sur les posts LinkedIn du concurrent depuis 90+ jours alors qu'il publiait mensuellement",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "top_account_content en polling mensuel, détection de rupture de cadence par Claude",
+   "keywords": []
+  },
+  "other_detection": "Changelog du produit, notes de version publiques",
+  "levier": "Comparatif de vélocité purement factuel : timeline des releases des deux produits côte à côte, datée et sourcée. Laisser le vide parler.",
+  "strength": 6,
+  "freq_per_competitor_year": 0.7,
+  "guard": "Le silence marketing n'est pas le silence produit — vérifier le changelog technique avant d'affirmer un ralentissement."
+ },
+ {
+  "id": "incident-securite",
+  "name": "Incident de sécurité ou perte de certification",
+  "what": "Breach divulguée, retrait d'un badge SOC2/ISO du site, notification CNIL publique",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "keyword_detection",
+   "keywords": [
+    "security incident",
+    "data breach",
+    "faille de sécurité",
+    "violation de données",
+    "incident de sécurité"
+   ]
+  },
+  "other_detection": "HaveIBeenPwned, diffing de la page trust/security du concurrent, registres publics",
+  "levier": "Zéro mention de l'incident. Publier et pousser au même moment son propre dossier sécurité (certifs, pentest, DPA) aux clients du concurrent via un contenu 'comment auditer votre fournisseur SaaS'. Le contexte fait le travail.",
+  "strength": 9,
+  "freq_per_competitor_year": 0.15,
+  "guard": "Terrain juridique miné. Uniquement des faits publiquement divulgués par le concurrent lui-même ou une autorité. Jamais de rumeur, jamais de mention directe."
+ },
+ {
+  "id": "litige-public",
+  "name": "Litige juridique public",
+  "what": "Procès en cours (PI, client, employé) rendu public par voie de presse ou registre",
+  "sillage": {
+   "detectable": false,
+   "agent_type": "",
+   "keywords": []
+  },
+  "other_detection": "Bases juridiques publiques (Pappers, Doctrine), presse",
+  "levier": "Jamais un argument. Sert uniquement au scoring interne : les clients d'un fournisseur en litige lourd sont plus réceptifs aux discussions de continuité — prioriser leur nurturing.",
+  "strength": 4,
+  "freq_per_competitor_year": 0.2,
+  "guard": "Présomption d'innocence absolue. Signal interne de priorisation, interdit dans tout message sortant."
+ },
+ {
+  "id": "depart-vague-ingenierie",
+  "name": "Hémorragie d'ingénieurs",
+  "what": "4+ développeurs/ingénieurs du concurrent changent de poste en 120 jours",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "job_update sur cohorte engineering issue de account_mapping",
+   "keywords": []
+  },
+  "other_detection": "Activité GitHub publique de l'org qui ralentit, avis Glassdoor engineering",
+  "levier": "Prédicteur de dette produit à 6-12 mois. Alimenter le levier 'silence-produit' en avance et sécuriser les clients aux besoins techniques lourds : 'Voici notre équipe qui construira ce dont vous aurez besoin dans un an.'",
+  "strength": 6,
+  "freq_per_competitor_year": 0.5,
+  "guard": "Turnover tech normal ~15%/an — n'armer que si le taux observé dépasse nettement la base, calculé sur l'effectif réel cartographié."
+ },
+ {
+  "id": "remplacement-account-manager",
+  "name": "L'AM/CSM du client visé part",
+  "what": "Le CSM assigné à un client précis du concurrent (identifiable par ses interactions LinkedIn avec ce client) change de poste",
+  "sillage": {
+   "detectable": true,
+   "agent_type": "job_update ciblé, mapping CSM→client construit par Claude depuis les interactions publiques (likes, commentaires, posts communs)",
+   "keywords": []
+  },
+  "other_detection": "Aucune fiable — c'est la force du croisement Sillage",
+  "levier": "Le levier le plus chirurgical du système : la relation humaine qui retenait ce client vient de disparaître. Fenêtre de 60 jours. Approche relationnelle pure : présence, valeur, invitation — le pitch produit vient en second.",
+  "strength": 10,
+  "freq_per_competitor_year": 1.2,
+  "guard": "Le mapping CSM→client par interactions publiques est probabiliste (~70% de fiabilité) — jamais évoquer le départ au client, juste être là au bon moment."
+ }
+]

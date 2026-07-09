@@ -1,0 +1,31 @@
+{
+  "_note": "Manifest des endpoints REST Sillage v2 — base https://api.getsillage.com. status: documented = vu dans la doc publique (08/07/2026) ; to_confirm = chemin exact à geler au Day-1 via l'OpenAPI (GET /api/v1/docs/spec). RestSillage refuse d'appeler un to_confirm (NotConfigured).",
+  "auth": "Authorization: Bearer sk_live_... (Settings → API Keys ; génération parfois à activer par le support)",
+  "errors": "RFC 9457 application/problem+json — 402=crédits insuffisants, 429+Retry-After, headers X-RateLimit-*, X-Request-Id",
+  "openapi_spec": "https://api.getsillage.com/api/v1/docs/spec",
+  "swagger_ui": "https://api.getsillage.com/api/v1/docs",
+  "endpoints": {
+    "signals_query": {"path": "/api/v2/workspace/signals/query", "method": "POST", "status": "documented",
+      "params": ["signal_start_date", "signal_end_date", "detection_start_date", "detection_end_date", "agent_id", "signal_run_id", "company_id", "company_domain[]", "company_linkedin_handle[]", "company_linkedin_url[]", "cursor", "limit(1-100)"],
+      "notes": "pagination CURSEUR (seule famille en curseur), tri détection desc"},
+    "signals_count": {"path": "/api/v2/workspace/signals/count", "method": "POST", "status": "to_confirm"},
+    "signals_get": {"path": "/api/v2/workspace/signals/{id}", "method": "GET", "status": "to_confirm"},
+    "top_accounts_add": {"path": "/api/v2/workspace/top-accounts", "method": "POST", "status": "to_confirm",
+      "notes": "ASYNC : 202 puis poll du statut d'ingestion ; quota trial = cap à vie (erreur top-account-quota-exceeded, rejet TOTAL de la requête)"},
+    "top_accounts_list": {"path": "/api/v2/workspace/top-accounts", "method": "GET", "status": "to_confirm"},
+    "persona_upsert": {"path": "/api/v2/workspace/persona", "method": "PUT", "status": "to_confirm"},
+    "agents_create": {"path": "/api/v2/workspace/agents", "method": "POST", "status": "to_confirm",
+      "notes": "8 types : keyword_detection, job_posting_keyword_detection, job_update, competitor, partner, customer, influencer, champion — get-setup-state = checklist diagnostique"},
+    "signal_runs_launch": {"path": "/api/v2/workspace/signal-runs/launch", "method": "POST", "status": "to_confirm",
+      "notes": "launch → poll jusqu'à état terminal — PAS de webhook chez Sillage"},
+    "signal_runs_get": {"path": "/api/v2/workspace/signal-runs/{id}", "method": "GET", "status": "to_confirm"},
+    "mapping_enrich_company": {"path": "/api/v2/workspace/account-mapping", "method": "POST", "status": "to_confirm",
+      "notes": "async, par domaine/LinkedIn → profils employés (pont vers le dirigeant LinkedIn)"},
+    "rate_limit": {"path": "/api/v2/workspace/rate-limit", "method": "GET", "status": "to_confirm",
+      "notes": "lire les quotas RÉELS du workspace en premier au Day-1 (MCP: sillage_v2_get_rate_limit)"}
+  },
+  "mcp": {"url": "https://api.getsillage.com/api/mcp/v2", "transport": "http streamable + OAuth 2.1",
+    "install": "claude mcp add --transport http sillage https://api.getsillage.com/api/mcp/v2",
+    "tools_prefix": "sillage_v2_", "scope": "1 workspace par connexion",
+    "resources": ["sillage://setup-state", "sillage://playbooks"]}
+}

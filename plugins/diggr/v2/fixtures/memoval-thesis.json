@@ -1,0 +1,16 @@
+{
+  "id": "memoval-cedant",
+  "concept": "MemoVAL — capture et structuration de la mémoire opérationnelle d'une PME (savoir non-tacite du dirigeant : relations clients, accords fournisseurs, historique des décisions) avant sa transmission, pour éviter la décote de cession. 4500€ one-shot + 249€/mois.",
+  "statement": "Une PME indépendante de 1,5-10 M€ dont le dirigeant de 58-68 ans EST la mémoire opérationnelle achètera la capture de mémoire parce que la décote de cession devient tangible quand la transmission entre dans son horizon de 1-3 ans, à condition que l'entreprise soit assez mûre pour avoir une mémoire à capturer.",
+  "persona": {
+    "role": "dirigeant-actionnaire cédant",
+    "champion": "expert-comptable / conseil en transmission",
+    "title_patterns": ["Gérant", "Président", "Président de SAS", "Directeur Général", "PDG"]
+  },
+  "universe_hint": "PME françaises, région Auvergne-Rhône-Alpes d'abord (proximité Lyon), secteurs à fort savoir tacite (fabrication, BTP technique, négoce spécialisé B2B, agroalimentaire, maintenance industrielle).",
+  "validation": {
+    "success_metric": "Sur 100 contacts : taux de réponse positive tier IN ≥ 3× celui d'un échantillon témoin BAND ; ≥ 5 RDV qualifiés.",
+    "kill_metric": "IN ne bat pas BAND après 100 contacts → la thèse cédant est fausse ou les poids mentent → recalibrage ou pivot de thèse."
+  },
+  "status": "active"
+}

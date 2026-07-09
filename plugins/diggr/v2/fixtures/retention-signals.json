@@ -1,0 +1,230 @@
+{
+  "thesis_id": "retention-risk-b2b",
+  "version": "0.1.0",
+  "_note": "L'ARBRE DE RISQUE — la preuve de « un seul moteur, l'autre sens du cycle de vie ». Le MÊME score_v2.py qui score l'appétence d'achat score ici le RISQUE de churn/slip d'un deal ouvert. Il ontologise les 5-6 types de signaux Sillage que l'arbre d'acquisition n'utilisait pas : champion (job change), competitor (engagement), job_update, customer, + leadership/M&A (web). IN = à risque, BAND = à surveiller, OUT = sain. VOI = quel deal vérifier en priorité.",
+  "defaults": {
+    "prior": {
+      "P": 0.5,
+      "S": 0.3,
+      "O": 0.3
+    },
+    "gate_floor": 0.05
+  },
+  "signals": [
+    {
+      "id": "P-ACT-01",
+      "layer": "P",
+      "claim": "Compte actif à surveiller (deal ouvert ou client payant, pas déjà perdu/gagné)",
+      "rationale": "On ne monitore que ce qui est en jeu. Un deal clos n'a plus de risque à piloter.",
+      "cluster": "perimetre",
+      "crit": 1,
+      "proxies": [
+        {
+          "id": "P-ACT-01.a",
+          "source": "registry",
+          "field": "monitorable",
+          "op": "eq",
+          "value": "true",
+          "fidelity": 0.98,
+          "fpr": 0.05,
+          "coverage": 1.0,
+          "cost_class": 0
+        }
+      ]
+    },
+    {
+      "id": "S-CHAMP-01",
+      "layer": "S",
+      "claim": "Le champion/sponsor du compte a quitté ou changé de poste (perte du relais interne)",
+      "rationale": "P(événement | deal qui va slipper) très supérieur à P(événement | deal sain) : perdre son sponsor est le prédicteur de churn n°1. Signal Sillage first-party (champion / job_update).",
+      "cluster": "sponsor",
+      "lr_class": "x20",
+      "proxies": [
+        {
+          "id": "S-CHAMP-01.a",
+          "source": "sillage",
+          "capability": "sillage.agents.champion",
+          "op": "eq",
+          "value": "champion_left",
+          "fidelity": 0.85,
+          "fpr": 0.03,
+          "coverage": 0.9,
+          "cost_class": 2,
+          "status": "confirmed_from_docs",
+          "decay": {
+            "fresh_days": 60,
+            "context_days": 180,
+            "context_mult": 0.7,
+            "stale_mult": 0.4
+          }
+        },
+        {
+          "id": "S-CHAMP-01.b",
+          "source": "sillage",
+          "capability": "sillage.agents.job_update",
+          "op": "eq",
+          "value": "contact_changed_company",
+          "fidelity": 0.7,
+          "fpr": 0.05,
+          "coverage": 0.85,
+          "cost_class": 2,
+          "status": "confirmed_from_docs",
+          "decay": {
+            "fresh_days": 60,
+            "context_days": 180,
+            "context_mult": 0.7,
+            "stale_mult": 0.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "S-COMP-01",
+      "layer": "S",
+      "claim": "Le compte s'engage avec un concurrent (menace de rip-and-replace)",
+      "rationale": "Suivre/interagir avec le contenu ou la page d'un concurrent = évaluation active d'une alternative. Signal Sillage social (competitor).",
+      "cluster": "concurrence",
+      "lr_class": "x5",
+      "proxies": [
+        {
+          "id": "S-COMP-01.a",
+          "source": "sillage",
+          "capability": "sillage.agents.competitor",
+          "op": "eq",
+          "value": "competitor_engagement",
+          "fidelity": 0.75,
+          "fpr": 0.08,
+          "coverage": 0.85,
+          "cost_class": 2,
+          "status": "confirmed_from_docs",
+          "decay": {
+            "fresh_days": 45,
+            "context_days": 120,
+            "context_mult": 0.6,
+            "stale_mult": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "id": "S-INACT-01",
+      "layer": "S",
+      "claim": "Le deal est inactif (aucune touche ni signal depuis le seuil de fraîcheur)",
+      "rationale": "Le silence est le prédicteur de slip le plus banal et le plus fiable. Calculé (déterministe), gratuit — pas besoin de Sillage.",
+      "cluster": "momentum",
+      "lr_class": "x5",
+      "proxies": [
+        {
+          "id": "S-INACT-01.a",
+          "source": "registry",
+          "field": "days_since_last_touch",
+          "op": "gte",
+          "value": 21,
+          "fidelity": 0.8,
+          "fpr": 0.3,
+          "coverage": 1.0,
+          "cost_class": 0
+        }
+      ]
+    },
+    {
+      "id": "S-LEAD-01",
+      "layer": "S",
+      "claim": "Changement de direction chez le compte (nouveau décideur = re-négociation)",
+      "rationale": "Un nouveau CxO ré-évalue les contrats en cours. Signal Sillage web (leadership change).",
+      "cluster": "gouvernance_compte",
+      "lr_class": "x2",
+      "proxies": [
+        {
+          "id": "S-LEAD-01.a",
+          "source": "sillage",
+          "capability": "sillage.agents.keyword_detection",
+          "op": "eq",
+          "value": "leadership_change",
+          "fidelity": 0.7,
+          "fpr": 0.1,
+          "coverage": 0.8,
+          "cost_class": 2,
+          "status": "confirmed_from_docs",
+          "decay": {
+            "fresh_days": 90,
+            "context_days": 270,
+            "context_mult": 0.6,
+            "stale_mult": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "id": "S-MA-01",
+      "layer": "S",
+      "claim": "Le compte fait l'objet d'une M&A (acquisition/fusion : cartes GTM rebattues)",
+      "rationale": "Une acquisition gèle ou annule les achats en cours et change le décideur. Signal Sillage web (M&A).",
+      "cluster": "gouvernance_compte",
+      "lr_class": "x5",
+      "proxies": [
+        {
+          "id": "S-MA-01.a",
+          "source": "sillage",
+          "capability": "sillage.agents.keyword_detection",
+          "op": "eq",
+          "value": "m_and_a",
+          "fidelity": 0.85,
+          "fpr": 0.03,
+          "coverage": 0.9,
+          "cost_class": 2,
+          "status": "confirmed_from_docs",
+          "decay": {
+            "fresh_days": 120,
+            "context_days": 365,
+            "context_mult": 0.6,
+            "stale_mult": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "id": "S-SILENT-01",
+      "layer": "S",
+      "claim": "Le compte est silencieux côté produit (aucun signal d'usage/engagement positif récent)",
+      "rationale": "L'ABSENCE de signal customer positif est un facteur de risque ; sa PRÉSENCE (usage, engagement) est une preuve CONTRE le risque (le mock émet value=false quand un signal customer positif est vu → abaisse le risque).",
+      "cluster": "sante_produit",
+      "lr_class": "x2",
+      "proxies": [
+        {
+          "id": "S-SILENT-01.a",
+          "source": "sillage",
+          "capability": "sillage.agents.customer",
+          "op": "eq",
+          "value": "silent",
+          "fidelity": 0.6,
+          "fpr": 0.25,
+          "coverage": 0.75,
+          "cost_class": 2,
+          "status": "confirmed_from_docs"
+        }
+      ]
+    },
+    {
+      "id": "O-AMT-01",
+      "layer": "O",
+      "claim": "Deal de gros montant (le risque coûte plus cher — priorité d'attention)",
+      "rationale": "Ne change pas la probabilité de slip mais l'ENJEU : un gros deal à risque passe devant. Sert la priorisation, pas le score de risque pur.",
+      "cluster": "enjeu",
+      "lr_class": "x1.2",
+      "proxies": [
+        {
+          "id": "O-AMT-01.a",
+          "source": "registry",
+          "field": "amount_eur",
+          "op": "gte",
+          "value": 20000,
+          "fidelity": 0.95,
+          "fpr": 0.5,
+          "coverage": 1.0,
+          "cost_class": 0
+        }
+      ]
+    }
+  ]
+}

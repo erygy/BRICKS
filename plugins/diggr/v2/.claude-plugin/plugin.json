@@ -1,0 +1,6 @@
+{
+  "name": "bricks-v2",
+  "version": "2.0.0-alpha.1",
+  "description": "Bricks V2 — le moteur GTM signal-natif : concept → thèses → milliers de signaux nécessaires (P/S/O) → matching capacités (Sillage/FullEnrich/registres) → scoring par intervalles + VOI → outreach évidence-first → verdict de thèse. Prototype pré-construit, chaîne prouvée en mock.",
+  "author": {"name": "Thomas Jebabli (conception V2) — sur la plomberie V1 de Rémi Lagorce & Robin Jehanno"}
+}

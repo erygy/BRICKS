@@ -1,5 +1,8 @@
-# données de travail (workspaces, bases, exports)
-bricks/
+# données de travail (workspaces, bases, exports) — /bricks/ = le root
+# runtime des workspaces à la racine, PAS plugins/bricks (le plugin)
+/bricks/
+/config.json
+/workspaces/
 *.db
 *.db-journal
 *.db-wal

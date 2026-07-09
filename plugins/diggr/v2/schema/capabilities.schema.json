@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Bricks V2 — source capability catalog",
+  "description": "Catalogue des capacités d'une source (Sillage, FullEnrich, registres…). Généré par la découverte (sillage-connect) ou écrit à la main pour les sources connues. Consommé par le BROKER pour mapper signaux→proxies, et par le compilateur de requêtes.",
+  "type": "object",
+  "required": ["source", "discovered_at", "capabilities"],
+  "properties": {
+    "source": {"type": "string"},
+    "transport": {"enum": ["mcp", "rest", "local"]},
+    "discovered_at": {"type": "string"},
+    "identity_key": {"type": "string", "description": "Clé d'identité des entreprises (siren, siret, domain, id-propriétaire…)."},
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["key", "kind"],
+        "properties": {
+          "key": {"type": "string", "description": "ex. sillage.search.filters.ca_range · sillage.signals.recruitment · fullenrich.contact.waterfall"},
+          "kind": {"enum": ["search_filter", "company_field", "signal_kind", "enrichment", "stream"]},
+          "params": {"type": "object", "description": "Schéma des paramètres tel que découvert (types, bornes, énumérations)."},
+          "cost_class": {"type": "integer", "minimum": 0, "maximum": 3},
+          "page_size": {"type": "integer"},
+          "supports_or": {"type": "boolean"},
+          "since_param": {"type": "boolean", "description": "signal_kind : peut-on filtrer par date ?"},
+          "status": {"enum": ["presumed", "confirmed", "absent"], "description": "presumed = déduit avant connexion ; confirmé/absent après découverte."},
+          "notes": {"type": "string"}
+        }
+      }
+    },
+    "quotas": {"type": "object", "description": "Découvert à la connexion : crédits, rate limits."},
+    "probe_log": {"type": "array", "description": "Les requêtes-sondes exécutées et leurs formes de réponse (audit de la découverte)."}
+  }
+}
