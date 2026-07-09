@@ -31,6 +31,8 @@ tools/core/           le moteur (inchangé)
   session_auth.py     détection d'auth (dépendance d'agent.py)
 tools/providers/
   fullenrich.py       recherche personnes + cascade d'enrichissement (child rows)
+front/                UI web locale (table type Clay) — server.py stdlib +
+                      index.html React ; lancée par le skill /bricks:interface
 skills/               les playbooks GARDÉS comme matière première (voir bas)
 templates/context/    gabarits offer/icp/personas copiés par workspace.py new
 CONVENTIONS.md        le contrat runtime (namespace /bricks:*, ${CLAUDE_PLUGIN_ROOT})
@@ -43,14 +45,14 @@ CONVENTIONS.md        le contrat runtime (namespace /bricks:*, ${CLAUDE_PLUGIN_R
 `write-outreach`, `playbook-outbound`, `workspace`, `tools-guide`.
 
 **Gardé aussi** : le packaging plugin (`.claude-plugin/plugin.json`,
-`hooks/hooks.json`, `session_start.py`, `.mcp.json` réduit à fullenrich).
+`hooks/hooks.json`, `session_start.py`, `.mcp.json` réduit à fullenrich) et le
+front table (`front/` + skill `interface` qui le lance).
 
 **Jeté** : `jobs.py`, `news.py`, `firmo.py` (remplacés par Sillage/FullEnrich),
-toute la voie Bright Data (y compris son serveur MCP), le front table
-(`front/`), et 16 skills liées au scraping ou hors scope (find*,
-enrich-buying-committee, enrich-person-profile, signal-person, score,
-transform, interface, scan-mentions, lookalike*, create-landing-page,
-brickgent, tools de session).
+toute la voie Bright Data (y compris son serveur MCP), et 15 skills liées au
+scraping ou hors scope (find*, enrich-buying-committee, enrich-person-profile,
+signal-person, score, transform, scan-mentions, lookalike*,
+create-landing-page, brickgent, tools de session).
 
 ## À construire (volontairement absent — rien n'est codé ici)
 
