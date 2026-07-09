@@ -222,6 +222,7 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         try:
             if path in ("/", "/index.html"): self._file("index.html", "text/html; charset=utf-8")
+            elif path == "/diggr-logo.svg": self._file("diggr-logo.svg", "image/svg+xml")
             elif path == "/seed.json": self._file("seed.json", "application/json; charset=utf-8")
             elif path == "/api/ping": self._json(200, {"app": "bricks-v4", "fable": HAVE_FABLE})
             elif path == "/api/settings": self._json(200, settings_status())
