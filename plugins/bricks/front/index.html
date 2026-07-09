@@ -3,38 +3,59 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Bricks</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%2210%22 y=%2210%22 width=%2280%22 height=%2280%22 rx=%2214%22 fill=%22%23ff5722%22/></svg>" />
+<title>DIGGR</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><defs><linearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22><stop offset=%220%22 stop-color=%22%23FFD04D%22/><stop offset=%221%22 stop-color=%22%23D18D2A%22/></linearGradient></defs><rect x=%2210%22 y=%2210%22 width=%2280%22 height=%2280%22 rx=%2216%22 fill=%22url(%23g)%22/></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 <style>
+  /* ---- DIGGR identity — dark premium + or précieux ---- */
   :root, :root[data-theme="dark"] {
     color-scheme: dark;
-    --bg: #121212;
-    --card: #171717;
-    --border: #2a2a2a;
-    --border-soft: #222222;
-    --border-strong: #333333;
-    --hover: #1c1c1c;
-    --text: #dddddd;
-    --text-dim: #888888;
-    --text-faint: #666666;
-    --accent: #ff5722;
-    --accent-soft: rgba(255, 87, 34, .12);
+    --bg: #0A0A0B;
+    --card: #101014;
+    --glass: rgba(255, 255, 255, .025);
+    --border: rgba(255, 255, 255, .08);
+    --border-soft: rgba(255, 255, 255, .05);
+    --border-strong: rgba(255, 255, 255, .15);
+    --hover: rgba(255, 255, 255, .04);
+    --text: #ECECEF;
+    --text-dim: #9A9AA3;
+    --text-faint: #63636C;
+    /* interaction neutre (focus, hovers, sélection) — l'or reste précieux */
+    --accent: rgba(255, 255, 255, .28);
+    --accent-soft: rgba(255, 255, 255, .06);
+    /* l'or — logo, CTA principal, élément actif, l'info qui brille. C'est tout. */
+    --gold: #E9AE3A;
+    --gold-grad: linear-gradient(135deg, #FFD04D 0%, #E9AE3A 55%, #D18D2A 100%);
+    --gold-soft: rgba(233, 174, 58, .12);
+    --gold-border: rgba(233, 174, 58, .38);
+    --gold-glow: rgba(255, 208, 77, .4);
+    --gold-ink: #1c1305;
     --danger: #ef4444;
-    --radius: 12px;
+    --radius: 14px;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   :root[data-theme="light"] {
     color-scheme: light;
-    --bg: #f4f4f2;
-    --card: #ffffff;
-    --border: #e3e3df;
-    --border-soft: #ededea;
-    --border-strong: #d6d6d0;
-    --hover: #f0f0ec;
-    --text: #1d1d1b;
-    --text-dim: #6b6b66;
-    --text-faint: #9a9a93;
-    --accent: #ff5722;
-    --accent-soft: rgba(255, 87, 34, .10);
+    --bg: #F6F5F1;
+    --card: #FFFFFF;
+    --glass: rgba(20, 18, 10, .02);
+    --border: rgba(20, 18, 10, .10);
+    --border-soft: rgba(20, 18, 10, .06);
+    --border-strong: rgba(20, 18, 10, .18);
+    --hover: rgba(20, 18, 10, .045);
+    --text: #17171A;
+    --text-dim: #5E5E66;
+    --text-faint: #97979E;
+    --accent: rgba(20, 18, 10, .30);
+    --accent-soft: rgba(20, 18, 10, .05);
+    --gold: #C4841D;
+    --gold-grad: linear-gradient(135deg, #E9AE3A 0%, #D18D2A 60%, #B4711C 100%);
+    --gold-soft: rgba(209, 141, 42, .10);
+    --gold-border: rgba(209, 141, 42, .45);
+    --gold-glow: rgba(233, 174, 58, .35);
+    --gold-ink: #1c1305;
     --danger: #dc2626;
   }
   * { box-sizing: border-box; }
@@ -703,6 +724,72 @@
     border-radius: 8px; padding: 10px 12px; margin: 8px 0 0;
   }
   .fiche-state { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 13px; }
+
+  /* ---- DIGGR — typo mono, interactions sobres, l'or là où ça brille ---- */
+  .brand-logo {
+    height: 24px; width: auto; display: block; overflow: visible; flex: none;
+    filter: drop-shadow(0 1px 6px rgba(255, 208, 77, .22));
+  }
+  @keyframes twinkle { 0%, 100% { opacity: .45; transform: scale(.9); } 50% { opacity: 1; transform: scale(1.08); } }
+  .spark { color: var(--gold); display: inline-block; margin-right: 4px; animation: twinkle 2.6s ease-in-out infinite; }
+
+  /* JetBrains Mono : labels & chiffres */
+  thead th { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; }
+  .meta, .tab .count, td.col-num, .toolbar-meta, .card-footer,
+  .sg-date, .ev-date, .oc-week, .oc-meta, .tier-chip, .fiche-kind,
+  .panel h4, .whynow .wn-label, code, .chip { font-family: var(--mono); }
+  .chip { font-size: 10.5px; }
+
+  /* interactions neutres — l'orange historique s'efface */
+  a.cell-link { color: var(--text); background: var(--hover); }
+  tbody tr.selected td { border-bottom-color: var(--border-strong); }
+  thead th.sorted, thead th.sorted .type-ico, thead th.sorted .sort-ico { color: var(--text); }
+  .btn-toolbar.active { background: var(--hover); border-color: var(--border-strong); color: var(--text); }
+  .search-wrap .search-ico { color: var(--text-faint); }
+  .person-chip:hover, .coord:hover, .export-opt:hover { border-color: var(--border-strong); }
+  .coord:hover { color: var(--text); }
+  .export-opt:hover { background: var(--hover); }
+  .gnode:hover circle.body { stroke: var(--text-dim); }
+  .fiche-kind { background: var(--hover); color: var(--text-dim); }
+  input[type="checkbox"] { accent-color: var(--gold); }
+
+  /* verre discret sur les couches flottantes */
+  .modal-overlay, .fiche-overlay { backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); }
+  .action-bar {
+    background: rgba(16, 16, 20, .72); border-color: var(--border);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* L'OR, précieux — 1. l'élément actif */
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab.week-tab { color: var(--text-dim); }
+  .tab.week-tab.active { color: var(--gold); }
+  .ws-tab.active { background: var(--gold-soft); border-color: var(--gold-border); color: var(--gold); }
+  .ws-tab.active .dot { background: var(--gold); }
+
+  /* 2. le CTA principal : dégradé, encre foncée, reflet au survol */
+  .btn-approve {
+    position: relative; overflow: hidden;
+    background: var(--gold-grad); color: var(--gold-ink);
+    box-shadow: 0 2px 16px -6px var(--gold-glow);
+  }
+  .btn-approve::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .55) 50%, transparent 58%);
+    transform: translateX(-130%); transition: transform .5s ease;
+  }
+  .btn-approve:hover { filter: none; }
+  .btn-approve:hover::after { transform: translateX(130%); }
+  .btn-accent, .btn-plus { background: var(--gold-grad); color: var(--gold-ink); }
+
+  /* 3. l'info qui brille : WHY NOW, tier NOW, signaux frais, entité au centre */
+  .whynow { background: var(--glass); border-color: var(--gold-border); }
+  .whynow .wn-label { color: var(--gold); }
+  .whynow .wn-label::before { content: "✦"; margin-right: 6px; display: inline-block; animation: twinkle 2.6s ease-in-out infinite; }
+  .tier-now { background: var(--gold-soft); color: var(--gold); border: 1px solid var(--gold-border); }
+  .tier-week { background: var(--hover); color: var(--text-dim); }
+  .gdot.fresh { fill: var(--gold); }
+  .gnode.center circle.body { fill: var(--gold-soft); stroke: var(--gold); }
 </style>
 </head>
 <body>
@@ -1714,7 +1801,7 @@ function App() {
           </button>`)}
         ${tables.includes("outreach") && html`
           <button class=${"tab week-tab" + (active === WEEK ? " active" : "")} onClick=${() => setActive(WEEK)}>
-            📞 To contact this week
+            <span class="spark">✦</span> To contact this week
             ${active === WEEK && table && html`<span class="count">${table.rows.length}</span>`}
           </button>`}
       </div>`}
@@ -1761,7 +1848,12 @@ function App() {
       <div class="topbar">
         ${/* Sidebar désactivée momentanément.
         html`<button class="icon-btn" title=${sidebarOpen ? "Fermer le menu" : "Ouvrir le menu"} onClick=${() => setSidebarOpen(o => !o)}>☰</button>` */ null}
-        <div class="brand"><span class="logo">■</span> Bricks</div>
+        <div class="brand">
+          <svg class="brand-logo" viewBox="0 0 143.95 32.78" role="img" aria-label="DIGGR" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="dg" x1="0.48" y1="16.39" x2="143.55" y2="16.39" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFD04D"/><stop offset="1" stop-color="#D18D2A"/></linearGradient></defs>
+            <path fill="url(#dg)" d="M38.19,1.14h8.1l-5.38,30.51h-8.1L38.19,1.14z M80.14,17.1c-1.64,9.27-9.7,15.27-18.37,15.27c-9.69,0-15.74-7.23-14.21-15.94C49.11,7.73,57.74,0.4,67.21,0.4c3.87,0.06,8.07,1.7,10.17,4.03l-5.57,6.15C70.38,9,68.12,7.98,65.87,7.98c-4.54,0-9.19,3.73-10.02,8.44c-0.75,4.28,1.94,8.44,7.58,8.44c3.69,0,6.64-1.78,7.26-4.69H63.7l1.06-6.04h15.65C80.39,15.15,80.31,16.13,80.14,17.1z M115.48,17.1c-1.64,9.27-9.7,15.27-18.37,15.27c-9.69,0-15.74-7.23-14.21-15.94S93.08,0.4,102.54,0.4c3.87,0.06,8.07,1.7,10.17,4.03l-5.57,6.15c-1.42-1.59-3.68-2.61-5.94-2.61c-4.54,0-9.19,3.73-10.02,8.44c-0.75,4.28,1.94,8.44,7.58,8.44c3.69,0,6.64-1.78,7.26-4.69h-6.98l1.06-6.04h15.65C115.73,15.15,115.65,16.13,115.48,17.1z M133.19,31.65l-5.82-13.25l-2.34,13.25h-8.1l5.34-30.51h11.58c6.59,0,10.52,4.45,9.55,9.92c-0.67,3.8-3.52,6.98-6.75,8.35l6.02,12.25H133.19z M128.01,14.54l3.31,0.02c1.72,0.02,3.5-1.19,3.83-3.07c0.33-1.89-1.05-3.07-2.75-3.07h-3.31L128.01,14.54z M17.5,1.14L5.86,1.16L3.59,14.05h7.21l0.72-4.1h4.79c4.59,0,6.95,2.44,6.24,6.46c-0.7,3.97-3.9,6.38-8.45,6.38H9.25l0.72-4.11H2.77L0.48,31.65h11.64c10.37,0,17.73-5.75,19.4-15.22C33.2,6.9,27.88,1.1,17.5,1.14z"/>
+          </svg>
+        </div>
         ${status && status.initialized && status.workspaces && status.workspaces.length > 0 && html`
           <div class="sep"></div>
           <div class="ws-bar">
