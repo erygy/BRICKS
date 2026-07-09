@@ -1,7 +1,7 @@
 # BRICKS-FINAL — règles du repo
 
-Base curée de Bricks-v2 (voir README.md pour le périmètre gardé/jeté et les
-briques à construire), distribuée comme **plugin Claude Code** — l'architecture
+Base curée de Bricks-v2 (voir README.md pour le pipeline, le périmètre
+gardé/jeté et l'état de la v3), distribuée comme **plugin Claude Code** — l'architecture
 d'origine est conservée : manifeste `.claude-plugin/plugin.json`, hook
 SessionStart (`hooks/hooks.json` → `tools/core/session_start.py`), MCP servers
 dans `.mcp.json`, skills namespacées `/bricks:*`, chemins via

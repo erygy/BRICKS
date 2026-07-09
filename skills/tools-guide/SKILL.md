@@ -220,12 +220,26 @@ CLI AND a `step(row, ctx, args)` function that plugs into `runner.py --step`.
 | Script | Purpose | Runner step |
 |---|---|---|
 | `fullenrich.py` | FullEnrich people search, wave cascade per company (`FULLENRICH_API_KEY`) | `fullenrich.py:step {"params":{…},"out_table":"contacts"}` — inserts verified contacts as child rows tagged `source_run` |
+| `sillage.py` | Sillage surveillance P3/P4 (`SILLAGE_API_KEY`) : `test-auth` · `setup` (persona + top-20 → `tracked`) · `watchlist --type competitor\|champion` · `agents` · `run` (reprise state.json) · `pull` (curseur, dédup `sillage_signal_id`, arme `intercept_status` sur competitor*) · `leads` · `add-signal` (démo) | — CLI piloté par `/surveil` ; jamais de step |
+| `emelia.py` | Emelia sequencer P7 (`EMELIA_API_KEY`, seed guard `EMELIA_SEED_INBOXES`) : `test-auth` · `create-campaign --week` · `push` (approved → sent, stamp en une vague) · `start` · `stats` (opens/replies → outreach, liste « à appeler ») · `export-csv` (fallback zéro-API) | — CLI piloté par `/outreach` |
+| `../steps/intercept.py` | Interception P4 : résout l'acteur d'un signal competitor* depuis `payload_json` (preuve-seulement) → insère la company `source='competitor_interception'` + `qualify_status='pending'` (même porte P2), pose `type='competitor_engagement'` ; irrésolu → `not_found` | `intercept.py:step` sur `signals` / `--status-col intercept_status` |
+| `../../seed/import_p1.py` | Sourcing P1 : CSV companies (FullEnrich export) → normalise domaine/linkedin → stage → `import-csv --key domain`, `source` + `qualify_status='pending'` armés à l'insert | — CLI one-shot, pas un step |
 
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/runner.py" run --table companies \
   --status-col enrich_status --run-id enrich-2026-07-09 \
   --step "${CLAUDE_PLUGIN_ROOT}/tools/providers/fullenrich.py:step" --preview 10
+
+# interception (P4) — la branche competitor* du pull :
+python3 "${CLAUDE_PLUGIN_ROOT}/tools/core/runner.py" run --table signals \
+  --status-col intercept_status --run-id intercept-2026-07-09 \
+  --step "${CLAUDE_PLUGIN_ROOT}/tools/steps/intercept.py:step" --preview 10
 ```
+
+`tools/core/score.py` (P5) est documenté dans son en-tête : scoring
+déterministe fit+heat+persona avec décote de fraîcheur et faisceau
+collègues ×0.5, sort `priority_score/tier`, `why_now(_evidence)` et peut
+émettre la file `outreach` de la semaine — zéro modèle, zéro crédit.
 
 ---
 
@@ -236,12 +250,16 @@ Need a workspace?            → workspace.py status | new | switch
 Read what's in the db?       → db.py tables | schema | select | count
 Insert user-owned data?      → db.py add --rows '[{...}]'  (small)
 Insert sourced mass?         → save CSV → db.py import-csv <table> <file> --key <col>
+Sourcing P1 (FullEnrich)?    → export CSV → seed/import_p1.py --csv <file>
 Patch existing rows?         → db.py modify (--updates | --set+--where)
 Enrich many rows (AI)?       → runner.py run --ai … --preview 10 → GO → --commit
 Enrich many rows (provider)? → runner.py run --step providers/<x>.py:step …
 Chain both on one pass?      → runner.py run --step … --step … --ai …
 Undo a bad run?              → runner.py rollback --manifest <run>.manifest.json
 One-off AI question (≲5)?    → agent.py --prompt … (or /bricks:brickgent)
-GTM sourcing / enrichment?   → /bricks:find | /bricks:enrich
-No ICP yet?                  → /bricks:gtm-onboard
+Surveillance & signaux?      → sillage.py setup|watchlist|agents|run|pull|leads (/surveil)
+Interception competitor*?    → runner.py run --step tools/steps/intercept.py:step …
+Scoring & why-now?           → score.py (P5, déterministe) puis passe --ai why_now
+Envoi & retours campagne?    → emelia.py create-campaign|push|start|stats (/outreach)
+No ICP yet?                  → /onboard (P0 — offre, ICP, personas, concurrents)
 ```
