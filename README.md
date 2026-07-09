@@ -1,141 +1,111 @@
 <p align="center">
-  <img src="docs/assets/logo.svg" alt="Bricks logo" width="72" style="background:#ff5722;border-radius:12px;padding:8px;" />
-</p>
-
-<h1 align="center">Bricks</h1>
-
-<p align="center">
-  <strong>The open-source GTM engine.</strong><br/>
-  Replace Clay with open source and native integrations — built for the age of Claude Code.
+  <img src="plugins/bricks-v4/front/diggr-logo.svg" alt="DIGGR" width="230" />
 </p>
 
 <p align="center">
-  <a href="https://remilagorce.github.io/Bricks/">Documentation</a> ·
-  <a href="#quickstart">Quickstart</a> ·
-  <a href="#contributing">Contributing</a>
+  <strong>Creusez l'or de vos concurrents.</strong><br/>
+  Le moteur de conquête concurrentielle : DIGGR déterre les clients et prospects de vos concurrents — avec la preuve, le bon moment, et les coordonnées vérifiées.
+</p>
+
+<p align="center">
+  <code>Claude</code> · <code>Sillage</code> · <code>FullEnrich</code>
 </p>
 
 ---
 
-## What is Bricks? 
+> **Vos concurrents publient la liste de leurs meilleurs clients.**
+> DIGGR la déterre — et vous dit lequel démarcher **maintenant**.
 
-Bricks is an open-source alternative to Clay. Instead of paying per credit inside a closed spreadsheet, you compose your GTM workflows from open bricks connected directly to the native tools you already use.
+Pendant que la prospection classique brasse tout le marché à froid, DIGGR part d'une évidence : **vos meilleurs futurs clients ne sont pas des inconnus — ils sont déjà chez vos concurrents**, éduqués, budgétés, convaincus par votre marché. DIGGR les identifie à partir de signaux **publics**, avec la **citation source**, et ne remonte que les comptes réellement démarcheables aujourd'hui.
 
-- **Find** — source companies and contacts from open and native data sources
-- **Transform** — clean, dedupe, and shape your data with simple building blocks
-- **Enrich** — plug enrichment providers directly, no middleman markup
-- **Automated inbound** — qualify and route inbound leads automatically
-- **Signal** — listen to buying signals and trigger workflows on them
+---
 
-## Quickstart
+## Trois façons de creuser
 
-### 1. Add the marketplace
+DIGGR unifie **deux mondes** — le déplacement concurrentiel et l'acquisition — dans une seule interface, autour de trois axes :
 
-In a Claude Code session, add this repo as a plugin marketplace — a local
-checkout, or the GitHub repo once published:
+| Axe | Verbe | La cible | Le signal type |
+|---|---|---|---|
+| 🔴 **Captation** | Voler | un client **déjà** chez un concurrent | « Ravis de travailler avec [concurrent] » → client identifié |
+| 🔵 **Interception** | Devancer | un prospect qui **évalue** un concurrent | RFP, demande de démo publique, comparatif en cours |
+| 🟣 **Acquisition** | Sourcer | un profil **ICP** encore froid | levée de fonds, recrutement clé, migration de stack |
 
-```text
-/plugin marketplace add /path/to/clay-gtm-agent
-# or, once published:
-/plugin marketplace add remilagorce/Bricks
-```
+Chaque compte est scoré sur **deux axes séparés, jamais mélangés** : le **FIT** (qualité, IN/BAND/OUT → tier A/B/C) et la **FENÊTRE** (timing — *Ouverte* = agir maintenant).
 
-### 2. Install the plugin
+---
 
-```text
-/plugin install bricks@bricks
-```
+## La stack — chaque outil est indispensable
 
-This installs the `bricks` plugin (skills, the plumbing tools, the
-`fullenrich` MCP server, the local web UI) from the `bricks` marketplace.
-Restart Claude Code once installation finishes.
+| Outil | Rôle | Testé en réel |
+|---|---|---|
+| **Claude** | Raisonnement, dossiers de démarchage **ancrés** (chaque fait sourcé), chatbot qui **s'abstient** plutôt que d'inventer | ✅ |
+| **Sillage** | Les signaux d'intention publics : 257 types taxonomisés, minage des clients d'un concurrent depuis ses posts | ✅ minage live prouvé (post → clients cités) |
+| **FullEnrich** | Les coordonnées vérifiées, au prix minimal, uniquement quand le compte est chaud | ✅ enrichissement réel → email *DELIVERABLE* |
 
-### 3. Create a workspace and start working
+Retirez un outil, le système tombe : sans Sillage plus de vérité extérieure ; sans Claude du bruit ; sans FullEnrich un dossier envoyé à un fantôme.
 
-From any directory outside this repo (workspaces are data, never
-committed):
+---
 
-```text
-mkdir -p ~/bricks-workspaces/demo && cd ~/bricks-workspaces/demo
-claude
-```
-
-Just ask in natural language — Claude picks the right brick:
-
-```text
-Crée un workspace pour une campagne SaaS France, trouve 30 entreprises
-SaaS de 10-50 employés, puis enrichis leurs emails.
-```
-
-No setup command needed: the first GTM request auto-initializes the
-workspace and scaffolds `context/offer.md` and `context/icp.md`.
-
-### Switch between workspaces
-
-A workspace is one isolated client/campaign context (its own database,
-its own `context/`). Ask in natural language, or invoke the `workspace`
-skill directly:
-
-```text
-switch workspace acme-outbound
-/workspace list
-/workspace status
-```
-
-`new` and `switch` show a banner confirming which workspace is now active
-— always check it before running anything that writes data.
-
-### Write to the database
-
-You never write to `bricks.db` yourself: every insert/update/read goes
-through **`tools/db.py`**, the single door to the database, called
-directly by the skill in charge (no subagent in between — `db.py` is
-deterministic and prints JSON receipts, so there is nothing to delegate to
-a model). In practice this is invisible — just ask for the outcome
-("enrichis les 40 entreprises sans email"), and the skill does the actual
-read/write and reports back a receipt (counts, not raw rows). See
-`CLAUDE.md` and `plugins/bricks/CONVENTIONS.md` for the full rationale and
-contract.
-
-### Open the local UI
-
-A Clay-like table view of the current workspace's database:
-
-```text
-ouvre l'interface
-```
-
-This runs the `interface` skill, which launches `front/server.py` in the
-background and gives you a `http://127.0.0.1:4321` link — the same
-`tools/db.py` code path as the skills, so the UI never drifts from what
-the bricks actually wrote.
-
-### Workflows vs natural language
-
-For exploration or one-off requests, just talk to Claude — it reads each
-skill's description and picks the right brick per step. For a sequence you
-want to repeat identically (e.g. find → enrich → transform, every week),
-define a workflow that **dispatches explicitly** to named agents instead
-of letting Claude re-decide the routing each time. See `CLAUDE.md` for the
-dispatch-vs-automatic-delegation distinction.
-
-Full guide in the [documentation](https://remilagorce.github.io/Bricks/quickstart/).
-
-## Documentation
-
-The docs are built with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/) and published on GitHub Pages.
-
-Run them locally:
+## Lancer la démo (moins de 2 minutes)
 
 ```bash
-pip install -r requirements.txt
-mkdocs serve
+git clone -b diggr https://github.com/erygy/BRICKS.git
+cd BRICKS/plugins/bricks-v4/front
+python3 server.py            # → http://127.0.0.1:8970
 ```
 
-## Contributing
+> Sur Mac, double-cliquez simplement **`Lancer DIGGR.command`** (dans `plugins/bricks-v4/front/`) : il démarre le serveur et ouvre le navigateur.
+>
+> Les clés API (Claude, Sillage, FullEnrich) se posent dans l'écran **Installation**, ou dans `~/.bricks/env`. Sans clé, l'interface tourne quand même (démo pré-chargée) ; avec les clés, le chatbot et la détection de concurrents sont **live**.
 
-Contributions are welcome! See the [Contribute](https://remilagorce.github.io/Bricks/contribute/) guide in the docs.
+**Le script minute par minute** de la démo : [`plugins/bricks-v4/DEMO-RUNBOOK.md`](plugins/bricks-v4/DEMO-RUNBOOK.md).
 
-## License
+---
 
-MIT
+## Les 4 écrans
+
+- **Installation** — un assistant en 3 étapes : profil de l'entreprise → clés API → **l'IA détecte vos concurrents** (à valider).
+- **Comptes** — la table de travail : axe, concurrent, FIT (barre + tier), FENÊTRE, signaux. Triable, filtrable par axe.
+- **Radar** — le pilotage : où sont les **fenêtres ouvertes**, un board **par concurrent** (ses clients à capter, ses prospects à intercepter, sa faille exploitable), et la **viabilité du motion** (moteur de verdict bayésien).
+- **Brief** — le dossier d'un compte sur **un seul écran** : signaux clés, axes stratégiques, membres à contacter, **message pré-rédigé**, leviers — **plus un chatbot ancré** qui répond uniquement sur les faits du dossier et s'abstient sinon (zéro hallucination).
+
+Et une **landing de présentation** prête à l'emploi : [`plugins/bricks-v4/landing/`](plugins/bricks-v4/landing/) (statique, ouvrable directement).
+
+---
+
+## Réel vs démonstration (en toute transparence)
+
+- **Réel** : le minage des clients de concurrents (prouvé live sur Sillage), la taxonomie de **257 signaux**, tous les **dossiers et le chatbot générés par Claude**, l'enrichissement **FullEnrich** (email vérifié *DELIVERABLE*).
+- **Démo** : l'entreprise d'exemple, les firmographies et certains scores sont synthétisés pour la présentation. En production, le FIT est calculé par le moteur de scoring signal-natif, les firmo viennent d'un registre / FullEnrich, et le minage est industrialisé.
+
+---
+
+## Structure du projet
+
+```
+plugins/bricks-v4/
+├── front/            L'application DIGGR (React + htm, serveur Python) — le cockpit
+│   ├── index.html    Les 4 écrans + le chatbot ancré
+│   ├── server.py     API : seed, chatbot (Claude), détection concurrents, clés
+│   └── Lancer DIGGR.command   double-clic → démo
+├── landing/          La landing page de présentation (statique)
+├── _data/            257 signaux classés, failles concurrent, clients minés (réels)
+├── _proofs/          Spec Sillage gelée + preuve de minage live
+├── FUSION-V4.md      Le merge des deux moteurs (déplacement × acquisition)
+├── V5-MERGE-PLAN.md  Le plan d'architecture
+└── DEMO-RUNBOOK.md   Le script de démo (4 min)
+
+plugins/bricks-v2/    Le moteur importé (scoring signal-natif, verdict, fabrique de messages)
+```
+
+---
+
+## Preuves
+
+- **Minage live** : 50 posts LinkedIn réels d'un concurrent → 10 clients extraits **avec citation** (`plugins/bricks-v4/_proofs/`).
+- **FullEnrich** : clé vérifiée (2500 crédits), enrichissement réel renvoyant un **email vérifié *DELIVERABLE***.
+- **Viabilité** : à ~1000 comptes surveillés, la taxonomie produit **~35 signaux forts/jour**, soit un flux quotidien de comptes à démarcher — pas un fichier qui pourrit.
+
+---
+
+<p align="center"><sub>DIGGR — conquête concurrentielle · construit sur un moteur GTM signal-natif · Claude · Sillage · FullEnrich</sub></p>
