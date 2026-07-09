@@ -584,6 +584,125 @@
   .editor-body:empty::before { content: attr(data-placeholder); color: var(--text-faint); pointer-events: none; }
   .editor-footer { display: flex; align-items: center; gap: 18px; padding: 10px 16px; border-top: 1px solid var(--border-soft); flex-wrap: wrap; }
   .editor-footer .words { margin-left: auto; font-size: 11.5px; color: var(--text-faint); font-variant-numeric: tabular-nums; }
+
+  /* ---- fiche (the ONE detail screen: company- or contact-centered) ---- */
+  tbody tr.rowlink { cursor: pointer; }
+  .tab.week-tab { color: var(--accent); }
+  .tab.week-tab.active { color: var(--accent); }
+  .fiche-overlay {
+    position: fixed; inset: 0; z-index: 40;
+    background: rgba(0, 0, 0, .6);
+    display: flex; align-items: center; justify-content: center;
+    animation: fade .12s ease-out; padding: 24px;
+  }
+  .fiche {
+    width: min(1180px, 96vw); height: min(860px, 92vh);
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 24px 80px -16px rgba(0, 0, 0, .8);
+    display: flex; flex-direction: column; overflow: hidden;
+    animation: rise2 .15s ease-out;
+  }
+  .fiche-head {
+    flex: none; display: flex; align-items: center; gap: 14px;
+    padding: 14px 20px; border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+  .fiche-kind {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent); flex: none;
+  }
+  .fiche-title { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fiche-sub { font-size: 12.5px; color: var(--text-dim); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fiche-coords { display: flex; align-items: center; gap: 8px; margin-left: auto; flex: none; }
+  .coord {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text); text-decoration: none;
+    background: var(--hover); border: 1px solid var(--border);
+    padding: 5px 10px; border-radius: 8px; white-space: nowrap;
+  }
+  .coord:hover { border-color: var(--accent); color: var(--accent); }
+  .coord.missing { color: var(--text-faint); border-style: dashed; }
+  .tier-chip {
+    display: inline-flex; align-items: center; gap: 6px; flex: none;
+    font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px;
+  }
+  .tier-now { background: rgba(239, 68, 68, .15); color: #f87171; }
+  .tier-week { background: rgba(245, 158, 11, .15); color: #fbbf24; }
+  .tier-nurture { background: #26262b; color: #9ca3af; }
+  .fiche-body { flex: 1; min-height: 0; overflow: auto; padding: 18px 20px 26px; }
+  .whynow {
+    display: flex; flex-direction: column; gap: 8px;
+    background: var(--accent-soft); border: 1px solid var(--accent);
+    border-radius: 10px; padding: 14px 18px; margin-bottom: 16px;
+  }
+  .whynow .wn-label { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; color: var(--accent); }
+  .whynow .wn-text { font-size: 15px; font-weight: 600; line-height: 1.5; }
+  .evidence-row { display: flex; gap: 8px; align-items: baseline; font-size: 12.5px; color: var(--text-dim); }
+  .evidence-row .ev-date { flex: none; font-variant-numeric: tabular-nums; color: var(--text-faint); }
+  .fiche-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; align-items: start; }
+  .fiche-grid .full { grid-column: 1 / -1; }
+  .panel {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; min-width: 0;
+  }
+  .panel h4 {
+    margin: 0 0 10px; font-size: 11.5px; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim);
+  }
+  .graph-svg { width: 100%; height: auto; display: block; }
+  .gnode { cursor: pointer; }
+  .gnode circle.body { fill: var(--hover); stroke: var(--border-strong); stroke-width: 1.5; }
+  .gnode:hover circle.body { stroke: var(--accent); }
+  .gnode.center circle.body { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+  .gnode.competitor circle.body { stroke: #ef4444; stroke-dasharray: 4 3; }
+  .gnode text.ini { fill: var(--text); font-size: 12px; font-weight: 700; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+  .gnode text.lbl { fill: var(--text-dim); font-size: 10.5px; text-anchor: middle; }
+  .gnode.center text.lbl { fill: var(--text); font-weight: 600; }
+  .gedge { stroke: var(--border-strong); stroke-width: 1.2; }
+  .gedge.competitor { stroke: #ef4444; stroke-dasharray: 5 4; opacity: .8; }
+  .gdot { fill: var(--text-faint); }
+  .gdot.fresh { fill: var(--accent); }
+  .signal-row {
+    display: flex; gap: 10px; align-items: baseline;
+    padding: 8px 0; border-top: 1px solid var(--border-soft); font-size: 12.5px;
+  }
+  .signal-row:first-of-type { border-top: none; }
+  .signal-row .sg-date { flex: none; width: 76px; color: var(--text-faint); font-variant-numeric: tabular-nums; font-size: 11.5px; }
+  .signal-row .sg-type { flex: none; }
+  .signal-row .sg-sum { min-width: 0; }
+  .signal-row.stale { opacity: .55; }
+  .people-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .person-chip {
+    display: inline-flex; flex-direction: column; gap: 2px; text-align: left;
+    border: 1px solid var(--border); background: var(--hover);
+    border-radius: 9px; padding: 8px 12px; cursor: pointer; font-family: inherit;
+    transition: border-color .12s;
+    max-width: 200px;
+  }
+  .person-chip:hover { border-color: var(--accent); }
+  .person-chip .p-name { font-size: 12.5px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .person-chip .p-pos { font-size: 11px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .outreach-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-top: 10px; }
+  .outreach-card .oc-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .outreach-card .oc-week { font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .outreach-card .oc-meta { font-size: 11.5px; color: var(--text-faint); }
+  .btn-approve {
+    margin-left: auto; border: none; cursor: pointer; font-family: inherit;
+    background: #16a34a; color: #fff; font-size: 12.5px; font-weight: 700;
+    padding: 7px 16px; border-radius: 8px; transition: filter .12s;
+  }
+  .btn-approve:hover { filter: brightness(1.1); }
+  .btn-approve:disabled { opacity: .55; cursor: default; }
+  .draft-block { margin-top: 10px; }
+  .draft-block summary { cursor: pointer; font-size: 12px; color: var(--text-dim); font-weight: 600; }
+  .draft-block pre {
+    white-space: pre-wrap; font: 12px/1.5 inherit; color: var(--text);
+    background: var(--hover); border: 1px solid var(--border-soft);
+    border-radius: 8px; padding: 10px 12px; margin: 8px 0 0;
+  }
+  .fiche-state { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 13px; }
 </style>
 </head>
 <body>
@@ -676,6 +795,198 @@ function Cell({ value, type }) {
   }
   if (type === "number") return html`<span class="cell-num">${value}</span>`;
   return html`<span title=${value}>${value}</span>`;
+}
+
+// ---- the ONE detail screen (fiche) — company- or contact-centered --------
+const WEEK = "__week__";
+const initials = (name) => ((name || "").trim().split(/\s+/).map(w => w[0]).filter(Boolean).slice(0, 2).join("") || "?").toUpperCase();
+const daysAgo = (iso) => { const t = Date.parse(iso || ""); return isNaN(t) ? Infinity : (Date.now() - t) / 86400000; };
+const isFresh = (iso) => daysAgo(iso) <= 60;
+const parseEvidence = (raw) => { try { const v = JSON.parse(raw || "[]"); return Array.isArray(v) ? v : []; } catch { return []; } };
+const trunc = (s, n) => { s = String(s || ""); return s.length > n ? s.slice(0, n - 1) + "…" : s; };
+
+function GraphSVG({ data, onNavigate }) {
+  const isContact = data.entity === "contacts";
+  const center = data.center;
+  const centerId = String(center._id);
+  const nodes = [];
+  if (isContact && data.company) {
+    nodes.push({ type: "company", row: data.company, label: data.company.name || data.company.domain, nav: { table: "companies", id: data.company._id } });
+  }
+  (data.contacts || []).filter(c => !(isContact && String(c._id) === centerId)).slice(0, 8)
+    .forEach(c => nodes.push({ type: "contact", row: c, label: c.full_name || "?", nav: { table: "contacts", id: c._id } }));
+  (data.competitors || []).slice(0, 4)
+    .forEach(c => nodes.push({ type: "competitor", row: c, label: c.name || c.domain }));
+
+  // signals attach to their owner node (contact first, else the center/company)
+  const dotsFor = (ownerTest) => (data.signals || []).filter(ownerTest).slice(0, 6);
+  const W = 960, H = 400, CX = 480, CY = 168, RX = 300, RY = 108;
+  const placed = nodes.map((n, i) => {
+    const a = (2 * Math.PI * i) / Math.max(nodes.length, 1) - Math.PI / 2;
+    return { ...n, x: CX + RX * Math.cos(a), y: CY + RY * Math.sin(a) };
+  });
+  const centerDots = dotsFor(s => isContact
+    ? String(s.contact_id) === centerId
+    : String(s.company_id) === centerId && !String(s.contact_id || "").trim());
+
+  const node = (n, cls, r, key) => html`
+    <g key=${key} class=${"gnode " + cls} transform=${`translate(${n.x},${n.y})`}
+       onClick=${() => n.nav && onNavigate(n.nav.table, n.nav.id)}>
+      <circle class="body" r=${r}></circle>
+      <text class="ini">${n.type === "competitor" ? "⚔" : initials(n.label)}</text>
+      <text class="lbl" y=${r + 14}>${trunc(n.label, 20)}</text>
+      ${(n.dots || []).map((s, k) => html`
+        <circle key=${k} class=${"gdot" + (isFresh(s.signal_date) ? " fresh" : "")}
+          cx=${(k - (n.dots.length - 1) / 2) * 10} cy=${r + 24} r="3.5">
+          <title>${(s.signal_date || "") + " — " + (s.summary || s.type || "")}</title>
+        </circle>`)}
+    </g>`;
+
+  placed.forEach(n => {
+    n.dots = n.type === "contact" ? dotsFor(s => String(s.contact_id) === String(n.row._id))
+      : n.type === "company" ? dotsFor(s => String(s.company_id) === String(n.row._id) && !String(s.contact_id || "").trim())
+      : dotsFor(s => String(s.competitor_id) === String(n.row._id));
+  });
+
+  return html`
+    <svg class="graph-svg" viewBox=${`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg">
+      ${placed.map((n, i) => html`<line key=${"e" + i} class=${"gedge" + (n.type === "competitor" ? " competitor" : "")}
+        x1=${CX} y1=${CY} x2=${n.x} y2=${n.y}></line>`)}
+      ${placed.map((n, i) => node(n, n.type, 24, "n" + i))}
+      ${node({ x: CX, y: CY, type: isContact ? "contact" : "company",
+               label: isContact ? (center.full_name || "?") : (center.name || center.domain || "?"),
+               dots: centerDots }, "center", 30, "center")}
+    </svg>`;
+}
+
+function FicheModal({ table, id, onNavigate, onClose, onChanged }) {
+  const [data, setData] = useState(null);
+  const [err, setErr] = useState(null);
+  const [approving, setApproving] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    setData(null); setErr(null);
+    api(`/api/graph/${table}/${id}`)
+      .then(d => { if (alive) setData(d); })
+      .catch(e => { if (alive) setErr(e.message); });
+    return () => { alive = false; };
+  }, [table, id]);
+
+  const approve = async (oid) => {
+    setApproving(oid);
+    setErr(null);
+    try {
+      await api(`/api/outreach/${oid}/approve`, { method: "POST",
+        headers: { "Content-Type": "application/json" }, body: "{}" });
+      setData(prev => prev && ({ ...prev,
+        outreach: prev.outreach.map(o => String(o._id) === String(oid) ? { ...o, status: "approved" } : o) }));
+      onChanged && onChanged();
+    } catch (e) { setErr(e.message); }
+    finally { setApproving(null); }
+  };
+
+  const center = data && data.center;
+  const isContact = data && data.entity === "contacts";
+  const company = data && (isContact ? data.company : center);
+  const colleagues = data ? data.contacts.filter(c => !(isContact && String(c._id) === String(center._id))) : [];
+  const evidence = center ? parseEvidence(center.why_now_evidence) : [];
+  const tier = center && (center.priority_tier || "").trim();
+  const myOutreach = data ? data.outreach.filter(o => !isContact || String(o.contact_id) === String(center._id)) : [];
+  const coord = (label, value, href) => value
+    ? html`<a class="coord" href=${href} target="_blank" rel="noreferrer">${label} ${value}</a>`
+    : html`<span class="coord missing">${label} —</span>`;
+
+  return html`
+    <div class="fiche-overlay" onClick=${onClose}>
+      <div class="fiche" onClick=${e => e.stopPropagation()}>
+        ${!data && html`<div class="fiche-state">${err ? err : "Chargement…"}</div>`}
+        ${data && html`
+          <div class="fiche-head">
+            <span class="fiche-kind">${isContact ? "Contact" : "Company"}</span>
+            <div style=${{ minWidth: 0 }}>
+              <div class="fiche-title">${isContact ? (center.full_name || "?") : (center.name || center.domain)}</div>
+              <div class="fiche-sub">
+                ${isContact
+                  ? [center.position, company && (company.name || company.domain)].filter(Boolean).join(" · ")
+                  : [center.domain, center.headcount && center.headcount + " emp.", center.industry, center.geo].filter(Boolean).join(" · ")}
+              </div>
+            </div>
+            ${tier && html`<span class=${"tier-chip tier-" + tier}>${tier.toUpperCase()}${center.priority_score ? " · " + center.priority_score : ""}</span>`}
+            <div class="fiche-coords">
+              ${isContact && coord("📞", center.phone, "tel:" + center.phone)}
+              ${isContact && coord("✉", center.email, "mailto:" + center.email)}
+              ${coord("in", (center.linkedin_url || "").replace(/^https?:\/\/(www\.)?linkedin\.com\//, ""), center.linkedin_url)}
+              <button class="icon-btn" title="Fermer" onClick=${onClose}>✕</button>
+            </div>
+          </div>
+          <div class="fiche-body">
+            ${err && html`<div class="settings-error" style=${{ marginBottom: "12px" }}>${err}</div>`}
+            ${(center.why_now || evidence.length > 0) && html`
+              <div class="whynow">
+                <span class="wn-label">WHY NOW — l'angle d'attaque</span>
+                ${center.why_now && html`<div class="wn-text">${center.why_now}</div>`}
+                ${evidence.map((ev, i) => html`
+                  <div key=${i} class="evidence-row">
+                    <span class="ev-date">${ev.date || ""}</span>
+                    <span class="chip">${ev.type || "signal"}</span>
+                    <span>${ev.summary || ""}</span>
+                  </div>`)}
+              </div>`}
+            <div class="fiche-grid">
+              <div class="panel full">
+                <h4>Le graphe — ${isContact ? "société, collègues, concurrents engagés" : "décideurs, concurrents engagés"}</h4>
+                <${GraphSVG} data=${data} onNavigate=${onNavigate} />
+              </div>
+              <div class="panel">
+                <h4>Signaux (${data.signals.length}) — frais ≤ 60 j en orange</h4>
+                ${data.signals.length === 0 && html`<div class="fiche-sub">Aucun signal — la surveillance Sillage n'a rien remonté encore.</div>`}
+                ${data.signals.slice(0, 40).map((s, i) => html`
+                  <div key=${i} class=${"signal-row" + (isFresh(s.signal_date) ? "" : " stale")}>
+                    <span class="sg-date">${s.signal_date || "?"}</span>
+                    <span class="sg-type"><span class="chip">${s.type || s.sillage_type || "?"}</span></span>
+                    <span class="sg-sum">${s.summary || ""}${s.actor_name && !String(s.summary || "").includes(s.actor_name) ? " — " + s.actor_name : ""}</span>
+                  </div>`)}
+              </div>
+              <div>
+                <div class="panel">
+                  <h4>${isContact ? `Collègues (${colleagues.length})` : `Décideurs (${data.contacts.length})`}</h4>
+                  <div class="people-grid">
+                    ${(isContact ? colleagues : data.contacts).map(p => html`
+                      <button key=${p._id} class="person-chip" onClick=${() => onNavigate("contacts", p._id)}>
+                        <span class="p-name">${p.full_name || "?"}${p.is_champion === "1" ? " ★" : ""}</span>
+                        <span class="p-pos">${trunc(p.position || "", 34)}${p.priority_tier ? " · " + p.priority_tier : ""}</span>
+                      </button>`)}
+                    ${(isContact ? colleagues : data.contacts).length === 0 && html`<div class="fiche-sub">Personne encore — \`sillage.py leads\` les ramènera.</div>`}
+                  </div>
+                </div>
+                ${myOutreach.length > 0 && html`
+                  <div class="panel" style=${{ marginTop: "16px" }}>
+                    <h4>Outreach — la file</h4>
+                    ${myOutreach.map(o => html`
+                      <div key=${o._id} class="outreach-card">
+                        <div class="oc-head">
+                          <span class="oc-week">${o.week || ""}</span>
+                          ${o.strategy && html`<span class="chip">${o.strategy}</span>`}
+                          <span class=${"chip s-" + (o.status || "draft")}>${o.status || "draft"}</span>
+                          ${o.audit_score && html`<span class="oc-meta">audit ${o.audit_score}/100</span>`}
+                          ${o.status === "draft" && html`
+                            <button class="btn-approve" disabled=${approving === o._id}
+                              onClick=${() => approve(o._id)}>
+                              ${approving === o._id ? "…" : "Approve"}
+                            </button>`}
+                        </div>
+                        ${["email_1", "email_2", "email_3", "icebreaker_call"].filter(k => (o[k] || "").trim()).map(k => html`
+                          <details key=${k} class="draft-block">
+                            <summary>${k === "icebreaker_call" ? "Icebreaker call" : "Email " + k.slice(-1)}</summary>
+                            <pre>${o[k]}</pre>
+                          </details>`)}
+                      </div>`)}
+                  </div>`}
+              </div>
+            </div>
+          </div>`}
+      </div>
+    </div>`;
 }
 
 const TIMEZONES = [
@@ -1020,6 +1331,7 @@ function App() {
   const [keyInputs, setKeyInputs] = useState({});        // key -> pasted value
   const [savingKey, setSavingKey] = useState(null);
   const [settingsError, setSettingsError] = useState(null);
+  const [fiche, setFiche] = useState(null);            // {table, id} | null
 
   const openSettings = async () => {
     setSettingsOpen(true);
@@ -1067,7 +1379,9 @@ function App() {
     const st = await api("/api/status");
     setStatus(st);
     const tables = st.current ? st.current.tables : [];
-    if (tables.length && !tables.includes(activeRef.current)) setActive(tables[0]);
+    const activeOk = tables.includes(activeRef.current)
+      || (activeRef.current === WEEK && tables.includes("outreach"));
+    if (tables.length && !activeOk) setActive(tables[0]);
     if (!tables.length) { setActive(null); setTable(null); }
     return st;
   }, []);
@@ -1076,7 +1390,8 @@ function App() {
     if (!name) return;
     if (!silent) setLoading(true);
     try {
-      const data = await api("/api/table/" + encodeURIComponent(name));
+      const data = await api(name === WEEK ? "/api/week"
+        : "/api/table/" + encodeURIComponent(name));
       setTable(data);
       // Prune selected ids that no longer exist (row deleted by a skill).
       const idc = data.headers.indexOf("_id");
@@ -1097,7 +1412,9 @@ function App() {
     try {
       const st = await loadStatus();
       const tables = st.current ? st.current.tables : [];
-      const name = tables.includes(activeRef.current) ? activeRef.current : tables[0];
+      const activeOk = tables.includes(activeRef.current)
+        || (activeRef.current === WEEK && tables.includes("outreach"));
+      const name = activeOk ? activeRef.current : tables[0];
       if (name) await loadTable(name, { silent });
       setError(null);
     } catch (e) {
@@ -1161,6 +1478,21 @@ function App() {
   // Technical columns (underscore-prefixed, e.g. _id) are never displayed.
   const cols = allHeaders.map((h, i) => ({ h, i })).filter(({ h }) => !h.startsWith("_"));
   const types = cols.map(({ h, i }) => columnType(h, rows.map(r => r[i] ?? "")));
+
+  // Row click → the ONE detail screen (companies, contacts, week queue).
+  const weekContactIdx = active === WEEK ? allHeaders.indexOf("_contact_id") : -1;
+  const ficheFor = (r) => {
+    if (active === WEEK && weekContactIdx >= 0 && r[weekContactIdx])
+      return { table: "contacts", id: r[weekContactIdx] };
+    if ((active === "companies" || active === "contacts") && idIdx >= 0)
+      return { table: active, id: r[idIdx] };
+    return null;
+  };
+  const openFiche = (e, r) => {
+    if (e.target.closest("a, input, button")) return;   // links & checkboxes win
+    const target = ficheFor(r);
+    if (target) setFiche(target);
+  };
 
   const hasFilters = globalFilter.trim() !== "" || Object.values(colFilters).some(v => v.trim());
   const displayRows = useMemo(() => {
@@ -1243,7 +1575,8 @@ function App() {
     if (!table || exporting) return;
     const headers = cols.map(({ h }) => h);
     const dataRows = displayRows.map(r => cols.map(({ i }) => r[i] ?? ""));
-    const base = (active || "export").replace(/\.csv$/, "");
+    const base = (active === WEEK ? "to_contact_this_week"
+      : (active || "export")).replace(/\.csv$/, "");
     setExporting(format);
     try {
       if (format === "csv") {
@@ -1347,7 +1680,10 @@ function App() {
                   : displayRows.map((r, i) => {
                       const rowId = canSelect ? r[idIdx] : null;
                       const isSel = rowId !== null && selected.has(rowId);
-                      return html`<tr key=${rowId ?? i} class=${isSel ? "selected" : ""}>
+                      const clickable = ficheFor(r) !== null;
+                      return html`<tr key=${rowId ?? i}
+                        class=${(isSel ? "selected" : "") + (clickable ? " rowlink" : "")}
+                        onClick=${clickable ? ((e) => openFiche(e, r)) : undefined}>
                         ${canSelect && html`<td class="col-check"><input type="checkbox" checked=${isSel} onChange=${() => toggleRow(rowId)} /></td>`}
                         <td class="col-num">${i + 1}</td>
                         ${cols.map(({ i: c }, k) => html`<td key=${k}><${Cell} value=${r[c] ?? ""} type=${types[k]} /></td>`)}
@@ -1376,6 +1712,11 @@ function App() {
             ${t.replace(/\.csv$/, "")}
             ${t === active && table && html`<span class="count">${table.rows.length}</span>`}
           </button>`)}
+        ${tables.includes("outreach") && html`
+          <button class=${"tab week-tab" + (active === WEEK ? " active" : "")} onClick=${() => setActive(WEEK)}>
+            📞 To contact this week
+            ${active === WEEK && table && html`<span class="count">${table.rows.length}</span>`}
+          </button>`}
       </div>`}
     ${body}
     ${selected.size > 0 && html`
@@ -1462,6 +1803,10 @@ function App() {
           ${content}
         </div>
       </div>
+      ${fiche && html`<${FicheModal} table=${fiche.table} id=${fiche.id}
+        onNavigate=${(t, i) => setFiche({ table: t, id: i })}
+        onClose=${() => setFiche(null)}
+        onChanged=${() => refresh(true)} />`}
       ${exportOpen && html`
         <div class="modal-overlay" onClick=${() => !exporting && setExportOpen(false)}>
           <div class="modal" onClick=${e => e.stopPropagation()}>

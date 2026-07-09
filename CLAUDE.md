@@ -199,3 +199,7 @@ Enrichir / Envoyer.
    `competitor_id` (l'arête « a engagé avec » + le `why_we_win` des
    drafts) et de `intercept_status` (la branche interception tourne dans
    runner.py, pas en boucle de session).
+5. Les retours de campagne (`sent_at`, `opened_count`, `replied`,
+   `status sent→replied`) vivent sur `outreach` (FK `contact_id`),
+   jamais sur `contacts` — la roadmap disait « dans la table contact » :
+   même information, une seule écriture, le front joint via `contact_id`.

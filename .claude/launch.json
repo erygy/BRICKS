@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "bricks-ui",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["front/server.py", "--port", "4321"],
+      "port": 4321
+    }
+  ]
+}

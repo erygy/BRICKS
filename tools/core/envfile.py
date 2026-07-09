@@ -14,6 +14,10 @@ Format — one KEY=value per line, # comments allowed:
     ANTHROPIC_API_KEY=…                     # engine workers, token billing
     FULLENRICH_API_KEY=…                    # people-search fetcher (dashboard key)
     BRIGHTDATA_API_TOKEN=…                  # agent --web
+    SILLAGE_API_KEY=sk_live_…               # surveillance P3/P4 (sillage.py)
+    EMELIA_API_KEY=…                        # sequencer P7 (emelia.py)
+    EMELIA_SEED_INBOXES=a@x.fr,@seed.dev    # hackathon send guard (comma list)
+    EMELIA_TEMPLATE_ID=…                    # optional campaign template to clone
 
 Values already present in the environment are NEVER overridden — a shell
 export or a test harness always wins. Missing file = silent no-op.
@@ -77,6 +81,44 @@ KNOWN_KEYS = [
      "url": "https://brightdata.com/cp",
      "urlLabel": "brightdata.com/cp",
      "command": None},
+    {"key": "SILLAGE_API_KEY",
+     "label": "Sillage — surveillance & signaux (P3/P4)",
+     "hint": "clé workspace sk_live_… (équipe Sillage)",
+     "how": "Récupère la clé API workspace (sk_live_…) auprès de l'équipe "
+            "Sillage — sponsor du hackathon — et colle-la ici. Nécessaire "
+            "pour setup / watchlist / agents / run / pull / leads.",
+     "url": "https://www.getsillage.com/docs/api",
+     "urlLabel": "getsillage.com → docs API",
+     "command": None},
+    {"key": "EMELIA_API_KEY",
+     "label": "Emelia — envoi des séquences (P7)",
+     "hint": "app.emelia.io → Settings → API",
+     "how": "Connecte-toi à app.emelia.io, puis Settings → API → copie la "
+            "clé et colle-la ici. Nécessaire pour create-campaign / push / "
+            "start / stats.",
+     "url": "https://app.emelia.io",
+     "urlLabel": "app.emelia.io",
+     "command": None},
+    {"key": "EMELIA_SEED_INBOXES",
+     "label": "Emelia — boîtes seed (garde-fou hackathon)",
+     "hint": "emails ou @domaines, séparés par des virgules",
+     "how": "Liste les SEULES boîtes autorisées à recevoir pendant "
+            "l'événement (ex : demo@bricks.dev,@bricks-seed.dev). "
+            "`push` refuse tout destinataire hors liste tant que ce "
+            "garde-fou est actif — c'est voulu.",
+     "url": None,
+     "urlLabel": None,
+     "command": None},
+    {"key": "EMELIA_TEMPLATE_ID",
+     "label": "Emelia — campagne modèle (optionnel)",
+     "hint": "id de la campagne à dupliquer chaque semaine",
+     "how": "Crée UNE campagne modèle dans l'UI Emelia (3 étapes "
+            "{{email_1}}/{{email_2}}/{{email_3}}), copie son id depuis "
+            "l'URL et colle-le ici — create-campaign la dupliquera au "
+            "lieu de repartir d'une campagne vierge.",
+     "url": "https://app.emelia.io",
+     "urlLabel": "app.emelia.io",
+     "command": None},
 ]
 
 
@@ -131,17 +173,27 @@ def set_key(key: str, value: str) -> dict:
                          f"{[e['key'] for e in KNOWN_KEYS]}")
     if not value or "REMPLACE" in value:
         raise ValueError("valeur vide")
-    # A key/token is a single opaque string. Whitespace means the user
-    # pasted prose or a dictation by mistake (field-tested: a whole French
-    # sentence landed in BRIGHTDATA_API_TOKEN and silently broke the run).
-    if any(c.isspace() for c in value):
-        raise ValueError("cette valeur contient un espace ou un retour à la "
-                         "ligne — ce n'est pas une clé/token. Tu as peut-être "
-                         "collé du texte au lieu de la clé. Recopie UNIQUEMENT "
-                         "la clé.")
-    if len(value) < 8:
-        raise ValueError(f"valeur trop courte ({len(value)} caractères) pour "
-                         "une clé/token — vérifie que tu as tout collé.")
+    if key == "EMELIA_SEED_INBOXES":
+        # a comma LIST, not an opaque token: normalize spaces around
+        # entries instead of rejecting them, and skip the token checks.
+        value = ",".join(p.strip() for p in value.split(",") if p.strip())
+        if not value or "@" not in value:
+            raise ValueError("EMELIA_SEED_INBOXES attend des emails ou "
+                             "@domaines séparés par des virgules "
+                             "(ex : demo@bricks.dev,@seed.dev)")
+    else:
+        # A key/token is a single opaque string. Whitespace means the user
+        # pasted prose or a dictation by mistake (field-tested: a whole French
+        # sentence landed in BRIGHTDATA_API_TOKEN and silently broke the run).
+        if any(c.isspace() for c in value):
+            raise ValueError("cette valeur contient un espace ou un retour à "
+                             "la ligne — ce n'est pas une clé/token. Tu as "
+                             "peut-être collé du texte au lieu de la clé. "
+                             "Recopie UNIQUEMENT la clé.")
+        if len(value) < 8:
+            raise ValueError(f"valeur trop courte ({len(value)} caractères) "
+                             "pour une clé/token — vérifie que tu as tout "
+                             "collé.")
     path = env_path()
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     try:

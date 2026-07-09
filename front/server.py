@@ -135,6 +135,148 @@ def _remove_rows(name: str, ids) -> dict:
     return {"ok": True, "table": name, "removed": result["removed"], "rows": result["rows"]}
 
 
+# --------------------------------------------------------------------------
+# Fiche & week endpoints (read: db.py only; write: outreach approve only)
+# --------------------------------------------------------------------------
+
+def _safe_rows(path: str, table: str, where: str | None = None) -> list[dict]:
+    """Tolerant select — tables and columns are dynamic, absence is data."""
+    try:
+        return dbtool.select(path, table, where=where, limit=-1)["rows"]
+    except dbtool.DbError:
+        return []
+
+
+def _by_id(rows: list[dict]) -> dict:
+    return {str(r["_id"]): r for r in rows}
+
+
+def _int_id(value) -> int:
+    try:
+        return int(str(value).strip())
+    except (TypeError, ValueError):
+        raise ApiError(400, f"invalid id: {value!r}") from None
+
+
+def _graph(table: str, row_id: int) -> dict:
+    """The FK sub-graph of one company or contact — the SAME screen for both
+    (contract: le graphe = les FK, rien d'autre)."""
+    path = _db_path()
+    if table not in ("companies", "contacts"):
+        raise ApiError(400, "graph is defined for companies and contacts only")
+    center_rows = _safe_rows(path, table, f"_id={row_id}")
+    if not center_rows:
+        raise ApiError(404, f"{table} row {row_id} not found")
+    center = center_rows[0]
+
+    if table == "contacts":
+        company = None
+        cid = str(center.get("company_id") or "").strip()
+        if cid.isdigit():
+            found = _safe_rows(path, "companies", f"_id={int(cid)}")
+            company = found[0] if found else None
+        contacts = (_safe_rows(path, "contacts", f"company_id='{int(cid)}'")
+                    if cid.isdigit() else [center])
+    else:
+        company = center
+        contacts = _safe_rows(path, "contacts", f"company_id='{row_id}'")
+
+    company_key = str((company or {}).get("_id") or "")
+    contact_ids = {str(c["_id"]) for c in contacts}
+    signals = []
+    seen = set()
+    if company_key:
+        for s in _safe_rows(path, "signals", f"company_id='{int(company_key)}'"):
+            seen.add(str(s["_id"]))
+            signals.append(s)
+    for c in sorted(contact_ids, key=int):
+        for s in _safe_rows(path, "signals", f"contact_id='{int(c)}'"):
+            if str(s["_id"]) not in seen:
+                seen.add(str(s["_id"]))
+                signals.append(s)
+    signals.sort(key=lambda s: str(s.get("signal_date") or ""), reverse=True)
+
+    comp_ids = sorted({int(str(s.get("competitor_id")))
+                       for s in signals
+                       if str(s.get("competitor_id") or "").strip().isdigit()})
+    competitors = (_safe_rows(path, "competitors",
+                              f"_id IN ({','.join(map(str, comp_ids))})")
+                   if comp_ids else [])
+
+    outreach = []
+    for c in sorted(contact_ids, key=int):
+        outreach.extend(_safe_rows(path, "outreach", f"contact_id='{int(c)}'"))
+
+    return {"ok": True, "entity": table, "center": center,
+            "company": company, "contacts": contacts,
+            "signals": signals, "competitors": competitors,
+            "outreach": outreach}
+
+
+_WEEK_COLS = ["week", "contact", "position", "company", "phone", "email",
+              "priority_tier", "priority_score", "why_now", "strategy",
+              "status", "audit_score", "draft_status"]
+
+
+def _week() -> dict:
+    """The 'To contact this week' view — outreach ⋈ contacts ⋈ companies.
+    Table-shaped so the existing grid renders it; `_`-prefixed columns stay
+    hidden but ride along for the click-through (contract: le front lit tout
+    via db.py, il n'écrit QUE outreach.status draft→approved)."""
+    path = _db_path()
+    queue = _safe_rows(path, "outreach")
+    contacts = _by_id(_safe_rows(path, "contacts"))
+    companies = _by_id(_safe_rows(path, "companies"))
+    queue.sort(key=lambda r: (str(r.get("week") or ""),
+                              -float(str((contacts.get(str(r.get("contact_id")))
+                                          or {}).get("priority_score") or 0)
+                                     if str((contacts.get(str(r.get("contact_id")))
+                                             or {}).get("priority_score") or "")
+                                     .replace(".", "", 1).lstrip("-").isdigit()
+                                     else 0)))
+    headers = ["_outreach_id", "_contact_id"] + _WEEK_COLS
+    rows = []
+    for q in queue:
+        contact = contacts.get(str(q.get("contact_id"))) or {}
+        company = companies.get(str(contact.get("company_id"))) or {}
+        rows.append([
+            str(q.get("_id")), str(contact.get("_id") or ""),
+            q.get("week") or "", contact.get("full_name") or "",
+            contact.get("position") or "", company.get("name") or "",
+            contact.get("phone") or "", contact.get("email") or "",
+            contact.get("priority_tier") or "",
+            contact.get("priority_score") or "",
+            contact.get("why_now") or "", q.get("strategy") or "",
+            q.get("status") or "", q.get("audit_score") or "",
+            q.get("draft_status") or ""])
+    return {"table": "to_contact_this_week", "headers": headers,
+            "rows": [["" if v is None else str(v) for v in r] for r in rows]}
+
+
+def _approve(outreach_id: int) -> dict:
+    """The front's ONLY write (contract): outreach.status draft → approved.
+    The blocking audit is enforced here too: audit_score < 70 never passes."""
+    path = _db_path()
+    rows = _safe_rows(path, "outreach", f"_id={outreach_id}")
+    if not rows:
+        raise ApiError(404, f"outreach row {outreach_id} not found")
+    row = rows[0]
+    status = str(row.get("status") or "").strip()
+    if status != "draft":
+        raise ApiError(409, f"seuls les drafts s'approuvent (statut actuel : "
+                            f"{status or '∅'})")
+    score = str(row.get("audit_score") or "").strip()
+    if score.isdigit() and int(score) < 70:
+        raise ApiError(409, f"audit bloquant : score {score} < 70 — resserre "
+                            "le draft et re-lance l'audit")
+    try:
+        dbtool.modify(path, "outreach",
+                      updates=[{"_id": outreach_id, "status": "approved"}])
+    except dbtool.DbError as exc:
+        raise ApiError(400, str(exc)) from None
+    return {"ok": True, "_id": outreach_id, "status": "approved"}
+
+
 def _set_setting(payload: dict) -> dict:
     """Store one engine key in ~/.bricks/env; the value is never echoed."""
     try:
@@ -176,6 +318,14 @@ class Handler(BaseHTTPRequestHandler):
                 self._send_json(200, _api_status())
             elif path == "/api/settings":
                 self._send_json(200, envfile.status())
+            elif path == "/api/week":
+                self._send_json(200, _week())
+            elif path.startswith("/api/graph/"):
+                match = re.fullmatch(r"/api/graph/([a-z_]+)/(\d+)", path)
+                if not match:
+                    raise ApiError(400, "expected /api/graph/<table>/<id>")
+                self._send_json(200, _graph(match.group(1),
+                                            _int_id(match.group(2))))
             elif path.startswith("/api/table/"):
                 self._send_json(200, _read_table(path[len("/api/table/"):]))
             else:
@@ -192,10 +342,13 @@ class Handler(BaseHTTPRequestHandler):
                 payload = json.loads(self.rfile.read(length) or b"{}")
             except json.JSONDecodeError as exc:
                 raise ApiError(400, f"invalid JSON body: {exc}") from None
+            approve = re.fullmatch(r"/api/outreach/(\d+)/approve", path)
             if path == "/api/workspace/switch":
                 self._send_json(200, _switch_workspace(payload.get("name")))
             elif path == "/api/settings":
                 self._send_json(200, _set_setting(payload))
+            elif approve:
+                self._send_json(200, _approve(_int_id(approve.group(1))))
             elif match:
                 self._send_json(200, _remove_rows(match.group(1), payload.get("ids")))
             else:

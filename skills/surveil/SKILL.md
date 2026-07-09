@@ -81,14 +81,29 @@ signal stays without company_id, never a phantom row.
 
 Whenever `qualify_status='pending'` rows exist (first sourcing or fresh
 interceptions). STATIC criteria only — headcount, industry, geo,
-business model, from `context/icp.md` (kill rules included); everything
-Sillage covers (hiring, job changes, posts) is EXCLUDED from this
-judgment. `--ai` writes exactly `icp_verdict`, `icp_reason`, `fit_score`:
+business model, from `context/icp.md` (kill rules included).
+
+**Liste d'exclusion Sillage** — le dynamique est le travail de Sillage
+(getsillage.com/docs/playbooks/signal-reference) : on ne l'enrichit NI
+ne le juge à P2, il arrive en lignes `signals` au pull (P4) et est
+scoré à P5. Couvert par ses agents :
+
+- `job_update` — prises de poste, promotions (→ `newJob`, `recentlyPromoted`)
+- `job_posting_keyword_detection` — offres d'emploi (→ `jobPosting`)
+- `keyword_detection` — mots-clés posts & actu (→ `keywordDetection`)
+- `competitor` — engagement avec un concurrent surveillé (→ `competitor_engagement`)
+- `champion` — mouvements de champion (→ `champion_move`)
+- `partner` / `customer` / `influencer` — agents Sillage non souscrits ;
+  dynamiques quand même, pas plus l'affaire de P2.
+
+Un verdict P2 qui cite un recrutement, un changement de poste ou un
+post est un MAUVAIS verdict — resserre le prompt et re-lance la ligne.
+`--ai` writes exactly `icp_verdict`, `icp_reason`, `fit_score`:
 
 ```bash
 python3 "tools/core/runner.py" run --table companies \
   --status-col qualify_status --run-id qualify-<date> \
-  --ai '{"prompt":"ICP: <criteria + kill rules from icp.md>. Entreprise: {{name}} ({{domain}}) — {{headcount}} / {{industry}} / {{geo}}. Tranche: qualified|rejected + raison (1 phrase) + fit_score 0-100 (fit STATIQUE).","schema":{"type":"object","properties":{"icp_verdict":{"type":"string","enum":["qualified","rejected"]},"icp_reason":{"type":"string"},"fit_score":{"type":"integer"}}},"model":"haiku"}' \
+  --ai '{"prompt":"ICP: <criteria + kill rules from icp.md>. Entreprise: {{name}} ({{domain}}) — {{headcount}} / {{industry}} / {{geo}}. Juge le fit STATIQUE uniquement : taille, secteur, géo, business model. IGNORE tout signal dynamique — recrutements, prises de poste, promotions, posts, actu, engagement concurrent, mouvement champion : couvert par Sillage, jugé au scoring, pas ici. Tranche: qualified|rejected + raison (1 phrase, critères statiques seulement) + fit_score 0-100.","schema":{"type":"object","properties":{"icp_verdict":{"type":"string","enum":["qualified","rejected"]},"icp_reason":{"type":"string"},"fit_score":{"type":"integer"}}},"model":"haiku"}' \
   --preview 10
 # preview receipts → ONE GO → --commit
 ```
