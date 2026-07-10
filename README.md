@@ -8,11 +8,7 @@ même marketplace :
 | [`bricks`](plugins/bricks/) | **Signal Interceptor** (v3) — l'agent qui surveille comptes & concurrents (Sillage), intercepte les prospects qui discutent avec un concurrent, qualifie à une porte ICP unique, score le WHY NOW preuves à l'appui, prépare la file de la semaine, rédige/audite et envoie (Emelia). UI locale : tables, file « to contact this week », fiche cold-call avec graphe. | [README](plugins/bricks/README.md) · [DEMO](plugins/bricks/DEMO.md) |
 | [`diggr`](plugins/diggr/) | **Diggr** — la lignée Bricks v2 : workspace management, find / enrich / transform sur SQLite par workspace, plus le front Diggr (`v4/`) et les expérimentations v2 (`v2/` — agents, schémas, scoring). | [v4/DEMO-RUNBOOK](plugins/diggr/v4/DEMO-RUNBOOK.md) |
 
-> ⚠️ **Ce repo n'est PAS le repo de soumission du hackathon.**
-> Règle de l'événement : « Build entirely during the event. No prior commits. »
-> Ce dépôt sert de référence/fondation ; le jour J, on repart d'un repo vierge
-> (ou on le déclare comme dépendance open-source créditée SI les organisateurs
-> valident explicitement).
+
 
 ## Installer
 
